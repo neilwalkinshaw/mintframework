@@ -1,0 +1,2 @@
+methane <= 597.355089: highwater
+methane > 597.355089: not_critical

@@ -1,0 +1,11 @@
+===== MODEL FOR:critical =====
+pump = true: switch_pump_off
+pump = false
+| methane <= 607.2162
+| | methane <= 602.640094: not_critical
+| | methane > 602.640094
+| | | water <= 31.699162: not_critical
+| | | water > 31.699162: critical
+| methane > 607.2162
+| | water <= 74.875037: highwater
+| | water > 74.875037: critical

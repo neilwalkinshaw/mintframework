@@ -1,0 +1,18 @@
+=========================== MODEL FOR:join(LNode;LNode;)V =========================== 
+J48 pruned tree
+------------------
+
+below.value <= 11
+|   below.value <= -468: push(I)Z (13.14/5.57)
+|   below.value > -468
+|   |   above.value <= 0
+|   |   |   above.value <= -454: push(I)Z (7.01/2.9)
+|   |   |   above.value > -454: isAtCapacity()Z (23.66/16.26)
+|   |   above.value > 0: push(I)Z (21.9/9.05)
+below.value > 11
+|   below.value <= 1668
+|   |   above.value <= 508: push(I)Z (8.18/3.52)
+|   |   above.value > 508: join(LNode;LNode;)V (4.97/2.05)
+|   below.value > 1668
+|   |   above.value <= 1167: push(I)Z (8.47/3.64)
+|   |   above.value > 1167: isAtCapacity()Z (4.67/2.11)

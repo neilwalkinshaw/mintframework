@@ -1,0 +1,613 @@
+Classifier Model
+M5 pruned model tree:
+(using smoothed linear models)
+
+High_Confidence <= 0.5 : 
+|   Other_Capability <= 1.5 : LM1 (333/0%)
+|   Other_Capability >  1.5 : 
+|   |   Two_of_Three_Reports_Valid <= 0.5 : LM2 (43/43.593%)
+|   |   Two_of_Three_Reports_Valid >  0.5 : LM3 (41/0%)
+High_Confidence >  0.5 : 
+|   Down_Separation <= 756.5 : 
+|   |   cur_vertical_sep <= 635.5 : 
+|   |   |   Up_Separation <= 500.5 : 
+|   |   |   |   Up_Separation <= 423 : LM4 (64/0%)
+|   |   |   |   Up_Separation >  423 : 
+|   |   |   |   |   cur_vertical_sep <= 597.5 : LM5 (13/0%)
+|   |   |   |   |   cur_vertical_sep >  597.5 : 
+|   |   |   |   |   |   Down_Separation <= 449.5 : LM6 (15/42.613%)
+|   |   |   |   |   |   Down_Separation >  449.5 : LM7 (5/71.3%)
+|   |   |   Up_Separation >  500.5 : LM8 (114/0%)
+|   |   cur_vertical_sep >  635.5 : 
+|   |   |   Other_Capability <= 0.5 : 
+|   |   |   |   Down_Separation <= 399.5 : 
+|   |   |   |   |   Other_Tracked_Alt <= 849 : 
+|   |   |   |   |   |   Up_Separation <= 505 : LM9 (12/0%)
+|   |   |   |   |   |   Up_Separation >  505 : LM10 (6/0%)
+|   |   |   |   |   Other_Tracked_Alt >  849 : 
+|   |   |   |   |   |   Other_Tracked_Alt <= 3791 : LM11 (45/0%)
+|   |   |   |   |   |   Other_Tracked_Alt >  3791 : LM12 (12/26.061%)
+|   |   |   |   Down_Separation >  399.5 : 
+|   |   |   |   |   Up_Separation <= 399.5 : 
+|   |   |   |   |   |   Own_Tracked_Alt <= 499.5 : LM13 (16/50.302%)
+|   |   |   |   |   |   Own_Tracked_Alt >  499.5 : LM14 (43/0%)
+|   |   |   |   |   Up_Separation >  399.5 : 
+|   |   |   |   |   |   Alt_Layer_Value <= 0.5 : 
+|   |   |   |   |   |   |   Other_Tracked_Alt <= 2098.5 : 
+|   |   |   |   |   |   |   |   Down_Separation <= 525 : 
+|   |   |   |   |   |   |   |   |   Other_Tracked_Alt <= 237 : LM15 (3/161.063%)
+|   |   |   |   |   |   |   |   |   Other_Tracked_Alt >  237 : LM16 (10/0%)
+|   |   |   |   |   |   |   |   Down_Separation >  525 : LM17 (14/0%)
+|   |   |   |   |   |   |   Other_Tracked_Alt >  2098.5 : LM18 (17/0%)
+|   |   |   |   |   |   Alt_Layer_Value >  0.5 : LM19 (142/95.293%)
+|   |   |   Other_Capability >  0.5 : 
+|   |   |   |   Other_Tracked_Alt <= 661.5 : 
+|   |   |   |   |   Own_Tracked_Alt <= 590.5 : LM20 (143/62.882%)
+|   |   |   |   |   Own_Tracked_Alt >  590.5 : LM21 (105/0%)
+|   |   |   |   Other_Tracked_Alt >  661.5 : LM22 (165/75.871%)
+|   Down_Separation >  756.5 : 
+|   |   Up_Separation <= 506.5 : 
+|   |   |   Own_Tracked_Alt <= 727.5 : LM23 (43/0%)
+|   |   |   Own_Tracked_Alt >  727.5 : LM24 (12/85.175%)
+|   |   Up_Separation >  506.5 : 
+|   |   |   Up_Separation <= 876 : 
+|   |   |   |   Alt_Layer_Value <= 2.5 : 
+|   |   |   |   |   Other_Tracked_Alt <= 600.5 : 
+|   |   |   |   |   |   cur_vertical_sep <= 699.5 : 
+|   |   |   |   |   |   |   Own_Tracked_Alt_Rate <= 126.5 : LM25 (13/0%)
+|   |   |   |   |   |   |   Own_Tracked_Alt_Rate >  126.5 : 
+|   |   |   |   |   |   |   |   Other_Capability <= 0.5 : LM26 (21/64.569%)
+|   |   |   |   |   |   |   |   Other_Capability >  0.5 : 
+|   |   |   |   |   |   |   |   |   Down_Separation <= 808.5 : LM27 (10/0%)
+|   |   |   |   |   |   |   |   |   Down_Separation >  808.5 : LM28 (6/0%)
+|   |   |   |   |   |   cur_vertical_sep >  699.5 : LM29 (29/0%)
+|   |   |   |   |   Other_Tracked_Alt >  600.5 : 
+|   |   |   |   |   |   Down_Separation <= 840.5 : LM30 (14/0%)
+|   |   |   |   |   |   Down_Separation >  840.5 : 
+|   |   |   |   |   |   |   Other_Tracked_Alt <= 647.5 : LM31 (7/0%)
+|   |   |   |   |   |   |   Other_Tracked_Alt >  647.5 : LM32 (8/112.996%)
+|   |   |   |   Alt_Layer_Value >  2.5 : 
+|   |   |   |   |   Down_Separation <= 861.5 : LM33 (30/0%)
+|   |   |   |   |   Down_Separation >  861.5 : 
+|   |   |   |   |   |   Own_Tracked_Alt <= 592 : LM34 (7/0%)
+|   |   |   |   |   |   Own_Tracked_Alt >  592 : LM35 (8/48.871%)
+|   |   |   Up_Separation >  876 : 
+|   |   |   |   Up_Separation <= 902.5 : 
+|   |   |   |   |   Down_Separation <= 897 : LM36 (8/0%)
+|   |   |   |   |   Down_Separation >  897 : LM37 (3/161.063%)
+|   |   |   |   Up_Separation >  902.5 : LM38 (28/0%)
+
+LM num: 1
+output = 
+	-0.0016 * High_Confidence 
+	- 0.0007 * Two_of_Three_Reports_Valid 
+	- 0.0011 * Alt_Layer_Value 
+	- 0.0019 * Climb_Inhibit 
+	+ 0.004
+
+LM num: 2
+output = 
+	-0.6024 * High_Confidence 
+	- 0.0208 * Two_of_Three_Reports_Valid 
+	- 0.0011 * Alt_Layer_Value 
+	- 0.0019 * Climb_Inhibit 
+	+ 0.0135
+
+LM num: 3
+output = 
+	-0.1197 * High_Confidence 
+	- 0.0214 * Two_of_Three_Reports_Valid 
+	- 0.0011 * Alt_Layer_Value 
+	- 0.0019 * Climb_Inhibit 
+	+ 0.0139
+
+LM num: 4
+output = 
+	0.0001 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0001 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	- 0 * Up_Separation 
+	- 0 * Down_Separation 
+	- 0.0061 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	- 0.0124
+
+LM num: 5
+output = 
+	0.0004 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0006 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	- 0 * Up_Separation 
+	+ 0.0004 * Down_Separation 
+	- 0.0061 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	- 0.5099
+
+LM num: 6
+output = 
+	0.0004 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	- 0.0657 * Two_of_Three_Reports_Valid 
+	+ 0.0009 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	- 0 * Up_Separation 
+	+ 0.0011 * Down_Separation 
+	- 0.0061 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	- 0.8025
+
+LM num: 7
+output = 
+	0.0082 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	- 0.0986 * Two_of_Three_Reports_Valid 
+	+ 0.0011 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	- 0 * Up_Separation 
+	+ 0.0015 * Down_Separation 
+	- 0.0061 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	- 5.861
+
+LM num: 8
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0 * Up_Separation 
+	- 0 * Down_Separation 
+	- 0.0061 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	+ 0.0216
+
+LM num: 9
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	+ 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0.0006 * Up_Separation 
+	- 0.0002 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0243 * Climb_Inhibit 
+	+ 0.2874
+
+LM num: 10
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	+ 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0.0007 * Up_Separation 
+	- 0.0002 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0243 * Climb_Inhibit 
+	+ 0.3891
+
+LM num: 11
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	- 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	+ 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0.0001 * Up_Separation 
+	- 0.0002 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0243 * Climb_Inhibit 
+	+ 0.8668
+
+LM num: 12
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	- 0.0001 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	+ 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0.0001 * Up_Separation 
+	- 0.0002 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0243 * Climb_Inhibit 
+	+ 0.9361
+
+LM num: 13
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0008 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0 * Up_Separation 
+	+ 0 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0447 * Climb_Inhibit 
+	- 0.1593
+
+LM num: 14
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0 * Up_Separation 
+	+ 0 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0447 * Climb_Inhibit 
+	+ 0.1165
+
+LM num: 15
+output = 
+	0.0001 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0124 * Alt_Layer_Value 
+	- 0.0002 * Up_Separation 
+	+ 0.0023 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0613 * Climb_Inhibit 
+	- 0.4013
+
+LM num: 16
+output = 
+	0.0001 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0124 * Alt_Layer_Value 
+	- 0.0002 * Up_Separation 
+	+ 0.0023 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0613 * Climb_Inhibit 
+	- 0.4532
+
+LM num: 17
+output = 
+	0.0001 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0124 * Alt_Layer_Value 
+	- 0.0002 * Up_Separation 
+	+ 0.0022 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0613 * Climb_Inhibit 
+	- 0.1059
+
+LM num: 18
+output = 
+	0.0001 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0124 * Alt_Layer_Value 
+	- 0.0002 * Up_Separation 
+	+ 0.0015 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.0613 * Climb_Inhibit 
+	- 0.2016
+
+LM num: 19
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0001 * Own_Tracked_Alt 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	+ 0.0683 * Alt_Layer_Value 
+	- 0 * Up_Separation 
+	+ 0 * Down_Separation 
+	+ 0.0024 * Other_RAC 
+	- 0.0066 * Other_Capability 
+	- 0.037 * Climb_Inhibit 
+	+ 0.0417
+
+LM num: 20
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.006 * Two_of_Three_Reports_Valid 
+	- 0 * Own_Tracked_Alt 
+	- 0 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0.0002 * Up_Separation 
+	- 0.0007 * Down_Separation 
+	+ 0.0019 * Other_RAC 
+	- 0.0057 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	+ 0.393
+
+LM num: 21
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.006 * Two_of_Three_Reports_Valid 
+	- 0 * Own_Tracked_Alt 
+	- 0 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0 * Up_Separation 
+	- 0.0001 * Down_Separation 
+	+ 0.0019 * Other_RAC 
+	- 0.0057 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	+ 0.0665
+
+LM num: 22
+output = 
+	0 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.2034 * Two_of_Three_Reports_Valid 
+	- 0 * Own_Tracked_Alt 
+	- 0 * Own_Tracked_Alt_Rate 
+	- 0 * Other_Tracked_Alt 
+	- 0.0011 * Alt_Layer_Value 
+	+ 0.0004 * Up_Separation 
+	- 0.0007 * Down_Separation 
+	+ 0.0019 * Other_RAC 
+	- 0.0057 * Other_Capability 
+	- 0.0016 * Climb_Inhibit 
+	+ 0.3893
+
+LM num: 23
+output = 
+	0.0002 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0613 * Two_of_Three_Reports_Valid 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0365 * Alt_Layer_Value 
+	+ 0.0002 * Up_Separation 
+	- 0.0002 * Down_Separation 
+	- 0.0486 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 0.3439
+
+LM num: 24
+output = 
+	0.0002 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.2045 * Two_of_Three_Reports_Valid 
+	- 0.0001 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0365 * Alt_Layer_Value 
+	+ 0.0002 * Up_Separation 
+	- 0.0002 * Down_Separation 
+	- 0.0486 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 0.3919
+
+LM num: 25
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0001 * Own_Tracked_Alt 
+	- 0.0007 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	+ 0.0013 * Up_Separation 
+	- 0.0021 * Down_Separation 
+	- 0.1533 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 2.5019
+
+LM num: 26
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0005 * Own_Tracked_Alt 
+	- 0.0006 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	+ 0.0017 * Up_Separation 
+	- 0.003 * Down_Separation 
+	- 0.1596 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 3.1921
+
+LM num: 27
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0001 * Own_Tracked_Alt 
+	- 0.0006 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	+ 0.0008 * Up_Separation 
+	- 0.0048 * Down_Separation 
+	- 0.1662 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 4.9586
+
+LM num: 28
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0001 * Own_Tracked_Alt 
+	- 0.0006 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	+ 0.0008 * Up_Separation 
+	- 0.0051 * Down_Separation 
+	- 0.1662 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 5.0982
+
+LM num: 29
+output = 
+	0.0007 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0 * Own_Tracked_Alt 
+	- 0.0004 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	+ 0.0002 * Up_Separation 
+	- 0.0004 * Down_Separation 
+	- 0.0929 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 1.7133
+
+LM num: 30
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0004 * Own_Tracked_Alt_Rate 
+	- 0.0002 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	- 0.0001 * Up_Separation 
+	+ 0.0013 * Down_Separation 
+	- 0.0808 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	- 0.1393
+
+LM num: 31
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0004 * Own_Tracked_Alt_Rate 
+	- 0.0016 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	- 0.0001 * Up_Separation 
+	+ 0.0012 * Down_Separation 
+	- 0.0808 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 1.1541
+
+LM num: 32
+output = 
+	0.0005 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0004 * Own_Tracked_Alt_Rate 
+	- 0.0016 * Other_Tracked_Alt 
+	- 0.0489 * Alt_Layer_Value 
+	- 0.0001 * Up_Separation 
+	+ 0.0012 * Down_Separation 
+	- 0.0808 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 0.9806
+
+LM num: 33
+output = 
+	0.0004 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0003 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0687 * Alt_Layer_Value 
+	- 0.0001 * Up_Separation 
+	+ 0.001 * Down_Separation 
+	- 0.0183 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	- 0.2678
+
+LM num: 34
+output = 
+	0.0004 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	+ 0.0002 * Own_Tracked_Alt 
+	- 0.0003 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0687 * Alt_Layer_Value 
+	- 0.0001 * Up_Separation 
+	+ 0.0015 * Down_Separation 
+	- 0.0183 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	- 0.6933
+
+LM num: 35
+output = 
+	0.0006 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	+ 0.0002 * Own_Tracked_Alt 
+	- 0.0003 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0687 * Alt_Layer_Value 
+	- 0.0001 * Up_Separation 
+	+ 0.0015 * Down_Separation 
+	- 0.0183 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	- 0.6609
+
+LM num: 36
+output = 
+	0.0002 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0002 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0629 * Alt_Layer_Value 
+	- 0.0005 * Up_Separation 
+	+ 0.0018 * Down_Separation 
+	- 0.0183 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	- 0.6104
+
+LM num: 37
+output = 
+	0.0002 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0002 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0629 * Alt_Layer_Value 
+	- 0.0005 * Up_Separation 
+	+ 0.0023 * Down_Separation 
+	- 0.0183 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	- 0.9706
+
+LM num: 38
+output = 
+	0.0002 * cur_vertical_sep 
+	+ 0.0037 * High_Confidence 
+	+ 0.0143 * Two_of_Three_Reports_Valid 
+	- 0.0002 * Own_Tracked_Alt_Rate 
+	- 0.0001 * Other_Tracked_Alt 
+	- 0.0629 * Alt_Layer_Value 
+	- 0.0005 * Up_Separation 
+	- 0.0001 * Down_Separation 
+	- 0.0183 * Other_Capability 
+	- 0.0041 * Climb_Inhibit 
+	+ 0.8828

@@ -1,0 +1,4 @@
+height <= 1.263973:  very obese (4.0)
+height > 1.263973
+|   height <= 2.749478:  healthy (3.0)
+|   height > 2.749478:  underweight (3.0)

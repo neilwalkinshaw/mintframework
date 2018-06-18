@@ -1,0 +1,91 @@
+
+-fisolate-erroneous-paths-dereference <= 0
+|   -frerun-cse-after-loop <= 0
+|   |   -fdse <= 0
+|   |   |   -fssa-phiopt <= 0
+|   |   |   |   -ftree-slsr <= 0: '(69062.8-70394]' (26.0/17.0)
+|   |   |   |   -ftree-slsr > 0: '(70394-71725.2]' (20.0/11.0)
+|   |   |   -fssa-phiopt > 0
+|   |   |   |   -fcprop-registers <= 0: '(69062.8-70394]' (21.0/9.0)
+|   |   |   |   -fcprop-registers > 0
+|   |   |   |   |   -fschedule-insns2 <= 0: '(69062.8-70394]' (3.0)
+|   |   |   |   |   -fschedule-insns2 > 0
+|   |   |   |   |   |   -fcse-follow-jumps <= 0: '(65069.2-66400.4]' (3.0/2.0)
+|   |   |   |   |   |   -fcse-follow-jumps > 0
+|   |   |   |   |   |   |   -fipa-sra <= 0: '(69062.8-70394]' (8.0/3.0)
+|   |   |   |   |   |   |   -fipa-sra > 0: '(70394-71725.2]' (4.0/1.0)
+|   |   -fdse > 0
+|   |   |   -findirect-inlining <= 0
+|   |   |   |   -ftree-sra <= 0
+|   |   |   |   |   -fstrict-aliasing <= 0: '(66400.4-67731.6]' (16.0/8.0)
+|   |   |   |   |   -fstrict-aliasing > 0
+|   |   |   |   |   |   -falign-loops <= 0: '(66400.4-67731.6]' (2.0/1.0)
+|   |   |   |   |   |   -falign-loops > 0: '(70394-71725.2]' (5.0/1.0)
+|   |   |   |   -ftree-sra > 0: '(69062.8-70394]' (15.0/6.0)
+|   |   |   -findirect-inlining > 0
+|   |   |   |   -fcse-skip-blocks <= 0
+|   |   |   |   |   -ftree-forwprop <= 0
+|   |   |   |   |   |   -fdce <= 0: '(71725.2-73056.4]' (6.0/2.0)
+|   |   |   |   |   |   -fdce > 0: '(66400.4-67731.6]' (5.0/3.0)
+|   |   |   |   |   -ftree-forwprop > 0: '(70394-71725.2]' (15.0/6.0)
+|   |   |   |   -fcse-skip-blocks > 0
+|   |   |   |   |   -ftree-phiprop <= 0
+|   |   |   |   |   |   -fgcse <= 0
+|   |   |   |   |   |   |   -ftree-dominator-opts <= 0: '(67731.6-69062.8]' (4.0/2.0)
+|   |   |   |   |   |   |   -ftree-dominator-opts > 0: '(69062.8-70394]' (5.0)
+|   |   |   |   |   |   -fgcse > 0: '(70394-71725.2]' (2.0/1.0)
+|   |   |   |   |   -ftree-phiprop > 0: '(70394-71725.2]' (12.0/7.0)
+|   -frerun-cse-after-loop > 0
+|   |   -ftree-dominator-opts <= 0: '(70394-71725.2]' (79.0/58.0)
+|   |   -ftree-dominator-opts > 0
+|   |   |   -fstrict-overflow <= 0: '(71725.2-73056.4]' (39.0/28.0)
+|   |   |   -fstrict-overflow > 0: '(70394-71725.2]' (22.0/14.0)
+-fisolate-erroneous-paths-dereference > 0
+|   -fdelete-null-pointer-checks <= 0
+|   |   -ftree-copyrename <= 0
+|   |   |   -findirect-inlining <= 0
+|   |   |   |   -fgcse <= 0
+|   |   |   |   |   -fcompare-elim <= 0
+|   |   |   |   |   |   -fcrossjumping <= 0: '(70394-71725.2]' (5.0)
+|   |   |   |   |   |   -fcrossjumping > 0: '(69062.8-70394]' (4.0/1.0)
+|   |   |   |   |   -fcompare-elim > 0: '(69062.8-70394]' (11.0/4.0)
+|   |   |   |   -fgcse > 0
+|   |   |   |   |   -ftree-slsr <= 0
+|   |   |   |   |   |   -fschedule-insns2 <= 0
+|   |   |   |   |   |   |   -ftree-builtin-call-dce <= 0: '(66400.4-67731.6]' (5.0/1.0)
+|   |   |   |   |   |   |   -ftree-builtin-call-dce > 0: '(71725.2-73056.4]' (3.0)
+|   |   |   |   |   |   -fschedule-insns2 > 0: '(69062.8-70394]' (5.0/1.0)
+|   |   |   |   |   -ftree-slsr > 0: '(70394-71725.2]' (14.0/6.0)
+|   |   |   -findirect-inlining > 0: '(70394-71725.2]' (53.0/34.0)
+|   |   -ftree-copyrename > 0
+|   |   |   -ftree-vrp <= 0: '(70394-71725.2]' (42.0/21.0)
+|   |   |   -ftree-vrp > 0
+|   |   |   |   -fcaller-saves <= 0: '(70394-71725.2]' (21.0/12.0)
+|   |   |   |   -fcaller-saves > 0
+|   |   |   |   |   -fstrict-aliasing <= 0
+|   |   |   |   |   |   -foptimize-sibling-calls <= 0: '(70394-71725.2]' (6.0/3.0)
+|   |   |   |   |   |   -foptimize-sibling-calls > 0: '(71725.2-73056.4]' (5.0/2.0)
+|   |   |   |   |   -fstrict-aliasing > 0
+|   |   |   |   |   |   -fhoist-adjacent-loads <= 0: '(69062.8-70394]' (2.0/1.0)
+|   |   |   |   |   |   -fhoist-adjacent-loads > 0: '(74387.6-75718.8]' (6.0)
+|   -fdelete-null-pointer-checks > 0
+|   |   -fipa-reference <= 0
+|   |   |   -freorder-blocks <= 0
+|   |   |   |   -ftree-ter <= 0
+|   |   |   |   |   -fdelayed-branch <= 0: '(69062.8-70394]' (15.0/9.0)
+|   |   |   |   |   -fdelayed-branch > 0: '(70394-71725.2]' (15.0/7.0)
+|   |   |   |   -ftree-ter > 0
+|   |   |   |   |   -fauto-inc-dec <= 0
+|   |   |   |   |   |   -fcompare-elim <= 0: '(71725.2-73056.4]' (6.0/2.0)
+|   |   |   |   |   |   -fcompare-elim > 0: '(69062.8-70394]' (5.0/1.0)
+|   |   |   |   |   -fauto-inc-dec > 0: '(67731.6-69062.8]' (5.0/2.0)
+|   |   |   -freorder-blocks > 0: '(71725.2-73056.4]' (40.0/20.0)
+|   |   -fipa-reference > 0
+|   |   |   -funit-at-a-time <= 0: '(71725.2-73056.4]' (37.0/26.0)
+|   |   |   -funit-at-a-time > 0
+|   |   |   |   -fcse-follow-jumps <= 0
+|   |   |   |   |   -fsplit-wide-types <= 0: '(69062.8-70394]' (8.0/4.0)
+|   |   |   |   |   -fsplit-wide-types > 0
+|   |   |   |   |   |   -fauto-inc-dec <= 0: '(73056.4-74387.6]' (11.0/6.0)
+|   |   |   |   |   |   -fauto-inc-dec > 0: '(71725.2-73056.4]' (5.0/2.0)
+|   |   |   |   -fcse-follow-jumps > 0: '(73056.4-74387.6]' (26.0/12.0)

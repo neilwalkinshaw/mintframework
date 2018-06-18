@@ -1,0 +1,7 @@
+JRIP rules:
+===========
+
+(methane >= 605.334411) and (methane <= 605.674047) => CLASS_NEXT=wait (2.0/0.0)
+(methane >= 594.231103) and (methane <= 598.424775) => CLASS_NEXT=critical (3.0/0.0)
+(methane >= 600.230823) => CLASS_NEXT=not_critical (15.0/0.0)
+ => CLASS_NEXT=highwater (33.0/0.0)

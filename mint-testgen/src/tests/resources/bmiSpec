@@ -1,0 +1,24 @@
+{
+	"command": "sh src/tests/resources/bmi.sh",
+	"parameters":[
+		{
+			"name": "weight",
+			"type": "double",
+            "max": "300",
+            "min": "-10"
+		},
+		{
+            "name": "height",
+           	"type": "double",
+            "max": "3"
+            "min": "-1"
+        }
+	],
+	"output":[
+        {
+            "name": "output",
+            "type": "double"
+        }
+	]
+}	
+		

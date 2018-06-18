@@ -1,0 +1,415 @@
+{
+	"command": "./gcc_wrapper.sh",
+	"parameters":[
+	{
+		"name": "-fauto-inc-dec",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fcompare-elim",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fcprop-registers",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdce",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdefer-pop",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdelayed-branch",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdse",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fguess-branch-probability",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fif-conversion2",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fif-conversion",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fipa-pure-const",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fipa-profile",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fipa-reference",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fmerge-constants",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fsplit-wide-types",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-bit-ccp",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-builtin-call-dce",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-ccp",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fssa-phiopt",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-ch",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-copyrename",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-dce",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-dominator-opts",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-dse",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-forwprop",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-fre",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-phiprop",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-slsr",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-sra",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-pta",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-ter",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-funit-at-a-time",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fthread-jumps",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-falign-functions",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-falign-jumps",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-falign-loops",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-falign-labels",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fcaller-saves",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fcrossjumping",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fcse-follow-jumps",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fcse-skip-blocks",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdelete-null-pointer-checks",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdevirtualize",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fdevirtualize-speculatively",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fexpensive-optimizations",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fgcse",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fgcse-lm",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fhoist-adjacent-loads",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-finline-small-functions",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-findirect-inlining",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fipa-sra",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fisolate-erroneous-paths-dereference",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-foptimize-sibling-calls",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fpartial-inlining",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fpeephole2",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-freorder-blocks",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-freorder-functions",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-frerun-cse-after-loop",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fsched-interblock",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fsched-spec",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fschedule-insns",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fschedule-insns2",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fstrict-aliasing",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-fstrict-overflow",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-switch-conversion",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-tail-merge",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-pre",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+,	{
+		"name": "-ftree-vrp",
+		"type": "integer",
+		"min": "0",
+		"max": "1"
+	}
+
+	],
+	"output-type":"integer"
+}
