@@ -1,0 +1,37 @@
+<math mode="" display="inline" id="K">
+  <maction actiontype="" id="scqd4a">
+    <mmultiscripts class="lg" id="w">
+      <mspace width="-1cm"/>
+      <none/>
+      <maligngroup/>
+      <none/>
+      <mstyle displaystyle="true" scriptminsize="-0ex" color="" form="prefix" lspace="verythinmathspace" rspace="thickmathspace" stretchy="false" symmetric="true" movablelimits="false" minsize="6ex" maxsize="INF" mathvariant="normal" mathsize="big" mathbackground="blue" id="D">
+        <mmultiscripts id="D">
+          <mroot class="m" id="d">
+            <mstyle scriptlevel="2" scriptminsize="0" background="&#x1CC1B;" form="postfix" lspace="-64   in" rspace="-5mm" fence="true" stretchy="false" symmetric="true" movablelimits="false" accent="true" largeop="false" minsize="verythickmathspace" maxsize="4  in" mathcolor="#244c3c" id="Q">
+              <mo form="prefix" lspace="verythinmathspace" rspace="verythickmathspace" fence="true" separator="true" movablelimits="true" largeop="true" minsize="mediummathspace" mathvariant="bold" mathsize="big" mathbackground="blue" id="g.X0f"><mglyph alt="&#x52D4;" index="0086"/></mo>
+            </mstyle>
+          </mroot>
+        </mmultiscripts>
+      </mstyle>
+      <maction actiontype="&#x447D;" id="T">
+        <mstyle color="" rspace="veryverythickmathspace" stretchy="true" symmetric="true" movablelimits="true" mathsize="127.5623cm" mathbackground="yellow">
+          <mi mathsize="0">𥫭<malignmark edge="left"/></mi>
+        </mstyle>
+      </maction>
+      <none/>
+      <none/>
+      <maction actiontype="" id="yj">
+        <mroot id="c2">
+          <mmultiscripts id="QA">
+            <maligngroup class="C" id="an"/>
+          </mmultiscripts>
+        </mroot>
+      </maction>
+      <mo lspace="veryverythickmathspace" accent="false" mathvariant="normal" class=":tsj" id="q.">
+        <mglyph alt=""/>
+      </mo>
+      <mi mathvariant="normal" mathcolor="#3d7" mathbackground="yellow" class="n" id="LLA"><mglyph fontfamily="Times"/></mi>
+    </mmultiscripts>
+  </maction>
+</math>
