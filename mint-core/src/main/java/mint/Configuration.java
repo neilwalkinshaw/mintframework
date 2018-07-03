@@ -37,6 +37,7 @@ public class Configuration {
 	public enum TestSelection {
 		art,
 		qbc,
+		bagging,
 		qbcClustered,
 		decisionTree,
 		random

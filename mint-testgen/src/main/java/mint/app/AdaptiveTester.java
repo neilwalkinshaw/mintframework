@@ -10,6 +10,7 @@
 package mint.app;
 
 
+import mint.testgen.stateless.text.TextIORunner;
 import org.apache.commons.cli.*;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -50,13 +51,14 @@ public class AdaptiveTester {
 		Options options = new Options();
 
 		Option help = new Option("help", "print this message");
+		Option csv = OptionBuilder.withArgName("input").hasArg().withDescription("Directory of base-inputs").create("input");
 		Option algorithm = OptionBuilder.withArgName("algorithm").hasArg().withDescription("J48, M5, JRIP").create("algorithm");
 		Option wekaOptions = OptionBuilder.withArgName("wekaOptions").hasArgs().withDescription("WEKA options for specific learning algorithms (See WEKA documentation)").create("wekaOptions");
 		wekaOptions.setArgs(6);
 		Option target = OptionBuilder.withArgName("target").hasArg().withDescription("Test target").create("target");
 		Option testPlan = OptionBuilder.withArgName("testPlan").hasArg().withDescription("Test plan").create("testPlan");
 		Option respectConstraints = OptionBuilder.withArgName("respectConstraints").withDescription("Always respect limits on input parameters").create("respectConstraints");
-		Option testSelection = OptionBuilder.withArgName("testSelection").hasArg().withDescription("art, qbc, qbcClustered, decisionTree, random").create("testSelection");
+		Option testSelection = OptionBuilder.withArgName("testSelection").hasArg().withDescription("art, qbc, qbcClustered, decisionTree, random, bagging").create("testSelection");
 		Option iterations = OptionBuilder.withArgName("iterations").hasArg().withDescription("Number of test iterations (excludes individual QBC iterations - an entire QBC cycle is counted as a single iteration.)").create("iterations");
 		Option limited = OptionBuilder.withArgName("terminationMode").hasArg().withDescription("Either \"time-limited\" or \"iterations\".").create("terminationMode");
 		Option qbcIterations = OptionBuilder.withArgName("qbcIterations").hasArg().withDescription("Number of iterations in a single QBC cycle.)").create("qbcIterations");
@@ -67,6 +69,7 @@ public class AdaptiveTester {
 		Option addSeqID = OptionBuilder.withArgName("addSequenceID").withDescription("[For experiments] Identifier for test number added as second parameter to SUT").create("addSequenceID");
 
 		options.addOption(help);
+		options.addOption(csv);
 		options.addOption(target);
 		options.addOption(algorithm);
 		options.addOption(wekaOptions);
@@ -93,7 +96,8 @@ public class AdaptiveTester {
 				formatter.printHelp("AdaptiveTester", options);
                 return;
 			}
-
+			if (line.hasOption("input"))
+				configuration.INPUT = line.getOptionValue("input");
 			if (line.hasOption("algorithm"))
 				configuration.ALGORITHM = Configuration.Data.valueOf(line.getOptionValue("algorithm"));
 			if (line.hasOption("testSelection"))
@@ -143,6 +147,8 @@ public class AdaptiveTester {
 				case qbcClustered: ti = new ClusterGPTestRunner(configuration.TARGET_EXECUTABLE,configuration.TEST_PLAN);
 					break;
 				case decisionTree: ti = new WekaClassifierTestRunner(configuration.TARGET_EXECUTABLE,configuration.TEST_PLAN, configuration.ALGORITHM);
+					break;
+				case bagging: ti = new TextIORunner(configuration.TARGET_EXECUTABLE,configuration.TEST_PLAN, configuration.INPUT);
 					break;
 				case random: ti = new RandomTestRunner(configuration.TARGET_EXECUTABLE,configuration.TEST_PLAN);
 			}
