@@ -1,5 +1,6 @@
 package mint.inference.text;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.biojava.nbio.alignment.Alignments;
 import org.biojava.nbio.alignment.SimpleGapPenalty;
@@ -14,6 +15,7 @@ import org.biojava.nbio.structure.StructureTools;
 import org.biojava.nbio.structure.io.MMCIFFileReader;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -65,7 +67,31 @@ public class BioJavaSUT {
         return ret;
     }
 
-    public static void main(String[] args){
+    public static double measureAlignmentFromFile(String fasta){
+        File source = new File(fasta);
+        double ret = 0D;
+        try {
+            InputStream stream = new ByteArrayInputStream(FileUtils.readFileToByteArray(source));
+            LinkedHashMap<String, ProteinSequence> a = FastaReaderHelper.readFastaProteinSequence(stream);
+            List<ProteinSequence> proteinList = new ArrayList<>();
+            proteinList.addAll(a.values());
+            SubstitutionMatrix<AminoAcidCompound> matrix = SimpleSubstitutionMatrix.getBlosum62();
+            double[] scores = Alignments.getAllPairsScores(proteinList,
+                    Alignments.PairwiseSequenceScorerType.GLOBAL, new SimpleGapPenalty(), matrix);
+            double sum = 0;
+            for(double score : scores){
+                sum+=score;
+            }
+            ret = sum/scores.length;
+            ConcurrencyTools.shutdown();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(ret);
+        return ret;
+    }
+
+    /*public static void main(String[] args){
         String fasta = ">1XMV:A|PDBID|CHAIN|SEQUENCE\n" +
                 "GSHMAIDENKQKALAAALGQIEKQFGKGSIMRLGEDRSMDVETISTGSLSLDIALGAGGLPMGRIVEIYGPESSGKTTLT\n" +
                 "LQVIAAAQREGKTCAFIDAEHALDPIYARKLGVDIDNLLCSQPDTGEQALEICDALARSGAVDVIVVDSVAALTPKAEIE\n" +
@@ -79,5 +105,9 @@ public class BioJavaSUT {
                 "GDEVIGSETKVKVVKNKVAPPFREAHFDILYGEGTSREGEILDLGSEHKVVEKSGAWYSYNGERIGQGKDNARNYLKEHP\n" +
                 "ELAREIENKVRVALGVPELAGGEAEAEAKAS";
         System.out.println(measureAlignment(fasta));
+    }*/
+
+    public static void main(String[] args){
+        measureAlignmentFromFile(args[0]);
     }
 }

@@ -1,11 +1,8 @@
 package mint.inference.text;
 
-import mint.inference.text.doc2vec.Doc2Vec;
+import mint.inference.UncertaintyBagging;
 import mint.tracedata.TestIO;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.deeplearning4j.models.paragraphvectors.ParagraphVectors;
-import org.nd4j.linalg.api.ndarray.INDArray;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.classifiers.Classifier;
@@ -13,6 +10,7 @@ import weka.classifiers.functions.GaussianProcesses;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.SMOreg;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.rules.M5Rules;
 import weka.classifiers.trees.M5P;
 import weka.core.Attribute;
@@ -23,6 +21,7 @@ import weka.core.tokenizers.CharacterNGramTokenizer;
 import weka.core.tokenizers.Tokenizer;
 import weka.core.tokenizers.WordTokenizer;
 import weka.filters.Filter;
+import weka.filters.MultiFilter;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
@@ -33,25 +32,36 @@ import java.util.*;
  */
 public class SingleInputNumericalOutputLearner implements Learner {
 
-    protected boolean deeplearn;
-
-    public SingleInputNumericalOutputLearner(boolean deepLearn){
-        this.deeplearn = deepLearn;
-    }
-
     final static Logger LOGGER = Logger.getLogger(SingleInputNumericalOutputLearner.class.getName());
 
-    //ParagraphVectors inputModel;
 
-    Classifier wekaClassifier;
+    ArrayList<Attribute> attributes;
 
-    Instances trainInstances;
+    protected boolean bagging;
 
-    enum ClassifierChoice {
+    public SingleInputNumericalOutputLearner(boolean bagging){
+        this.bagging = bagging;
+    }
+
+
+
+    protected Classifier wekaClassifier;
+
+    protected Instances allInstances;
+
+    public Instances getTestingInstances() {
+        return testingInstances;
+    }
+
+    protected Instances trainingInstances, testingInstances;
+
+    protected Map<TestIO,Instance> instanceMap;
+
+    public enum ClassifierChoice {
         GaussianProcess,LinearRegression,M5Rules,M5P,SMOreg,MultiLayerPerceptron
     }
 
-    enum TokenizerChoice {
+    public enum TokenizerChoice {
         Word,NGram
     }
 
@@ -67,71 +77,64 @@ public class SingleInputNumericalOutputLearner implements Learner {
         this.classifierChoice = classifierChoice;
     };
 
-    ParagraphVectors inputModel;
 
     @Override
-    public void train(Map<TestIO, TestIO> trainingData) {
+    public void train(Map<TestIO, TestIO> trainingSet, Map<TestIO, TestIO> testSet) {
 
         LOGGER.info("Training text model");
-        trainInstances = null;
+
+        instanceMap  = buildDataSet(trainingSet, testSet);
+
+        trainingInstances = new Instances("samples", attributes,trainingSet.size());
+        for(TestIO key : trainingSet.keySet()){
+            trainingInstances.add(instanceMap.get(key));
+        }
+        trainingInstances.setClassIndex(trainingInstances.numAttributes()-1);
+        if(testSet!=null) {
+            testingInstances = new Instances("tests", attributes, testSet.size());
+            for (TestIO key : testSet.keySet()) {
+                testingInstances.add(instanceMap.get(key));
+            }
+        }
         wekaClassifier = getClassifier();
-        if(deeplearn) {
-            inputModel = trainTextModel(trainingData.keySet(), 100);
-            trainInstances = buildDataSet(trainingData,inputModel);
-
-        }
-        else{
-            trainInstances = buildDataSet(trainingData);
-
-            StringToWordVector filter = new StringToWordVector();
-            filter.setTokenizer(getTokenizer());
-            filter.setWordsToKeep(100000);
-            filter.setMinTermFreq(20);
-            filter.setDoNotOperateOnPerClassBasis(true);
-            filter.setLowerCaseTokens(true);
-            //filter.setTFTransform(true);
-            //filter.setIDFTransform(true);
-
-            try {
-                filter.setInputFormat(trainInstances);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try{
-                trainInstances = Filter.useFilter(trainInstances,filter);
-
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-
-            AttributeSelection attSec = new AttributeSelection();  // package weka.filters.supervised.attribute!
-            CfsSubsetEval eval = new CfsSubsetEval();
-            GreedyStepwise search = new GreedyStepwise();
-            search.setSearchBackwards(true);
-            attSec.setEvaluator(eval);
-            attSec.setSearch(search);
-            try {
-                attSec.setInputFormat(trainInstances);
-                // generate new data
-                trainInstances = Filter.useFilter(trainInstances, attSec);
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
 
         LOGGER.info("Training classifier");
 
 
         try {
-            wekaClassifier.buildClassifier(trainInstances);
+            wekaClassifier.buildClassifier(trainingInstances);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }
+
+
+    protected Filter getFilter(Instances trainInstances) {
+        MultiFilter filter = new MultiFilter();
+        StringToWordVector swv = new StringToWordVector();
+        swv.setTokenizer(getTokenizer());
+        swv.setWordsToKeep(100000);
+        swv.setMinTermFreq(20);
+        swv.setDoNotOperateOnPerClassBasis(true);
+        swv.setLowerCaseTokens(true);
+        //filter.setTFTransform(true);
+        //filter.setIDFTransform(true);
+
+        AttributeSelection attSec = new AttributeSelection();  // package weka.filters.supervised.attribute!
+        CfsSubsetEval eval = new CfsSubsetEval();
+        GreedyStepwise search = new GreedyStepwise();
+        search.setSearchBackwards(true);
+        attSec.setEvaluator(eval);
+        attSec.setSearch(search);
+        filter.setFilters(new Filter[]{swv,attSec});
+        try {
+            filter.setInputFormat(trainInstances);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return filter;
     }
 
     private Classifier getClassifier() {
@@ -156,6 +159,18 @@ public class SingleInputNumericalOutputLearner implements Learner {
                 toReturn = new MultilayerPerceptron();
                 break;
         }
+        if(bagging){
+            UncertaintyBagging toRet = new UncertaintyBagging();
+            toRet.setClassifier(toReturn);
+            toReturn = toRet;
+        }
+        Filter filt = getFilter(allInstances);
+        if (filt != null) {
+            FilteredClassifier fc = new FilteredClassifier();
+            fc.setClassifier(toReturn);
+            fc.setFilter(filt);
+            toReturn = fc;
+        }
         return toReturn;
     }
 
@@ -176,63 +191,13 @@ public class SingleInputNumericalOutputLearner implements Learner {
         return toReturn;
     }
 
-    public void train(Map<TestIO, TestIO> trainingData, Map<TestIO, TestIO> testingData) {
 
-        Set<TestIO> allForTraining = new HashSet<TestIO>();
-        allForTraining.addAll(trainingData.keySet());
-        allForTraining.addAll(testingData.keySet());
+    public Map<TestIO,Instance> buildDataSet(Map<TestIO, TestIO> trainingData, Map<TestIO, TestIO> testSet) {
 
-        LOGGER.info("Training text model");
-        ParagraphVectors inputModel = trainTextModel(allForTraining,100);
-
-        LOGGER.info("Training Logistic Regression classifier");
-        GaussianProcesses classifier = new GaussianProcesses();
-
-        Instances toLearn = buildDataSet(trainingData,inputModel);
-        try {
-            classifier.buildClassifier(toLearn);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Map<TestIO,Instance> testIOToInstances = new HashMap<>();
 
 
-    }
-
-
-
-    public static Instances buildDataSet(Map<TestIO, TestIO> trainingData, ParagraphVectors inputModel) {
-        ArrayList<Attribute> attributes = new ArrayList<>();
-
-        for(int i = 0; i<inputModel.getLayerSize(); i++){
-
-            Attribute at = new Attribute(Integer.toString(i));
-            attributes.add(at);
-        }
-        attributes.add(new Attribute("output"));
-        Instances ret = new Instances("samples",attributes,trainingData.size());
-        ret.setClassIndex(ret.numAttributes()-1);
-
-        for(TestIO input : trainingData.keySet()){
-            TestIO output = trainingData.get(input);
-            String inVal = input.getVals().get(0).getValue().toString();
-            Double outVal = (Double)output.getVals().get(0).getValue();
-            INDArray inArray = inputModel.inferVector(preProcess(inVal));
-            float[] fVec = inArray.toFloatVector();
-            Instance ins = new DenseInstance(attributes.size());
-            for(int i = 0; i<fVec.length; i++){
-                ins.setValue(i,(double)fVec[i]);
-            }
-            ins.setValue(fVec.length,outVal);
-            ret.add(ins);
-        }
-        return ret;
-    }
-
-    public static Instances buildDataSet(Map<TestIO, TestIO> trainingData) {
-
-
-
-        ArrayList<Attribute> attributes = new ArrayList<>();
+         attributes = new ArrayList<>();
 
 
         Attribute input = new Attribute("stringinput",  (List<String>) null);
@@ -242,50 +207,36 @@ public class SingleInputNumericalOutputLearner implements Learner {
         Instances ret = new Instances("samples",attributes,trainingData.size());
         ret.setClass(output);
 
+
+
         for(TestIO in : trainingData.keySet()){
-            TestIO out = trainingData.get(in);
-            String inVal = in.getVals().get(0).getValue().toString();
-            Double outVal = (Double)out.getVals().get(0).getValue();
-            Instance ins = new DenseInstance(attributes.size());
-            ins.setDataset(ret);
-            ins.setValue(input,inVal);
+            Instance newInstance = buildInstance(trainingData, attributes, input, output, ret, in);
+            testIOToInstances.put(in,newInstance);
+        }
+        if(testSet !=null) {
+            for (TestIO in : testSet.keySet()) {
+                Instance newInstance = buildInstance(testSet, attributes, input, output, ret, in);
+                testIOToInstances.put(in,newInstance);
+            }
+        }
+        allInstances = ret;
+        return testIOToInstances;
+    }
+
+    public Instance  buildInstance(Map<TestIO, TestIO> trainingData, ArrayList<Attribute> attributes, Attribute input, Attribute output, Instances ret, TestIO in) {
+        TestIO out = trainingData.get(in);
+        String inVal = in.getVals().get(0).getValue().toString();
+        Double outVal = null;
+        if(out!=null)
+            outVal = (Double)out.getVals().get(0).getValue();
+        Instance ins = new DenseInstance(attributes.size());
+        ins.setDataset(ret);
+        ins.setValue(input,inVal);
+        if(outVal!=null)
             ins.setValue(output,outVal);
-            ret.add(ins);
-        }
-
-
-
-        return ret;
+        ret.add(ins);
+        return ins;
     }
-
-
-    protected static String preProcess(String sentence) {
-        sentence = sentence.replaceAll("[^\\w]", " ");
-
-        String[] splitUp = StringUtils.splitByCharacterTypeCamelCase(sentence);
-        sentence = "";
-        for(String s : splitUp){
-            sentence += s+" ";
-        }
-        System.out.println(sentence.toLowerCase());
-        return sentence.toLowerCase();
-    }
-
-
-    private ParagraphVectors trainTextModel(Set<TestIO> testIOs, int inputLayerSize) {
-
-        List<String> docs = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-        for(TestIO io : testIOs){
-            labels.add(io.getName());
-            String data = (String)io.getVals().get(0).getValue();
-            docs.add(data);
-        }
-        Doc2Vec d2v = new Doc2Vec(docs,labels,inputLayerSize);
-        return d2v.getModel();
-
-    }
-
 
 
     public Classifier getWekaModel(){

@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface Learner {
 
-    void train(Map<TestIO,TestIO> trainingData);
+    void train(Map<TestIO, TestIO> trainingSet, Map<TestIO, TestIO> trainingData);
 }

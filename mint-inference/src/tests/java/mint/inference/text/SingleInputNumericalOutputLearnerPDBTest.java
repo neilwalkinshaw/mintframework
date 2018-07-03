@@ -1,19 +1,12 @@
 package mint.inference.text;
 
-import mint.tracedata.TestIO;
-import mint.tracedata.types.DoubleVariableAssignment;
-import mint.tracedata.types.StringVariableAssignment;
-import mint.tracedata.types.VariableAssignment;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import weka.classifiers.Evaluation;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by neilwalkinshaw on 25/06/2018.
@@ -23,7 +16,7 @@ public class SingleInputNumericalOutputLearnerPDBTest {
     final static Logger LOGGER = Logger.getLogger(SingleInputNumericalOutputLearnerPDBTest.class.getName());
 
 
-
+/*
     @Test
     public void testWithPDBData(){
         BasicConfigurator.resetConfiguration();
@@ -49,10 +42,10 @@ public class SingleInputNumericalOutputLearnerPDBTest {
         Map<TestIO,TestIO> testing = runInputs(testSet);
         LOGGER.info("Learning");
         SingleInputNumericalOutputLearner sino = new SingleInputNumericalOutputLearner(false);
-        sino.train(training);
+        sino.train(training,null);
 
         try {
-            Evaluation eval = new Evaluation(SingleInputNumericalOutputLearner.buildDataSet(testing));
+            Evaluation eval = new Evaluation(sino.buildDataSet(training,null));
             //eval.crossValidateModel(sino.getWekaModel(),SingleInputNumericalOutputLearner.buildDataSet(testing,sino.getTextModel()),4,new Random(2));
             eval.crossValidateModel(sino.getWekaModel(),sino.trainInstances,10,new Random(0));
             System.out.println(eval.correlationCoefficient());
@@ -79,7 +72,7 @@ public class SingleInputNumericalOutputLearnerPDBTest {
             counter++;
         }
         return runs;
-    }
+    }*/
 
     private List<String> getCompounds() {
         List<String> compounds = new ArrayList<>();

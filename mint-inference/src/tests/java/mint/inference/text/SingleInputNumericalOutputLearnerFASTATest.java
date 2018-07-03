@@ -55,31 +55,31 @@ public class SingleInputNumericalOutputLearnerFASTATest {
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.ALL);
+
         List<String> trainingSet = new ArrayList<>();
 
         //File targetDir = new File("src/tests/resources/testFASTAFilesDownloaded");
-        File targetDir = new File("src/tests/resources/testFASTAFilesGT");
+        File targetDir = new File("src/tests/resources/testFASTAFilesDownloaded");
         Map<String,String> data = readTextFiles(targetDir);
-
-
         trainingSet.addAll(data.values());
-
         Map<TestIO,TestIO> training = runInputs(trainingSet);
+
+
         LOGGER.info("Learning");
         SingleInputNumericalOutputLearner sino = new SingleInputNumericalOutputLearner(false);
         sino.setTokenizerChoice(SingleInputNumericalOutputLearner.TokenizerChoice.NGram);
         sino.setClassifierChoice(SingleInputNumericalOutputLearner.ClassifierChoice.GaussianProcess);
-        sino.train(training);
+        sino.train(training, null);
 
         try {
             /*ArffSaver saver = new ArffSaver();
             saver.setInstances(sino.trainInstances);
             saver.setFile(new File("test.arff"));
             saver.writeBatch();*/
-            Evaluation eval = new Evaluation(sino.trainInstances);
+            Evaluation eval = new Evaluation(sino.allInstances);
             //eval.useNoPriors();
             //eval.crossValidateModel(sino.getWekaModel(),sino.testInstances,4,new Random(0));
-            eval.crossValidateModel(sino.getWekaModel(),sino.trainInstances,10,new Random(0));
+            eval.crossValidateModel(sino.getWekaModel(),sino.allInstances,10,new Random(0));
             //eval.crossValidateModel(sino.getWekaModel(),sino.testInstances,10,new Random(0));
             System.out.println(eval.correlationCoefficient());
         } catch (Exception e) {
