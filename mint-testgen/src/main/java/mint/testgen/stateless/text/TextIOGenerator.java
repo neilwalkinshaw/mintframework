@@ -1,5 +1,6 @@
 package mint.testgen.stateless.text;
 
+import mint.Configuration;
 import mint.inference.text.SingleInputNumericalOutputLearner;
 import mint.testgen.stateless.TestGenerator;
 import mint.tracedata.TestIO;
@@ -122,6 +123,6 @@ public class TextIOGenerator extends TestGenerator {
 
     @Override
     public List<TestIO> generateTestCases() {
-        return generateTestCases(increment);
+        return generateTestCases(Configuration.getInstance().QBC_ITERATIONS);
     }
 }

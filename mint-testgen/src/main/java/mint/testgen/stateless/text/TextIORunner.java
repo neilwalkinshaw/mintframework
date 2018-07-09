@@ -56,7 +56,7 @@ public class TextIORunner extends TestRunner {
         assert(testInputs!=null);
         Classifier testModel = inferModel();
         TestGenerator generator = new TextIOGenerator(command,params, Configuration.getInstance().ITERATIONS,testModel, orderedTestSet, sino);
-        return generator.generateTestCases(Configuration.getInstance().QBC_ITERATIONS);
+        return generator.generateTestCases();
     }
 
 

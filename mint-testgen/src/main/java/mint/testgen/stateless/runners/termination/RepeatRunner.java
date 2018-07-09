@@ -1,8 +1,9 @@
 package mint.testgen.stateless.runners.termination;
 
 import mint.Configuration;
-import mint.tracedata.TestIO;
 import mint.testgen.stateless.runners.execution.TestRunner;
+import mint.testgen.stateless.text.TextIORunner;
+import mint.tracedata.TestIO;
 import mint.tracedata.types.VariableAssignment;
 
 import java.io.FileNotFoundException;
@@ -72,7 +73,10 @@ public abstract class RepeatRunner {
 
                 String line = "";
                 for(VariableAssignment var : io.getVals()){
-                    line += var.getValue().toString() + " ";
+                    String val = var.getValue().toString();
+                    if(host instanceof TextIORunner)
+                        val = var.getName();
+                    line += val + " ";
                 }
                 writer.println(line);
                 if(counter == nextBreak){
