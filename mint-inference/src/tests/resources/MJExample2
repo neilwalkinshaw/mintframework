@@ -1,0 +1,16 @@
+types
+in_main the_number:N the_flag:B
+in_f the_number:N the_flag:B
+in_g the_number:N the_flag:B
+out_main the_number:N the_flag:B
+out_f the_number:N the_flag:B
+out_g the_number:N the_flag:B
+trace
+in_main 0 false
+in_f 0 false
+in_g 1 false
+out_g 2 false
+in_g 2 false
+out_g 3 false
+out_f 3 true
+out_main 0 true

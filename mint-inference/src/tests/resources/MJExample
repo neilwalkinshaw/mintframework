@@ -1,0 +1,13 @@
+types
+main the_number:N the_flag:B InOut:B
+f the_number:N the_flag:B InOut:B
+g the_number:N the_flag:B InOut:B
+trace
+main 0 false true
+f 0 false true
+g 1 false true
+g 2 false false
+g 2 false true
+g 3 false false
+f 3 true false
+main 0 true false
