@@ -54,6 +54,6 @@ digraph Automaton {
 }
 ```
 
-If you have GraphViz dot installed, you can save this to a file (say, `output.dot`) and convert to a PDF as follows: `dot -Tpdf output.dot > output.pdf`. This creates the following result:
+If you have GraphViz dot installed, you can save this to a file (say, `output.dot`) and convert to a PDF as follows: `dot -Tpdf output.dot -o output.pdf`. This creates the following result:
 
 ![Example state machinie](/mint-inference/src/tests/resources/MJExample2.png)
