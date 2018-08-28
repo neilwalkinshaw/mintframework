@@ -1,9 +1,5 @@
 package mint.testgen.sequential.gui;
 
-import org.apache.commons.cli.*;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.evaluation.coberturaAnalysis.CoverageComparison;
 import mint.inference.InferenceBuilder;
@@ -21,6 +17,10 @@ import mint.tracedata.TraceSet;
 import mint.tracedata.types.StringVariableAssignment;
 import mint.tracedata.types.VariableAssignment;
 import mint.visualise.dot.DotGraphWithLabels;
+import org.apache.commons.cli.*;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedPseudograph;
 
@@ -466,11 +466,10 @@ public class GUISMTester extends AbstractSMTester {
             checkAndMake(testDir);
             checkAndMake(machineDir);
             File machineFile = new File(mDir+File.separator+"machine_"+Integer.toString(this.testCounter));
-            FileWriter fw = new FileWriter(machineFile);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(DotGraphWithLabels.summaryDotGraph(m));
-            bw.close();
-            fw.close();
+            FileOutputStream os = new FileOutputStream(machineFile);
+            DotGraphWithLabels.summaryDotGraph(m, os);
+            os.flush();
+            os.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
