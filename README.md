@@ -56,4 +56,26 @@ digraph Automaton {
 
 If you have GraphViz dot installed, you can save this to a file (say, `output.dot`) and convert to a PDF as follows: `dot -Tpdf output.dot -o output.pdf`. This creates the following result:
 
+For a complete list of options you can run ming with `-help` argument. Here we include it for convenience.
+
+    usage: Mint
+     -algorithm <algorithm>       J48, JRIP, NaiveBayes, AdaBoostDiscrete
+     -carefulDet                  Determinize to prevent overgeneralisation.
+     -daikon                      Generate Daikon invariants for transitions
+     -data <data>                 use variable data for inference or not
+     -gp                          Use GP to infer transition functions.
+     -help                        print this message
+     -input <input>               trace file
+     -k <k>                       minimum length of overlapping outgoing paths
+                                  for a merge
+     -prefixClosed                Inferred model is an LTS (a state machine
+                                  where all states are accept states).
+     -strategy <strategy>         redblue,gktails,noloops,ktails
+     -visout <visout>             Write the dot representation of the graph to
+                                  a file instead of standard output
+     -visualise <visualise>       How to output your EFSM - either `text' or
+                                  `graphical'.
+     -wekaOptions <wekaOptions>   WEKA options for specific learning
+                                  algorithms (See WEKA documentation)
+
 ![Example state machinie](/mint-inference/src/tests/resources/MJExample2.png)
