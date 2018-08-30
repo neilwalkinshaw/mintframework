@@ -16,36 +16,60 @@ import mint.model.statepair.OrderedStatePair;
 import mint.tracedata.TraceElement;
 import org.jgrapht.graph.DefaultEdge;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.*;
 
 public class DotGraphWithLabels {
-	
-	
-	
 	public static String summaryDotGraph(SimpleMergingState mergeState){
 		Machine automaton = mergeState.getCurrent();
 		return summaryDotGraph(automaton);
-		
 	}
-	
-	public static String summaryDotGraph(Machine<Set<TraceElement>> automaton){
-		StringBuilder b = new StringBuilder("digraph Automaton {\n");
-		//b.append("  rankdir = LR;\n");
+
+	public static void summaryDotGraph(SimpleMergingState mergeState, OutputStream out){
+		Machine automaton = mergeState.getCurrent();
+		summaryDotGraph(automaton, out);
+	}
+
+
+	public static String summaryDotGraph(Machine<Set<TraceElement>> automaton) {
+		ByteArrayOutputStream builder = new ByteArrayOutputStream();
+		summaryDotGraph(automaton, builder);
+		return builder.toString();
+	}
+
+	/**
+	 * Writes the objects passed as parameters to the output stream. Could use an
+	 * OutputStreamWriter to roughly do the same thing but it was syntactically
+	 * more convenient in my opinion.
+	 *
+	 * @param o: stream
+	 * @param s: objects to write
+	 */
+	private static void write(OutputStream o, Object... s) {
+		for (Object obj : s) {
+			try { o.write(String.valueOf(obj).getBytes()); } catch (Exception ignored) {}
+		}
+	}
+
+	public static void summaryDotGraph(Machine<Set<TraceElement>> automaton, OutputStream out) {
+		write(out, "digraph Automaton {\n");
+		//write(out, "  rankdir = LR;\n");
 		Collection<Integer> states = automaton.getStates();
 		Integer[] stateArray = states.toArray(new Integer[states.size()]);
 		for (int i = 0; i<stateArray.length;i++) {
 			Integer s = stateArray[i];
-			b.append("  ").append(i);
+			write(out, "  ", i);
 			//b.append(" [label=\"\"");
-            b.append(" [label=\""+s+"\"");
+            write(out, " [label=\"", s, '"');
 			if (automaton.getAutomaton().getAccept(s).equals(TraceDFA.Accept.ACCEPT))
-				b.append(",shape=doublecircle");
+				write(out, ",shape=doublecircle");
 			else
-				b.append(",shape=circle");
-			b.append("];\n");
+				write(out, ",shape=circle");
+			write(out,"];\n");
 			if (s.equals(automaton.getInitialState())) {
-				b.append("  initial [shape=plaintext];\n");
-				b.append("  initial -> ").append(i).append("\n");
+				write(out,"  initial [shape=plaintext];\n",
+						       "  initial -> ", i, '\n');
 			}
 			Map<OrderedStatePair,Set<String>> destLabels = new HashMap<OrderedStatePair,Set<String>>();
 			for (DefaultEdge t : automaton.getAutomaton().getOutgoingTransitions(s)) {
@@ -63,24 +87,23 @@ public class DotGraphWithLabels {
 				destLabels.put(pair, labs);
 
 			}
-			appendTransitions(b,destLabels,stateArray);
+			appendTransitions(out, destLabels, stateArray);
 		}
-		b = b.append("}\n");
-		return b.toString();
+		write(out,"}\n");
 	}
 	
 
-	private static void appendTransitions(StringBuilder b,
+	private static void appendTransitions(OutputStream b,
 										  Map<OrderedStatePair, Set<String>> destLabels, Integer[] stateArray) {
 		Iterator<OrderedStatePair> pairs = destLabels.keySet().iterator();
 		while(pairs.hasNext()){
 			OrderedStatePair next = pairs.next();
 			int from = getIndexOf(next.getFirstState(), stateArray);
 			int to = getIndexOf(next.getSecondState(), stateArray);
-			b.append("  ").append(from);
-			b.append(" -> ").append(to).append(" [label=\"");
-			b.append(getLabels(destLabels.get(next)));
-			b.append("\"]\n");
+			write(b ,"  ", from,
+					" -> ", to, " [label=\"",
+					getLabels(destLabels.get(next)),
+					"\"]\n");
 		}
 		
 	}

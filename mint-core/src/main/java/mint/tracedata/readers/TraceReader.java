@@ -79,7 +79,8 @@ public class TraceReader {
 				if(line.startsWith("types")){
 					types = new HashMap<String,VariableAssignment<?>[]>();
 					while((line = r.readLine())!=null && !(line.startsWith("trace"))&& !(line.startsWith("negtrace"))){
-						if(line.startsWith("#")) {
+						line = line.trim();
+						if(line.startsWith("#") || line.length() == 0) {
 							continue; //Skip comments in type definitions.
 						}
 						String[] tokens = line.split(" ");
