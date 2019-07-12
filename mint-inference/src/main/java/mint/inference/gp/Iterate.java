@@ -47,7 +47,6 @@ public class Iterate extends AbstractIterator {
 
             offSpring.add(aNode);
 
-
             toMutate.mutate(gen,rand.nextInt(maxDepth-toMutate.depth()));
         }
     }

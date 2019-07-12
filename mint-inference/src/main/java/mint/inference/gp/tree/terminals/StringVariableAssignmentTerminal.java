@@ -19,7 +19,10 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 
     @Override
     public void mutate(Generator g, int depth){
-         swapWith(g.generateRandomStringExpression(g.getRandom().nextInt(depth)));
+        int random = 0;
+        if(depth>0)
+            random = g.getRandom().nextInt(depth);
+         swapWith(g.generateRandomStringExpression(random));
     }
 
     @Override
