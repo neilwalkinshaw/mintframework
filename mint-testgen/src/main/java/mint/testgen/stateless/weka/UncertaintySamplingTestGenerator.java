@@ -3,8 +3,12 @@ package mint.testgen.stateless.weka;
 import mint.Configuration;
 import mint.tracedata.TestIO;
 import mint.tracedata.types.VariableAssignment;
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.interval.ConfidenceInterval;
 import org.apache.log4j.Logger;
 import weka.classifiers.Classifier;
+import weka.classifiers.meta.Bagging;
+import weka.classifiers.trees.REPTree;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -87,27 +91,56 @@ public class UncertaintySamplingTestGenerator extends WekaModelTestGenerator {
 			instanceToTestCase.put(candInstances.get(i), inputs);
 
 		}
-		candInstances.setClassIndex(candInstances.numAttributes()-1);
-		Instance leastCertain = candInstances.firstInstance();
-		double lowestMargin = computeMargin(classifier,leastCertain);
-		for(int i = 1; i< candInstances.numInstances();i++){
-			Instance current = candInstances.get(i);
-			assert(instanceToTestCase.containsKey(current));
-			double currentMargin = computeMargin(classifier,current);
-			if(currentMargin < lowestMargin){
-				lowestMargin = currentMargin;
-				leastCertain = current;
-			}
-			if(currentMargin == 0D)
-				break; //can't go any lower, so not worth continuing with the loop.
-		}
-		TestIO ret = instanceToTestCase.get(leastCertain);
-		LOGGER.debug("Selected input with certainty score of "+(1-lowestMargin));
-		assert(ret!=null);
+		TestIO ret = null;
+		if(!(classifier instanceof Bagging)) {
+            ret = smallestMargin(instanceToTestCase, candInstances);
+        }
+        else{
+            ret = biggestVariance(instanceToTestCase, candInstances);
+        }
+        assert(ret!=null);
 		return ret;
 	}
 
-	@Override
+    private TestIO biggestVariance(Map<Instance, TestIO> instanceToTestCase, Instances candInstances) {
+        candInstances.setClassIndex(candInstances.numAttributes()-1);
+        Instance leastCertain = candInstances.firstInstance();
+        double highestVariance = computeVariance(classifier,leastCertain);
+        for(int i = 1; i< candInstances.numInstances();i++){
+            Instance current = candInstances.get(i);
+            assert(instanceToTestCase.containsKey(current));
+            double currentMargin = computeVariance(classifier,current);
+            if(currentMargin > highestVariance){
+                highestVariance = currentMargin;
+                leastCertain = current;
+            }
+        }
+        TestIO ret = instanceToTestCase.get(leastCertain);
+        LOGGER.debug("Selected input with certainty score of "+(highestVariance));
+        return ret;
+    }
+
+    protected TestIO smallestMargin(Map<Instance, TestIO> instanceToTestCase, Instances candInstances) {
+        candInstances.setClassIndex(candInstances.numAttributes()-1);
+        Instance leastCertain = candInstances.firstInstance();
+        double lowestMargin = computeMargin(classifier,leastCertain);
+        for(int i = 1; i< candInstances.numInstances();i++){
+            Instance current = candInstances.get(i);
+            assert(instanceToTestCase.containsKey(current));
+            double currentMargin = computeMargin(classifier,current);
+            if(currentMargin < lowestMargin){
+                lowestMargin = currentMargin;
+                leastCertain = current;
+            }
+            if(currentMargin == 0D)
+                break; //can't go any lower, so not worth continuing with the loop.
+        }
+        TestIO ret = instanceToTestCase.get(leastCertain);
+        LOGGER.debug("Selected input with certainty score of "+(1-lowestMargin));
+        return ret;
+    }
+
+    @Override
 	public List<TestIO> generateTestCases() {
 		LOGGER.debug("Generating random tests");
 		return generateTestCases(random.nextInt(10)+1);
@@ -122,6 +155,7 @@ public class UncertaintySamplingTestGenerator extends WekaModelTestGenerator {
 		double margin = 0.0;
 		try {
 			double[] distribution = m.distributionForInstance(instance);
+
 			if (distribution.length >= 2) {
 				Arrays.sort(distribution);
 				double most = distribution[distribution.length - 1];
@@ -135,6 +169,18 @@ public class UncertaintySamplingTestGenerator extends WekaModelTestGenerator {
 		}
 		return margin;
 	}
+
+    private static double computeVariance(Classifier m, Instance instance) {
+        Bagging bagger = (Bagging) m;
+        try {
+            double[] vals = bagger.getMembershipValues(instance);
+            REPTree rt;
+            return StatUtils.variance(vals);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
 
 }

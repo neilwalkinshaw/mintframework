@@ -1,10 +1,18 @@
 {
-	"command": "sh src/tests/resources/bioJava.sh",
+	"command": "/Users/neil/Documents/Research/SUTs/commons-math-interface/src/main/shell/BesselJTester.sh",
 	"parameters":[
 		{
-			"name": "fasta",
-			"type": "string"
-		}
+			"name": "x",
+			"type": "double",
+			"min": "0",
+			"max": "10"
+		},
+		{
+            "name": "y",
+            "type": "double",
+            "min": "0",
+            "max": "5000"
+        }
 	],
 	"output":[
         {

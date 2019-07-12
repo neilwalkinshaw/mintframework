@@ -5,7 +5,9 @@ import mint.inference.text.SingleInputNumericalOutputLearner;
 import mint.testgen.stateless.TestGenerator;
 import mint.tracedata.TestIO;
 import mint.tracedata.types.VariableAssignment;
+import org.apache.commons.math3.analysis.function.Log;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.log4j.Logger;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
@@ -18,14 +20,14 @@ import java.util.*;
  */
 public class TextIOGenerator extends TestGenerator {
 
-    private final static Logger LOGGER = Logger.getLogger(TextIOGenerator.class.getName());
-
 
     protected int increment = 5;
 
     protected SingleInputNumericalOutputLearner sino;
 
     protected List<TestIO> pool;
+
+    protected boolean random = false;
 
 
     protected final Classifier latestModel;
@@ -39,6 +41,10 @@ public class TextIOGenerator extends TestGenerator {
         this.latestModel = model;
         this.sino = sino;
         this.pool = pool;
+    }
+
+    public void setRandom(boolean random) {
+        this.random = random;
     }
 
     @Override
@@ -57,6 +63,8 @@ public class TextIOGenerator extends TestGenerator {
      * @return
      */
     private List<TestIO> pickLeastCertain(int howMany, List<TestIO> candidates) {
+        if(random)
+            return randomShuffle(howMany, candidates);
         LinkedHashMap<TestIO,Double> scores = new LinkedHashMap<>();
         Instances trainingIns = sino.getTestingInstances();
         List<Double> uncertainties = new ArrayList<>();
@@ -69,8 +77,9 @@ public class TextIOGenerator extends TestGenerator {
                 e.printStackTrace();
             }
 
-            Variance var = new Variance();
-            double variance = var.evaluate(classifications);
+            //Variance var = new Variance();
+            //double variance = var.evaluate(classifications);
+            double variance = entropy(classifications);
             uncertainties.add(variance);
 
         }
@@ -84,6 +93,27 @@ public class TextIOGenerator extends TestGenerator {
         return ordered;
     }
 
+    public static double entropy(double[] values) {
+        double entropy = 0;
+        double total = 0;
+        for(double val : values){
+            total+=val;
+        }
+        for (Double d: values) {
+            double prob = d/total;
+            entropy -= prob * FastMath.log(2,prob);
+        }
+        return entropy;
+    }
+
+
+    private List<TestIO> randomShuffle(int number, List<TestIO> candidates) {
+        List<TestIO> rand = new ArrayList<>();
+        rand.addAll(candidates);
+        Collections.shuffle(rand);
+        int index = Math.min(number,rand.size());
+        return rand.subList(0,index);
+    }
 
 
     private static LinkedHashMap<TestIO, Double> sortByComparator(Map<TestIO, Double> unsortMap, final boolean order)

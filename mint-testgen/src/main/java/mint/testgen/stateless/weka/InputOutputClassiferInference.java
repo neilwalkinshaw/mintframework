@@ -10,7 +10,6 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.PKIDiscretize;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +27,7 @@ public class InputOutputClassiferInference extends WekaClassifierInstantiator{
 	protected List<Attribute> attributes;
 	protected Instances trainingSet;
 	protected Configuration.Data algo;
-	
+
 	/**
 	 * Build a training set from observed input, output events and create a classifier for it.
 	 * @param testInputs a List observed inputs.
@@ -47,12 +46,13 @@ public class InputOutputClassiferInference extends WekaClassifierInstantiator{
         VariableAssignment<?> val = output.getVals().get(0);
 
 
-        //if(val instanceof StringVariableAssignment){
+        if(val instanceof StringVariableAssignment){
             Filter stringToNominal = createStringToNominalFilter(range);
             stringToNominal.setInputFormat(trainingSet);
             trainingSet = Filter.useFilter(trainingSet, stringToNominal);
-        //}
-        //else {
+
+        }
+        /*//else {
 
 
             PKIDiscretize discretize = new PKIDiscretize();
@@ -62,7 +62,7 @@ public class InputOutputClassiferInference extends WekaClassifierInstantiator{
             discretize.setInputFormat(trainingSet);
             trainingSet = Filter.useFilter(trainingSet, discretize);
 
-        //}
+        //}*/
         classifier = makeClassifier(algo);
         classifier.buildClassifier(trainingSet);
 

@@ -36,7 +36,7 @@ public class WekaClassifierTestRunner extends TestRunner {
 
         super(setupFile,testPlan);
         this.algo = algo;
-        this.minTests = 50;
+        this.minTests = 30;
 
     }
 
@@ -80,9 +80,9 @@ public class WekaClassifierTestRunner extends TestRunner {
     protected TestGenerator getTester(Classifier c,Configuration.Data algo, Instances ins) {
         //Configuration config = Configuration.getInstance();
         //if(config.TEST_SELECTION == Configuration.TestSelection.fromModel)
-        return new DataModelTestGenerator(command,c,params,algo);
+        //return new DataModelTestGenerator(command,c,params,algo);
         //else if(config.TEST_SELECTION == Configuration.TestSelection.uncertaintySampling)
-        //    return new UncertaintySamplingTestGenerator(command,params,c,100000,ins); //CHANGE ME
+            return new UncertaintySamplingTestGenerator(command,params,c,10000,ins); //CHANGE ME
         //else
         //    return new SymbolicGPTestGenerator(command,c,params,algo);
     }

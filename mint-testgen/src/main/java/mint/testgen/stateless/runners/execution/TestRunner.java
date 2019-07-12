@@ -1,5 +1,8 @@
 package mint.testgen.stateless.runners.execution;
 
+import mint.testgen.stateless.output.BasicTextRecorder;
+import mint.testgen.stateless.output.TestRecorder;
+import mint.testgen.stateless.output.junit.JUnitTestRecorder;
 import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.tracedata.TestIO;
@@ -31,8 +34,13 @@ public abstract class TestRunner {
 
     protected Command commandBuilder;
 
-    protected List<TestIO> testInputs;
-    protected List<TestIO> testOutputs;
+    /*
+    testInputs and testOutputs record the pairs of inputs and outputs that can be used for learning.
+     */
+    protected List<TestIO> testInputs, testOutputs;
+
+    //allTestInputs records *all* inputs attempted, even those that cause failures.
+    protected List<TestIO> allTestInputs;
 
     protected Map<String,Ngrammer> stringsToNgrams = new HashMap<String,Ngrammer>();
 
@@ -45,6 +53,8 @@ public abstract class TestRunner {
     protected NgramMerger ngramMerger;
 
     protected int listLength = -1;
+
+    protected JUnitDetails jud = null;
 	
 	private final static Logger LOGGER = Logger.getLogger(TestRunner.class.getName());
 
@@ -61,11 +71,16 @@ public abstract class TestRunner {
         rand = new Random(Configuration.getInstance().SEED);
 
         testInputs = new ArrayList<TestIO>();
+        allTestInputs = new ArrayList<TestIO>();
         testOutputs = new ArrayList<TestIO>();
 
 		JSONParser jp = new JSONParser();
 
         ngramMerger = new NgramMerger();
+
+        if(Configuration.getInstance().JAVA_SUT !=null){
+            setJUD();
+        }
 
 		try {
 			JSONObject o = (JSONObject)jp.parse(new FileReader(setupFile));
@@ -88,6 +103,19 @@ public abstract class TestRunner {
 		}
 	}
 
+    /**
+     * set JUnit description jud to contents of JAVA_SUT, as set in configuration.
+     */
+    private void setJUD() {
+	    String sut = Configuration.getInstance().JAVA_SUT;
+	    String[] elements = sut.split(",");
+	    if(elements.length<3){
+	        LOGGER.error("JAVA_SUT not configured properly. Only has "+elements.length+" elements.");
+        }
+	    jud = new JUnitDetails(elements[0],elements[0],elements[1],elements[2]);
+    }
+
+
     public void setCommandBuilder(Command commandBuilder){
         this.commandBuilder = commandBuilder;
     }
@@ -97,10 +125,6 @@ public abstract class TestRunner {
     }
 
 
-    public int getTestSize(){
-        return testInputs.size();
-    }
-
     protected RepeatRunner getRepRunner(){
         Configuration config = Configuration.getInstance();
         if(config.TEST_MODE == Configuration.TestMode.iterationLimited){
@@ -108,6 +132,10 @@ public abstract class TestRunner {
         }
         else
             return new TimedRunner(this,config.TEST_TIMEOUT);
+    }
+
+    public List<TestIO> getAllTestInputs() {
+        return allTestInputs;
     }
 
     public void run(){
@@ -437,6 +465,7 @@ public abstract class TestRunner {
 
         TestIO res = timedCall(new ProcessExecution(commandBuilder.getCommand(), redirectFile, time, output));
 
+        allTestInputs.add(test);
         if(res==null) {
             LOGGER.debug("NULL return");
             return;
@@ -514,4 +543,43 @@ public abstract class TestRunner {
         return files[rand.nextInt(files.length)];
     }
 
+    public TestRecorder getTestRecorder() {
+        if(jud == null)
+            return new BasicTextRecorder(this);
+        else{
+            return new JUnitTestRecorder(jud);
+        }
+    }
+
+    /**
+     * If the SUT in question is a Java unit, we can generate JUnit tests automatically.
+     * However, for this we need some additional details, which are stored in the following object.
+     */
+    public class JUnitDetails{
+
+        private String path,packageName,clazz,method;
+
+        public JUnitDetails(String path, String packageName, String clazz, String method) {
+            this.path = path;
+            this.packageName = packageName;
+            this.clazz = clazz;
+            this.method = method;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getPackageName() {
+            return packageName;
+        }
+
+        public String getClazz() {
+            return clazz;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+    }
 }

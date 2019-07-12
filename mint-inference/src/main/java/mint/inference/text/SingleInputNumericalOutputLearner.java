@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.functions.GaussianProcesses;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.MultilayerPerceptron;
@@ -39,19 +40,13 @@ public class SingleInputNumericalOutputLearner implements Learner {
 
     protected boolean bagging;
 
-    public SingleInputNumericalOutputLearner(boolean bagging){
-        this.bagging = bagging;
-    }
+    protected List<List<Double>> fitnessHistory = new ArrayList<>();
 
-
+    protected boolean recordFitness = false;
 
     protected Classifier wekaClassifier;
 
     protected Instances allInstances;
-
-    public Instances getTestingInstances() {
-        return testingInstances;
-    }
 
     protected Instances trainingInstances, testingInstances;
 
@@ -68,6 +63,26 @@ public class SingleInputNumericalOutputLearner implements Learner {
     protected TokenizerChoice tokenizerChoice = TokenizerChoice.Word;
 
     protected ClassifierChoice classifierChoice = ClassifierChoice.GaussianProcess;
+
+    public List<List<Double>> getFitnessHistory() {
+        return fitnessHistory;
+    }
+
+    public SingleInputNumericalOutputLearner(boolean bagging){
+        this.bagging = bagging;
+    }
+
+    public void setRecordFitness(boolean recordFitness){
+        this.recordFitness = recordFitness;
+    }
+
+    public boolean isRecordFitness() {
+        return recordFitness;
+    }
+
+    public Instances getTestingInstances() {
+        return testingInstances;
+    }
 
     public void setTokenizerChoice(TokenizerChoice tokenizerChoice) {
         this.tokenizerChoice = tokenizerChoice;
@@ -103,9 +118,22 @@ public class SingleInputNumericalOutputLearner implements Learner {
 
         try {
             wekaClassifier.buildClassifier(trainingInstances);
+            if(recordFitness){
+                Evaluation eval = new Evaluation(trainingInstances);
+                eval.crossValidateModel(wekaClassifier,trainingInstances,10,new Random(0));
+                List<Double> results = new ArrayList<>();
+                results.add(eval.correlationCoefficient());
+                results.add(eval.meanAbsoluteError());
+                results.add(eval.relativeAbsoluteError());
+                results.add(eval.rootMeanSquaredError());
+                results.add(eval.rootRelativeSquaredError());
+                fitnessHistory.add(results);
+                LOGGER.info("5-CV for model is: "+eval.toSummaryString());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
 
     }

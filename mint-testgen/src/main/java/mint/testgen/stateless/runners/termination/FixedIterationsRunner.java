@@ -13,7 +13,7 @@ public class FixedIterationsRunner extends RepeatRunner {
 
     protected int iterations;
 
-    private final static Logger LOGGER = Logger.getLogger(TestRunner.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(FixedIterationsRunner.class.getName());
 
 
     public FixedIterationsRunner(TestRunner host, int iterations){
@@ -28,7 +28,7 @@ public class FixedIterationsRunner extends RepeatRunner {
             runTest(toInfer);
             toInfer = host.generateTests();
         }
-        recordTestSet(host.getTestInputs(),indexList);
+        recorder.record(host.getAllTestInputs(),indexList);
     }
 
 }

@@ -5,8 +5,10 @@ import mint.Configuration.Data;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.Bagging;
 import weka.classifiers.rules.JRip;
 import weka.classifiers.trees.J48;
+import weka.classifiers.trees.M5P;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.filters.Filter;
@@ -32,10 +34,11 @@ public class WekaClassifierInstantiator {
 					}
 				return classifier;
 			}
-			case AdaBoostDiscrete:{
+			case AdaBoost:{
 				AdaBoostM1 classifier = new AdaBoostM1();
 				classifier.setClassifier(createJ48());
-				classifier.setSeed(configuration.SEED);
+                //Bagging classifier = new Bagging();
+                classifier.setSeed(configuration.SEED);
 				if(configuration.WEKA_OPTIONS.length>0)
 					try {
 						classifier.setOptions(configuration.WEKA_OPTIONS);
@@ -62,7 +65,15 @@ public class WekaClassifierInstantiator {
 						System.err.println("Invalid WEKA options - running with default settings.");
 					}				return classifier;
 			}
-			
+            case Bagging:{
+                Bagging classifier = new Bagging();
+                if(configuration.WEKA_OPTIONS.length>0)
+                    try {
+                        classifier.setOptions(configuration.WEKA_OPTIONS);
+                    } catch (Exception e) {
+                        System.err.println("Invalid WEKA options - running with default settings.");
+                    }				return classifier;
+            }
 		}
 		return null;
 	}

@@ -146,7 +146,7 @@ public class GUITARLogsReader {
         Option csv = OptionBuilder.withArgName("input").hasArg().withDescription("trace file").create("input");
 
         Option help = new Option("help", "print this message");
-        Option algorithm = OptionBuilder.withArgName("algorithm").hasArg().withDescription("J48, JRIP, NaiveBayes, AdaBoostDiscrete").create("algorithm");
+        Option algorithm = OptionBuilder.withArgName("algorithm").hasArg().withDescription("J48, JRIP, NaiveBayes, AdaBoost").create("algorithm");
         Option data = OptionBuilder.withArgName("data").hasArg().withDescription("use variable data for inference or not").create("data");
         Option k = OptionBuilder.withArgName("k").hasArg().withDescription("minimum length of overlapping outgoing paths for a merge").create("k");
         Option wekaOptions = OptionBuilder.withArgName("wekaOptions").hasArgs().withDescription("WEKA options for specific learning algorithms (See WEKA documentation)").create("wekaOptions");

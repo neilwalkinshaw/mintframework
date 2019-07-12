@@ -46,7 +46,7 @@ public class KFoldsEvaluator {
 		}
         List<List> results = new ArrayList<List>();
         Configuration.Data[] algos = new Configuration.Data[]{Configuration.Data.J48,
-                Configuration.Data.AdaBoostDiscrete, Configuration.Data.JRIP, Configuration.Data.NaiveBayes};
+                Configuration.Data.AdaBoost, Configuration.Data.JRIP, Configuration.Data.NaiveBayes};
 		if(data){
 
             for(int i = 0; i<algos.length;i++){

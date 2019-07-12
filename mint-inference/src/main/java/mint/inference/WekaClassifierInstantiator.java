@@ -32,7 +32,7 @@ public class WekaClassifierInstantiator {
 					}
 				return classifier;
 			}
-			case AdaBoostDiscrete:{
+			case AdaBoost:{
 				AdaBoostM1 classifier = new AdaBoostM1();
 				classifier.setClassifier(createJ48());
 				classifier.setSeed(configuration.SEED);

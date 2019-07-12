@@ -67,6 +67,8 @@ public class AdaptiveTester {
 		Option seed = OptionBuilder.withArgName("seed").hasArg().withDescription("Random seed").create("seed");
 		Option addProcessID = OptionBuilder.withArgName("addProcessID").hasArg().withDescription("[For experiments] Identifier for process added as first parameter to SUT").create("addProcessID");
 		Option addSeqID = OptionBuilder.withArgName("addSequenceID").withDescription("[For experiments] Identifier for test number added as second parameter to SUT").create("addSequenceID");
+		Option javaSUT = OptionBuilder.withArgName("javaSUT").withDescription("If using a Java SUT, include as comma-separated string: package,class,method").create("javaSUT");
+
 
 		options.addOption(help);
 		options.addOption(csv);
@@ -84,6 +86,7 @@ public class AdaptiveTester {
 		options.addOption(seed);
 		options.addOption(addProcessID);
 		options.addOption(addSeqID);
+		options.addOption(javaSUT);
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();
@@ -96,6 +99,8 @@ public class AdaptiveTester {
 				formatter.printHelp("AdaptiveTester", options);
                 return;
 			}
+			if (line.hasOption("javaSUT"))
+				configuration.JAVA_SUT = line.getOptionValue("javaSUT");
 			if (line.hasOption("input"))
 				configuration.INPUT = line.getOptionValue("input");
 			if (line.hasOption("algorithm"))

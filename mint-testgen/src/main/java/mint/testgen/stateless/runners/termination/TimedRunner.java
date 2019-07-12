@@ -26,6 +26,6 @@ public class TimedRunner extends RepeatRunner {
             runTest(toInfer);
             toInfer = host.generateTests();
         }while(System.currentTimeMillis() < finalTime);
-        recordTestSet(host.getTestInputs(),indexList);
+        recorder.record(host.getAllTestInputs(),indexList);
     }
 }

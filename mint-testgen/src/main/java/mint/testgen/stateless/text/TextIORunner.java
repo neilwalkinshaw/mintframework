@@ -3,6 +3,7 @@ package mint.testgen.stateless.text;
 import mint.Configuration;
 import mint.inference.text.SingleInputNumericalOutputLearner;
 import mint.testgen.stateless.TestGenerator;
+import mint.testgen.stateless.output.TestRecorder;
 import mint.testgen.stateless.runners.execution.TestRunner;
 import mint.tracedata.TestIO;
 import mint.tracedata.types.StringVariableAssignment;
@@ -12,7 +13,9 @@ import weka.classifiers.Classifier;
 import weka.classifiers.meta.FilteredClassifier;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -29,8 +32,11 @@ public class TextIORunner extends TestRunner {
 
     protected SingleInputNumericalOutputLearner sino;
 
-    Map<TestIO,TestIO> testSet;
-    List<TestIO> orderedTestSet;
+
+    protected Map<TestIO,TestIO> testSet;
+    protected List<TestIO> orderedTestSet;
+
+    protected boolean randomTests=false;
 
     /**
      * @param setupFile
@@ -46,6 +52,14 @@ public class TextIORunner extends TestRunner {
         sino.setClassifierChoice(SingleInputNumericalOutputLearner.ClassifierChoice.GaussianProcess);
     }
 
+    public void setRandomTests(boolean randomTests) {
+        this.randomTests = randomTests;
+    }
+
+    public void recordPerformance(){
+        sino.setRecordFitness(true);
+    }
+
     @Override
     public String getLabel() {
         return "TextInput";
@@ -55,7 +69,8 @@ public class TextIORunner extends TestRunner {
     public List<TestIO> generateTests() {
         assert(testInputs!=null);
         Classifier testModel = inferModel();
-        TestGenerator generator = new TextIOGenerator(command,params, Configuration.getInstance().ITERATIONS,testModel, orderedTestSet, sino);
+        TextIOGenerator generator = new TextIOGenerator(command,params, Configuration.getInstance().ITERATIONS,testModel, orderedTestSet, sino);
+        generator.setRandom(randomTests);
         return generator.generateTestCases();
     }
 
@@ -124,6 +139,44 @@ public class TextIORunner extends TestRunner {
         }
     }
 
+    @Override
+    public void run() {
+        super.run();
+        if(sino.isRecordFitness()){
+            List<List<Double>> fitnessHistory = sino.getFitnessHistory();
+            writeToCSV(fitnessHistory);
+        }
+    }
+
+    /**
+     * Write fitness history from inference to csv file.
+     * Currently name of csv is hard-coded.
+     * TODO change this.
+     * @param fitnessHistory
+     */
+    private void writeToCSV(List<List<Double>> fitnessHistory) {
+        try {
+            String label = getLabel();
+            if(randomTests)
+                label += "R";
+            PrintWriter out = new PrintWriter(label);
+            String toWrite = "";
+            for(List<Double> scores : fitnessHistory){
+                for(int i = 0; i<scores.size(); i++){
+                    toWrite+=scores.get(i);
+                    if(i<scores.size()-1)
+                        toWrite+=",";
+                    else
+                        toWrite+="\n";
+                }
+            }
+            out.println(toWrite);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Map<TestIO,TestIO> buildTrainingSetWithoutOutputs(List<TestIO> candidates) {
         Map<TestIO,TestIO> ret=new HashMap<>();
         orderedTestSet = new ArrayList<>();
@@ -149,4 +202,5 @@ public class TextIORunner extends TestRunner {
 
         return fc;
     }
+
 }

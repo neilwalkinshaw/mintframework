@@ -9,6 +9,7 @@ package mint; /*****************************************************************
  ******************************************************************************/
 
 import org.apache.log4j.Level;
+import weka.classifiers.meta.Bagging;
 
 
 public class Configuration {
@@ -23,7 +24,8 @@ public class Configuration {
 		//M5Rules, //Neural net learner 
 		JRIP, //JRIP learner
 		//AdditiveRegression, //Ensemble learner for numerical outputs
-		AdaBoostDiscrete //Ensemble learner for nominal outputs (discrete)
+		AdaBoost, //Ensemble learner for nominal outputs
+		Bagging //Ensemble learner for numeric outputs
 	}
 	
 	public enum Strategy {
@@ -148,5 +150,17 @@ public class Configuration {
 	  Used for QBC and ART.
 	 */
 	public int RANDOM_POOL = 100;
-	
+
+
+	/**
+	 * The following are necessary if the SUT is a Java target,
+	 * and we wish to generate JUnit test cases for it.
+	 *
+	 * To be supplied as a comma-separated string of the format:
+	 *
+	 * PACKAGE_PREFIX,CLASS,METHOD
+	 */
+
+	public String JAVA_SUT="";
+
 }
