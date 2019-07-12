@@ -85,6 +85,8 @@ public class Configuration {
 	
 	public Visualise VIS = Visualise.text;
 
+	public String VIS_OUTPUT = null;
+
 	public TestMode TEST_MODE = TestMode.iterationLimited;
 
     public long TEST_TIMEOUT = 600000; //Timeout for an individual test (not tied to USE_TIMEOUT)

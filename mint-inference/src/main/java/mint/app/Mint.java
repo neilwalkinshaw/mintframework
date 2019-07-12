@@ -9,10 +9,7 @@
  ******************************************************************************/
 package mint.app;
 
-import org.apache.commons.cli.*;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import mint.Configuration;
 import mint.inference.InferenceBuilder;
 import mint.inference.efsm.AbstractMerger;
 import mint.model.Machine;
@@ -22,10 +19,15 @@ import mint.tracedata.TraceSet;
 import mint.tracedata.readers.TraceReader;
 import mint.visualise.d3.Machine2JSONTransformer;
 import mint.visualise.dot.DotGraphWithLabels;
-import mint.Configuration;
+import org.apache.commons.cli.*;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +51,7 @@ public class Mint {
 		Option wekaOptions = OptionBuilder.withArgName("wekaOptions").hasArgs().withDescription("WEKA options for specific learning algorithms (See WEKA documentation)").create("wekaOptions");
 		wekaOptions.setArgs(6);
 		Option visualise = OptionBuilder.withArgName("visualise").hasArg().withDescription("How to output your EFSM - either `text' or `graphical'.").create("visualise");
+		Option visout = OptionBuilder.withArgName("visout").hasArg().withDescription("Write the dot representation of the graph to a file instead of standard output").create("visout");
 		Option daikon = OptionBuilder.withArgName("daikon").withDescription("Generate Daikon invariants for transitions").create("daikon");
 		Option strategy = OptionBuilder.withArgName("strategy").hasArg().withDescription("redblue,gktails,noloops,ktails").create("strategy");
         Option gp = OptionBuilder.withArgName("gp").withDescription("Use GP to infer transition functions.").create("gp");
@@ -63,6 +66,7 @@ public class Mint {
 		options.addOption(data);
 		options.addOption(wekaOptions);
 		options.addOption(visualise);
+		options.addOption(visout);
 		options.addOption(strategy);
         options.addOption(gp);
         options.addOption(carefulDet);
@@ -79,6 +83,8 @@ public class Mint {
 
 			if (line.hasOption("input"))
 				configuration.INPUT = line.getOptionValue("input");
+			if (line.hasOption("visout"))
+				configuration.VIS_OUTPUT = line.getOptionValue("visout");
 			if (line.hasOption("prefixClosed"))
 				configuration.PREFIX_CLOSED = true;
 			if (line.hasOption("data"))
@@ -125,12 +131,33 @@ public class Mint {
 		AbstractMerger<?, ?> inference = ib.getInference(posSet);
 
         Machine output = inference.infer();
-        if(configuration.VIS.equals(Configuration.Visualise.text))
-                    System.out.println(DotGraphWithLabels.summaryDotGraph(inference.getState()));
-        else{
-            Machine2JSONTransformer trans = new Machine2JSONTransformer();
-            trans.buildMachine(output, new File(configuration.TMP_PREFIX+"machine.json"));
-        }
+		if (configuration.VIS.equals(Configuration.Visualise.text)) {
+			OutputStream outputStream = null;
+			if (configuration.VIS_OUTPUT != null && !"-".equals(configuration.VIS_OUTPUT)) {
+				outputStream = new FileOutputStream(new File(configuration.VIS_OUTPUT));
+			} else {
+				outputStream = System.out;
+			}
+			try {
+				DotGraphWithLabels.summaryDotGraph(inference.getState(), outputStream);
+			} finally {
+				if (outputStream != null) {
+					try {
+						outputStream.close();
+					} catch (Exception ignored) {
+					}
+				}
+			}
+		} else {
+			Machine2JSONTransformer trans = new Machine2JSONTransformer();
+			String fileName;
+			if (configuration.VIS_OUTPUT != null) {
+				fileName = configuration.VIS_OUTPUT;
+			} else {
+				fileName = configuration.TMP_PREFIX + "machine.json";
+			}
+			trans.buildMachine(output, new File(fileName));
+		}
         if(output instanceof WekaGuardMachineDecorator && configuration.DATA){
             WekaGuardMachineDecorator wgm = (WekaGuardMachineDecorator) output;
             System.out.println(wgm.modelStrings());
