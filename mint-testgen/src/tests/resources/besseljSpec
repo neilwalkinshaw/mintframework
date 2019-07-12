@@ -1,0 +1,16 @@
+{
+	"command": "sh src/tests/resources/bioJava.sh",
+	"parameters":[
+		{
+			"name": "fasta",
+			"type": "string"
+		}
+	],
+	"output":[
+        {
+            "name": "output",
+            "type": "double"
+        }
+	]
+}	
+		
