@@ -10,8 +10,6 @@ public interface Selection {
 
     public double getBestFitness();
 
-    public Collection<Chromosome> getElites();
-
-    public List<Chromosome> select(GPConfiguration config);
+    public List<Chromosome> select(GPConfiguration config, int number);
 
 }

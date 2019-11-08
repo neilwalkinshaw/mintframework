@@ -24,22 +24,22 @@ public abstract class TournamentSelection implements Selection{
     protected Map<Chromosome,String> summaryCache;
     protected List<Chromosome> totalPopulation;
     protected List<Chromosome> elite;
+    protected int eliteSize;
     protected double bestFitness;
     protected int maxDepth;
-    protected final int maxElite = 3;
-    protected double averageScore;
 
-    public double getAverageScore(){
-        return averageScore;
-    }
 
     private final static Logger LOGGER = Logger.getLogger(TournamentSelection.class.getName());
 
 
+    public List<Chromosome> getElite(){
+        return elite;
+    }
 
     public TournamentSelection(List<Chromosome> totalPopulation, int maxDepth){
         this.summaryCache = new HashMap<Chromosome, String>();
-        this.elite = new ArrayList<Chromosome>();
+        eliteSize = 10;
+        //this.elite = new ArrayList<Chromosome>();
         this.totalPopulation = totalPopulation;
         this.bestFitness = Double.MAX_VALUE;
         this.maxDepth = maxDepth;
@@ -50,18 +50,12 @@ public abstract class TournamentSelection implements Selection{
         return bestFitness;
     }
 
-    public String getBestFitnessSummary(){
-        if(elite.isEmpty())
-            return "";
-        return summaryCache.get(elite.get(0));
-    }
 
 
-    public List<Chromosome> select(GPConfiguration config){
+    public List<Chromosome> select(GPConfiguration config, int number){
         //fitnessCache.clear();
-        List<List<Chromosome>> partitions = partition(config.getTournamentSize(), config.getPopulationSize());
+        List<List<Chromosome>> partitions = partition(config.getTournamentSize(), number);
         List<Chromosome> best =  bestIndividuals(partitions);
-        assert(best.size() == config.getPopulationSize());
         bestScoresAndElites(best);
         return best;
     }
@@ -88,9 +82,9 @@ public abstract class TournamentSelection implements Selection{
 
             Collections.shuffle(totalPopulation);
             List<Chromosome> pop = new ArrayList<Chromosome>();
-            if(counter < elite.size()){
-                pop.add(elite.get(counter));
-            }
+            //if(counter < elite.size()){
+              //  pop.add(elite.get(counter));
+            //}
             for(int i = pop.size(); i<tournamentSize; i++) {
                 pop.add(totalPopulation.get(i).copy());
             }
@@ -114,15 +108,18 @@ public abstract class TournamentSelection implements Selection{
         Collections.sort(population,getComparator());
         if(population.isEmpty())
             return;
-        double initialFitness = fitnessCache.get(population.get(0));
-        bestFitness = initialFitness;
-        elite.clear();
+        bestFitness = fitnessCache.get(population.get(0));
+        elite = new ArrayList<>();
+        for(int i = 0; (i<eliteSize && i<population.size()); i++){
+            elite.add(population.get(i));
+        }
+        /*elite.clear();
         elite.add(population.get(0));
         for(int i =1; i< population.size() && elite.size()<maxElite; i++){
             if(!elite.contains(population.get(i))) {
                 elite.add(population.get(i));
             }
-        }
+        }*/
     }
 
 
@@ -171,7 +168,6 @@ public abstract class TournamentSelection implements Selection{
         finally {
             pool.shutdownNow();
         }
-        averageScore = population.size() / totalScore;
         return best.copy();
     }
 
@@ -179,9 +175,9 @@ public abstract class TournamentSelection implements Selection{
         fitnessCache.put(solMap.get(sol),score);
     }
 
-    public Collection<Chromosome> getElites(){
-        return elite;
-    }
+    //public Collection<Chromosome> getElites(){
+    //    return elite;
+    //}
 
 
 

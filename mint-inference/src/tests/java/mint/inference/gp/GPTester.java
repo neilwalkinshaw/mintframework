@@ -48,9 +48,9 @@ public class GPTester {
         List<VariableTerminal<?>> doubleTerms = new ArrayList<VariableTerminal<?>>();
         doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false));
         doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false));
-        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("2",2.0), true));
+       // doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("2",2.0), true));
         doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1",1D), true));
-        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0",0D), true));
+        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0",0.5D), true));
         gpGenerator.setDoubleTerminals(doubleTerms);
 
         List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
@@ -74,11 +74,11 @@ public class GPTester {
         boolTerms.add(falseterm);
         gpGenerator.setBooleanTerminals(boolTerms);
 
-        SingleOutputGP gp = new SingleOutputGP(gpGenerator, generateTrainingSet(200),new GPConfiguration(20,0.95,0.05,7,7), false);
+        SingleOutputGP gp = new SingleOutputGP(gpGenerator, generateTrainingSet(60),new GPConfiguration(60,0.5,0.4,5,7), false);
 
 
 
-        System.out.println(gp.evolve(40));
+        System.out.println(gp.evolve(100));
 
     }
 

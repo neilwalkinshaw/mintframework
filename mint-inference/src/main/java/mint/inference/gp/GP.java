@@ -2,7 +2,6 @@ package mint.inference.gp;
 
 import org.apache.log4j.Logger;
 import mint.inference.evo.*;
-import mint.inference.gp.selection.SingleOutputTournament;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.*;
 
@@ -34,20 +33,6 @@ public abstract class GP<T> extends AbstractEvo {
         return evals;
     }
 
-    @Override
-    protected AbstractIterator getIterator(Selection selection) {
-        return new ListIterate(population, gpConf.getCrossOver(), gpConf.getMutation(), gen, gpConf.getDepth(), gen.getRandom(), selection.getElites());
-    }
-
-    @Override
-    protected List<Chromosome> select(List<Chromosome> population, Selection selection) {
-        assert(selection instanceof SingleOutputTournament);
-        List<Chromosome> sel = selection.select(gpConf);
-        SingleOutputTournament sot = (SingleOutputTournament) selection;
-        if(mem_dist)
-            distances = sot.getDistances();
-        return sel;
-    }
 
     @Override
     protected List<Chromosome> generatePopulation(int i) {
@@ -75,6 +60,8 @@ public abstract class GP<T> extends AbstractEvo {
         population.addAll(seeds);
         return population;
     }
+
+
 
     protected abstract String getType();
 

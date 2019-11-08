@@ -2,7 +2,6 @@ package mint.inference.evo;
 
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +39,8 @@ public abstract class  AbstractEvo{
             this.seeds = seeds;
     }
 
+    public abstract Selection getSelection(List<Chromosome> currentPop);
+
 
     public List<Chromosome> getPopulation() {
         return population;
@@ -50,39 +51,33 @@ public abstract class  AbstractEvo{
         population = generatePopulation(gpConf.getPopulationSize()-seeds.size());
 
         population.addAll(seeds);
-        Selection selection = null;
+        AbstractIterator it = getIterator(population);
+        Chromosome fittest = null;
         for(int i = 0; i<lim ; i++) {
-            selection = buildSelection(population);
-            population = select(population, selection);
-            if(selection.getBestFitness()<=0D ) { //If the result is perfect...
-                break;
+
+
+            population = it.iterate(this);
+
+
+            TournamentSelection latestSelection = (TournamentSelection)it.getLatestSelection();
+            if(latestSelection!=null){
+                Double bestFitness = latestSelection.getBestFitness();
+                //LOGGER.debug(latestSelection.getBestFitnessSummary());
+                //LOGGER.debug("Best fitness: "+it.getLatestSelection().getBestFitness());
+                fittest = latestSelection.elite.get(0);
+                LOGGER.debug("GP iteration: "+i + " - best fitness: "+bestFitness);
+                if(bestFitness  <=0D)
+                    break;
             }
-            assert(population.size() == gpConf.getPopulationSize());
 
-            AbstractIterator it = getIterator(selection);
-
-            population=new ArrayList<Chromosome>();
-            population.addAll(it.iterate(this));
-
-
-            Double bestFitness = selection.getBestFitness();
-            LOGGER.debug("GP iteration: "+i + " - best fitness: "+bestFitness);
+            it = getIterator(population);
         }
-        TournamentSelection ts = (TournamentSelection) selection;
-        LOGGER.debug(ts.getBestFitnessSummary());
-        LOGGER.debug("Best fitness: "+selection.getBestFitness());
-        Chromosome retNode = null;
-        if(!selection.getElites().isEmpty())
-            retNode = selection.getElites().iterator().next();
-        LOGGER.debug("Inferred GP: "+retNode);
-        return retNode;
+       // TournamentSelection ts = (TournamentSelection) it.getLatestSelection();
+
+        return fittest;
     }
 
-    protected abstract AbstractIterator getIterator(Selection selection);
-
-    protected abstract Selection buildSelection(List<Chromosome> population);
-
-    protected abstract List<Chromosome> select(List<Chromosome> population, Selection selection);
+    protected abstract AbstractIterator getIterator(List<Chromosome> population);
 
     /**
      * Generate a population of size i

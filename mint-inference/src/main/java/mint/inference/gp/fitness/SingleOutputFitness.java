@@ -46,7 +46,7 @@ public abstract class SingleOutputFitness<T> extends Fitness {
     public Double call() throws InterruptedException {
         Iterator<List<VariableAssignment<?>>> inputIt = evalSet.keySet().iterator();
         distances.clear();
-        double penaltyFactor = 1D;
+        double penaltyFactor = 0;
         while(inputIt.hasNext()){
             boolean penalize = false;
             if(Thread.interrupted())
@@ -64,27 +64,23 @@ public abstract class SingleOutputFitness<T> extends Fitness {
                 }
                 catch(Exception e){  //GP candidate has crashed.
                     e.printStackTrace();
-                    penalize = true;
+                    penaltyFactor=100;
                 }
                 if(actual == null)
-                    penalize = true;
+                    penaltyFactor=100;
                 if(!penalize) {
                     distance = (distance(actual, expected));
                     distances.add(distance);
                 }
             }
             catch(InvalidDistanceException e){
-                penalize = true;
+                penaltyFactor=100;
             }
             if(individual.subTreeMaxdepth() > maxDepth)
-                penalize = true;
+                penaltyFactor = Math.abs((individual.subTreeMaxdepth() - maxDepth)*2);
                 //distance+=distance/2;
-            if(penalize){
-                penaltyFactor++;
-                //break;
-            }
-            else
-                distances.add(distance);
+
+            distances.add(distance);
         }
         //if(penalize) {
             //service.shutdown();
@@ -93,7 +89,7 @@ public abstract class SingleOutputFitness<T> extends Fitness {
         ///else {
             //service.shutdown();
             double distance = calculateFitness(distances);
-            return distance * penaltyFactor;
+            return distance + penaltyFactor;
        // }
 
     }

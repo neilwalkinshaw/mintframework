@@ -1,20 +1,19 @@
 package mint.inference.gp;
 
-import mint.inference.evo.Chromosome;
-import mint.inference.evo.GPConfiguration;
-import mint.inference.evo.Selection;
+import mint.Configuration;
+import mint.inference.evo.*;
 import mint.inference.gp.selection.SingleOutputTournament;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by neilwalkinshaw on 06/03/15.
  */
 public class SingleOutputGP extends GP<VariableAssignment<?>> {
+
+    protected TournamentSelection selection = null;
 
 
     @Deprecated
@@ -35,10 +34,10 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 
 
     @Override
-    protected Selection buildSelection(List<Chromosome> population) {
-        return new SingleOutputTournament(evals,population, gpConf.getDepth(),mem_dist);
+    public Selection getSelection(List<Chromosome> currentPop) {
+        selection = new SingleOutputTournament(evals,currentPop,gpConf.getDepth(),mem_dist);
+        return selection;
     }
-
 
     protected String getType(){
         VariableAssignment<?> var = evals.values().iterator().next();
@@ -55,7 +54,12 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
     }
 
 
-
-
-
+    @Override
+    protected AbstractIterator getIterator(List<Chromosome> population) {
+        if(selection != null){
+            List<Chromosome> elites = selection.getElite();
+            return new Iterate(elites,population,gpConf.getCrossOver(),gpConf.getMutation(),gen,gpConf.getDepth(), new Random(Configuration.getInstance().SEED));
+        }
+        return new Iterate(new ArrayList<Chromosome>(),population,gpConf.getCrossOver(),gpConf.getMutation(),gen,gpConf.getDepth(), new Random(Configuration.getInstance().SEED));
+    }
 }
