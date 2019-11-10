@@ -1,4 +1,4 @@
-package mint.inference.gp.fitness;
+package mint.inference.gp.fitness.singleOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import org.apache.commons.collections4.MultiValuedMap;
 
 import mint.inference.gp.CallableNodeExecutor;
+import mint.inference.gp.fitness.Fitness;
+import mint.inference.gp.fitness.InvalidDistanceException;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.VariableAssignment;
 
@@ -87,7 +89,7 @@ public abstract class SingleOutputFitness<T> extends Fitness {
 		if (!(o instanceof SingleOutputFitness))
 			return false;
 
-		SingleOutputFitness singleOutputFitness = (SingleOutputFitness) o;
+		SingleOutputFitness<?> singleOutputFitness = (SingleOutputFitness<?>) o;
 
 		if (!individual.equals(singleOutputFitness.individual))
 			return false;

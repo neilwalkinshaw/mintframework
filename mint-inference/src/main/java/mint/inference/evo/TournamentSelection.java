@@ -77,7 +77,6 @@ public abstract class TournamentSelection implements Selection {
 
 	protected List<List<Chromosome>> partition(int tournamentSize, int number) {
 		List<List<Chromosome>> best = new ArrayList<List<Chromosome>>();
-		int counter = 0;
 		while (best.size() < number) {
 
 			Collections.shuffle(totalPopulation);
@@ -89,7 +88,6 @@ public abstract class TournamentSelection implements Selection {
 				pop.add(totalPopulation.get(i).copy());
 			}
 			best.add(pop);
-			counter++;
 		}
 		return best;
 	}
@@ -121,15 +119,13 @@ public abstract class TournamentSelection implements Selection {
 	}
 
 	protected Chromosome evaluatePopulation(Collection<Chromosome> population) {
-
 		assert (!population.isEmpty());
 		double bestScore = Double.MAX_VALUE;
 		Chromosome best = null;
-		Map<Future, Chromosome> solMap = new HashMap<Future, Chromosome>();
+		Map<Future<Double>, Chromosome> solMap = new HashMap<Future<Double>, Chromosome>();
 		Set<Future<Double>> set = new HashSet<Future<Double>>();
 		ExecutorService pool = Executors.newFixedThreadPool(4);
 		Fitness fitness = null;
-		double totalScore = 0D;
 		try {
 			for (Chromosome node : population) {
 				fitness = getFitness(node);
@@ -152,7 +148,6 @@ public abstract class TournamentSelection implements Selection {
 					best = solMap.get(sol);
 				} else if (best == null)
 					best = solMap.get(sol);
-				totalScore += score;
 				sol.cancel(true);
 			}
 
@@ -164,7 +159,8 @@ public abstract class TournamentSelection implements Selection {
 		return best.copy();
 	}
 
-	protected void processResult(Map<Future, Chromosome> solMap, Future<Double> sol, double score, Fitness fitness) {
+	protected void processResult(Map<Future<Double>, Chromosome> solMap, Future<Double> sol, double score,
+			Fitness fitness) {
 		fitnessCache.put(solMap.get(sol), score);
 	}
 

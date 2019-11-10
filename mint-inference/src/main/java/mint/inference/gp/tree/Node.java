@@ -154,4 +154,6 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		return maxDepth;
 	}
 
+	public abstract Set<T> varsInTree();
+
 }

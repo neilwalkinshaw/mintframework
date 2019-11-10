@@ -104,7 +104,7 @@ public class RootDoubleListNonTerminalTester {
 		MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> trainingSet = new HashSetValuedHashMap<List<VariableAssignment<?>>, VariableAssignment<?>>();
 		Random r = new Random(0);
 		for (int i = 0; i < size; i++) {
-			List<VariableAssignment<?>> inputs = new ArrayList();
+			List<VariableAssignment<?>> inputs = new ArrayList<VariableAssignment<?>>();
 			DoubleVariableAssignment a = new DoubleVariableAssignment("a", r.nextDouble());
 			DoubleVariableAssignment b = new DoubleVariableAssignment("b", r.nextDouble());
 			inputs.add(a);

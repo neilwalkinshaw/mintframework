@@ -1,9 +1,10 @@
-package mint.inference.gp.fitness;
+package mint.inference.gp.fitness.singleOutput;
 
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
+import mint.inference.gp.fitness.InvalidDistanceException;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.VariableAssignment;
 

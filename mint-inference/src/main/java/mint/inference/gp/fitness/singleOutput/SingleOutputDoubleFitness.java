@@ -1,9 +1,10 @@
-package mint.inference.gp.fitness;
+package mint.inference.gp.fitness.singleOutput;
 
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
+import mint.inference.gp.fitness.InvalidDistanceException;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.VariableAssignment;
 
@@ -15,13 +16,9 @@ public class SingleOutputDoubleFitness extends SingleOutputFitness<Double> {
 	protected double ceiling = 100000D;// Cannot make this Double.MAX, because overall fitness will yield a NaN from
 										// multiple penalties.
 
-	private final static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger
-			.getLogger(SingleOutputDoubleFitness.class.getName());
-
 	public SingleOutputDoubleFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
 			Node<VariableAssignment<Double>> individual, int maxDepth) {
 		super(evals, individual, maxDepth);
-		// System.out.println(penalty);
 	}
 
 	/**

@@ -13,7 +13,6 @@ import mint.inference.gp.fitness.Fitness;
 import mint.inference.gp.fitness.latentVariable.IntegerFitness;
 import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.fitness.latentVariable.StringFitness;
-import mint.inference.gp.fitness.singleOutput.SingleOutputFitness;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeComparator;
 import mint.tracedata.types.VariableAssignment;
@@ -21,16 +20,14 @@ import mint.tracedata.types.VariableAssignment;
 /**
  * Created by neilwalkinshaw on 25/06/15.
  */
-public class SingleOutputTournament extends IOTournamentSelection<VariableAssignment<?>> {
+public class LatentVariableTournament extends IOTournamentSelection<VariableAssignment<?>> {
 
 	protected Map<Node<?>, List<Double>> distances = null;
-	boolean mem_dist = false;
 
-	public SingleOutputTournament(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			List<Chromosome> totalPopulation, int maxDepth, boolean mem_dist) {
+	public LatentVariableTournament(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
+			List<Chromosome> totalPopulation, int maxDepth) {
 		super(evals, totalPopulation, maxDepth);
 		distances = new HashMap<Node<?>, List<Double>>();
-		this.mem_dist = mem_dist;
 	}
 
 	@Override
@@ -54,9 +51,6 @@ public class SingleOutputTournament extends IOTournamentSelection<VariableAssign
 	protected void processResult(Map<Future<Double>, Chromosome> solMap, Future<Double> sol, double score,
 			Fitness fitness) {
 		super.processResult(solMap, sol, score, fitness);
-		SingleOutputFitness<?> sof = (SingleOutputFitness<?>) fitness;
-		if (mem_dist)
-			distances.put(sof.getIndividual(), sof.getDistances());
 	}
 
 	public Map<Node<?>, List<Double>> getDistances() {

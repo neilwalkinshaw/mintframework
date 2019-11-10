@@ -204,7 +204,7 @@ public class GPTester {
 		gpGenerator.setBooleanTerminals(boolTerms);
 
 		SingleOutputGP gp = new SingleOutputGP(gpGenerator, generateBooleanTrainingSet(50),
-				new GPConfiguration(100, 0.95, 0.05, 7, 10));
+				new GPConfiguration(100, 0.95, 0.05, 7, 10), false);
 
 		System.out.println(gp.evolve(20));
 
@@ -214,7 +214,7 @@ public class GPTester {
 		MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> trainingSet = new HashSetValuedHashMap<List<VariableAssignment<?>>, VariableAssignment<?>>();
 		Random r = new Random(0);
 		for (int i = 0; i < size; i++) {
-			List<VariableAssignment<?>> inputs = new ArrayList();
+			List<VariableAssignment<?>> inputs = new ArrayList<VariableAssignment<?>>();
 			DoubleVariableAssignment a = new DoubleVariableAssignment("a", r.nextDouble());
 			DoubleVariableAssignment b = new DoubleVariableAssignment("b", r.nextDouble());
 			inputs.add(a);
@@ -230,7 +230,7 @@ public class GPTester {
 		MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> trainingSet = new HashSetValuedHashMap<List<VariableAssignment<?>>, VariableAssignment<?>>();
 		Random r = new Random(0);
 		for (int i = 0; i < size; i++) {
-			List<VariableAssignment<?>> inputs = new ArrayList();
+			List<VariableAssignment<?>> inputs = new ArrayList<VariableAssignment<?>>();
 			DoubleVariableAssignment a = new DoubleVariableAssignment("a", r.nextDouble());
 			DoubleVariableAssignment b = new DoubleVariableAssignment("b", r.nextDouble());
 			inputs.add(a);
@@ -252,8 +252,6 @@ public class GPTester {
 		DoubleVariableAssignmentTerminal incvar = new DoubleVariableAssignmentTerminal(one, false);
 
 		BooleanNonTerminal intvar = new EQBooleanOperator(addvar, new SubtractDoublesOperator(incvar, incvar));
-
-		NonTerminal<DoubleVariableAssignment> adder = new AddDoublesOperator(addvar, incvar);
 
 		IfThenElseOperator ro = new IfThenElseOperator(intvar, varvar, incvar);
 		VariableAssignment<?> result = ro.evaluate();

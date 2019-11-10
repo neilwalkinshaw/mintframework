@@ -1,7 +1,9 @@
 package mint.inference.gp.tree;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import mint.inference.gp.Generator;
@@ -125,6 +127,17 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		int vars = 0;
 		for (Node<?> n : children) {
 			vars += n.numVarsInTree();
+		}
+		return vars;
+	}
+
+	@Override
+	public Set<T> varsInTree() {
+		Set<T> vars = new HashSet<T>();
+		for (Node<?> child : this.getChildren()) {
+			for (VariableAssignment<?> var : child.varsInTree()) {
+				vars.add((T) var);
+			}
 		}
 		return vars;
 	}

@@ -67,7 +67,7 @@ public abstract class GP<T> extends AbstractEvo {
 	private String getTypeString() {
 		String typeString = "";
 		ListVariableAssignment var = (ListVariableAssignment) evals.values().iterator().next();
-		List val = var.getValue();
+		List<?> val = var.getValue();
 		for (int i = 0; i < val.size(); i++) {
 			Object element = val.get(i);
 			if (element instanceof DoubleVariableAssignment) {

@@ -1,4 +1,4 @@
-package mint.inference.gp.fitness;
+package mint.inference.gp.fitness.singleOutput;
 
 import java.util.List;
 

@@ -23,7 +23,7 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 	// For initialising constants
 	public IntegerVariableAssignmentTerminal(int value) {
 		super(true);
-		IntegerVariableAssignment var = new IntegerVariableAssignment(String.valueOf(value), value);
+		IntegerVariableAssignment var = new IntegerVariableAssignment(String.valueOf(value), value, true);
 		this.terminal = var;
 	}
 

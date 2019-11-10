@@ -1,9 +1,10 @@
-package mint.inference.gp.fitness;
+package mint.inference.gp.fitness.singleOutput;
 
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
+import mint.inference.gp.fitness.InvalidDistanceException;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.BooleanVariableAssignment;
 import mint.tracedata.types.VariableAssignment;
@@ -11,6 +12,7 @@ import mint.tracedata.types.VariableAssignment;
 /**
  * Created by neilwalkinshaw on 05/03/15.
  */
+@SuppressWarnings("rawtypes")
 public class SingleOutputListFitness extends SingleOutputFitness<List> {
 
 	protected double ceiling = 100000D;// Cannot make this Double.MAX, because overall fitness will yield a NaN from
