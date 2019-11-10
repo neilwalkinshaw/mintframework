@@ -3,7 +3,7 @@ package mint.inference.gp.tree;
 import mint.inference.gp.tree.nonterminals.booleans.*;
 import mint.inference.gp.tree.nonterminals.doubles.*;
 import mint.inference.gp.tree.nonterminals.doubles.IfThenElseOperator;
-import mint.inference.gp.tree.nonterminals.integer.*;
+import mint.inference.gp.tree.nonterminals.integers.*;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.StringNonTerminal;
 import mint.inference.gp.tree.terminals.*;

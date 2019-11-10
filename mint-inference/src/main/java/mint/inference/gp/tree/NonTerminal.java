@@ -1,134 +1,131 @@
 package mint.inference.gp.tree;
 
-import mint.inference.gp.Generator;
-import mint.tracedata.types.VariableAssignment;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import mint.inference.gp.Generator;
+import mint.tracedata.types.VariableAssignment;
 
 /**
  * Created by neilwalkinshaw on 03/03/15.
  */
 public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<T> {
 
-    protected List<Node<?>> children;
+	protected List<Node<?>> children;
 
-    public NonTerminal() {
-        super();
-        children = new ArrayList<Node<?>>();
-    }
+	public NonTerminal() {
+		super();
+		children = new ArrayList<Node<?>>();
+	}
 
-    protected void visitChildren(NodeVisitor visitor) throws InterruptedException {
-        Stack<Node<?>> childrenStack = new Stack<Node<?>>();
-        for (Node<?> child : children) {
-            childrenStack.push(child);
+	protected void visitChildren(NodeVisitor visitor) throws InterruptedException {
+		Stack<Node<?>> childrenStack = new Stack<Node<?>>();
+		for (Node<?> child : children) {
+			childrenStack.push(child);
 
-        }
-        while(!childrenStack.isEmpty()){
-            childrenStack.pop().accept(visitor);
-        }
-    }
+		}
+		while (!childrenStack.isEmpty()) {
+			childrenStack.pop().accept(visitor);
+		}
+	}
 
-    public void simplify(){
-        if (vals.size() == 1) {
-            Terminal<T> term = getTermFromVals();
-            swapWith(term);
-        } else if (vals.size() > 1) {
-            for (Node<?> child : getChildren()) {
-                child.simplify();
-            }
-        }
-    }
+	@Override
+	public void simplify() {
+		if (vals.size() == 1) {
+			Terminal<T> term = getTermFromVals();
+			swapWith(term);
+		} else if (vals.size() > 1) {
+			for (Node<?> child : getChildren()) {
+				child.simplify();
+			}
+		}
+	}
 
-    /**
-     * Get the first value from vals (there must be one)
-     * and return as a terminal. Used only for simplification
-     * @return
-     */
-    protected abstract Terminal<T> getTermFromVals();
+	/**
+	 * Get the first value from vals (there must be one) and return as a terminal.
+	 * Used only for simplification
+	 * 
+	 * @return
+	 */
+	protected abstract Terminal<T> getTermFromVals();
 
-    public List<Node<?>> getChildren(){
-        return children;
-    }
+	@Override
+	public List<Node<?>> getChildren() {
+		return children;
+	}
 
-    public void addChild(Node<?> child){
-        children.add(child);
-        child.setParent(this);
-    }
+	public void addChild(Node<?> child) {
+		children.add(child);
+		child.setParent(this);
+	}
 
-    @Override
-    public void mutate(Generator g, int depth){
-        //subtree-mutation
-        int childPos = g.getRandom().nextInt(children.size());
-        Node<?> child = children.get(childPos);
-        if(child.getType().equals("boolean")){
-            child = g.generateRandomBooleanExpression(depth-1);
-        }
-        else if(child.getType().equals("double")) {
-            child = g.generateRandomDoubleExpression(depth - 1);
-        }
-        else if(child.getType().equals("integer")){
-            child = g.generateRandomIntegerExpression(depth-1);
-        }
-        else{
-            child = g.generateRandomStringExpression(depth-1);
-        }
-        children.set(childPos,child);
+	@Override
+	public void mutate(Generator g, int depth) {
+		// subtree-mutation
+		int childPos = g.getRandom().nextInt(children.size());
+		Node<?> child = children.get(childPos);
+		if (child.getType().equals("boolean")) {
+			child = g.generateRandomBooleanExpression(depth - 1);
+		} else if (child.getType().equals("double")) {
+			child = g.generateRandomDoubleExpression(depth - 1);
+		} else if (child.getType().equals("integer")) {
+			child = g.generateRandomIntegerExpression(depth - 1);
+		} else {
+			child = g.generateRandomStringExpression(depth - 1);
+		}
+		children.set(childPos, child);
 
-    }
+	}
 
+	public abstract NonTerminal<T> createInstance(Generator g, int depth);
 
-    public abstract NonTerminal<T> createInstance(Generator g, int depth);
+	@Override
+	public String toString() {
+		return nodeString();
+	}
 
+	/**
+	 * String that returns a summary of the node and its children.
+	 * 
+	 * @return
+	 */
+	protected abstract String nodeString();
 
-    public String toString(){
-        //if(allChildrenAreConstants())
-        //    return evaluate().getValue().toString();
-        //else
-            return nodeString();
-    }
+	protected String childrenString() {
+		// simplify();
+		String retString = "";
+		for (int i = 0; i < children.size(); i++) {
+			if (i > 0)
+				retString += ",";
+			retString += children.get(i).toString();
+		}
+		return retString;
+	}
 
+	@Override
+	public int size() {
+		return 1 + childrenSizes();
+	}
 
-    /**
-     * String that returns a summary of the node and its children.
-     * @return
-     */
-    protected abstract String nodeString();
+	private int childrenSizes() {
+		int sizes = 0;
+		for (Node<?> n : children) {
+			sizes += n.size();
+		}
+		return sizes;
+	}
 
-    protected String childrenString(){
-        //simplify();
-        String retString = "";
-        for(int i = 0; i<children.size(); i++){
-            if(i>0)
-                retString+=",";
-            retString += children.get(i).toString();
-        }
-        return retString;
-    }
+	protected Node<?> getChild(int x) {
+		return children.get(x);
+	}
 
-    @Override
-    public int size(){
-        return 1+childrenSizes();
-    }
-
-    private int childrenSizes() {
-        int sizes = 0;
-        for(Node<?> n : children){
-            sizes += n.size();
-        }
-        return sizes;
-    }
-
-    protected Node<?> getChild(int x){
-        return children.get(x);
-    }
-
-    public int numVarsInTree(){
-        int vars = 0;
-        for(Node<?> n : children){
-            vars += n.numVarsInTree();
-        }
-        return vars;
-    }
+	@Override
+	public int numVarsInTree() {
+		int vars = 0;
+		for (Node<?> n : children) {
+			vars += n.numVarsInTree();
+		}
+		return vars;
+	}
 }

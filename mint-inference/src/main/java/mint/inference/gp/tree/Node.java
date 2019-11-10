@@ -1,5 +1,9 @@
 package mint.inference.gp.tree;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
@@ -8,147 +12,146 @@ import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
 import mint.tracedata.types.VariableAssignment;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Represents a node in a GP tree.
  *
- * If a GP tree is to be associated with a memory, the setMemory
- * method must only be called after the tree has been completed.
+ * If a GP tree is to be associated with a memory, the setMemory method must
+ * only be called after the tree has been completed.
  *
  * Created by neilwalkinshaw on 03/03/15.
  */
-public abstract class Node<T extends VariableAssignment<?>> implements Chromosome{
+public abstract class Node<T extends VariableAssignment<?>> implements Chromosome {
 
-    protected static int ids = 0;
+	protected static int ids = 0;
 
-    protected int id;
+	protected int id;
 
-    protected AssignmentOperator def;
+	protected AssignmentOperator def;
 
-    protected NonTerminal<?> parent;
+	protected NonTerminal<?> parent;
 
-    protected Set vals = new HashSet();
+	protected Set<Object> vals = new HashSet<Object>();
 
-    public Node(){
-        id = ids++;
+	public Node() {
+		id = ids++;
 
-    }
+	}
 
-    public NonTerminal<?> getParent() {
-        return parent;
-    }
+	public NonTerminal<?> getParent() {
+		return parent;
+	}
 
-    public AssignmentOperator getDef() {
-        return def;
-    }
+	public AssignmentOperator getDef() {
+		return def;
+	}
 
-    public void setDef(AssignmentOperator def) {
-        this.def = def;
-    }
+	public void setDef(AssignmentOperator def) {
+		this.def = def;
+	}
 
-    public abstract void simplify();
+	public abstract void simplify();
 
+	public void reset() {
+		for (Node<?> child : getChildren()) {
+			child.reset();
+		}
+	}
 
-    public void reset(){
-        for(Node child : getChildren()){
-            child.reset();
-        }
-    }
+	public abstract boolean accept(NodeVisitor visitor) throws InterruptedException;
 
-    public abstract boolean accept(NodeVisitor visitor) throws InterruptedException;
+	protected void setParent(NonTerminal<?> parent) {
+		this.parent = parent;
+	}
 
-    protected void setParent(NonTerminal<?> parent){
-        this.parent = parent;
-    }
+	public abstract List<Node<?>> getChildren();
 
-    public abstract List<Node<?>> getChildren();
+	public abstract T evaluate() throws InterruptedException;
 
-    public abstract T evaluate() throws InterruptedException;
+	@Override
+	public abstract Node<T> copy();
 
+	public abstract void mutate(Generator g, int depth);
 
-    public abstract Node<T> copy();
+	public boolean swapWith(Node<?> alternative) {
+		assert (!(this instanceof RootDouble));
+		assert (!(this instanceof RootBoolean));
+		assert (!(this instanceof RootListNonTerminal));
+		if (parent == null) {
+			return false;
+		}
+		if (!alternative.getType().equals(getType()))
+			return false;
+		int thisIndex = parent.getChildren().indexOf(this);
+		parent.getChildren().set(thisIndex, alternative);
+		alternative.setParent(parent);
+		return true;
+	}
 
-    public abstract void mutate(Generator g, int depth);
+	public abstract String getType();
 
-    public boolean swapWith(Node<?> alternative){
-        assert(!(this instanceof RootDouble));
-        assert(!(this instanceof RootBoolean));
-        assert(!(this instanceof RootListNonTerminal));
-        if(parent == null) {
-            return false;
-        }
-        if(!alternative.getType().equals(getType()))
-            return false;
-        int thisIndex = parent.getChildren().indexOf(this);
-        parent.getChildren().set(thisIndex,alternative);
-        alternative.setParent(parent);
-        return true;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Node))
+			return false;
 
-    public abstract String getType();
+		Node<?> node = (Node<?>) o;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Node)) return false;
+		if (id != node.id)
+			return false;
 
-        Node node = (Node) o;
+		return true;
+	}
 
-        if (id != node.id) return false;
+	@Override
+	public int hashCode() {
+		return id;
+	}
 
-        return true;
-    }
+	public abstract int numVarsInTree();
 
-    @Override
-    public int hashCode() {
-        return id;
-    }
+	public abstract int size();
 
-    public abstract int numVarsInTree();
+	/**
+	 * Returns the depth of this specific node within the tree.
+	 * 
+	 * @return
+	 */
+	public int depth() {
+		if (parent == null)
+			return 0;
+		else
+			return 1 + parent.depth();
+	}
 
-    public abstract int size();
+	protected void checkInterrupted() throws InterruptedException {
+		if (Thread.interrupted()) {
+			throw new InterruptedException();
+		}
 
-    /**
-     * Returns the depth of this specific node within the tree.
-     * @return
-     */
-    public int depth(){
-        if(parent == null)
-            return 0;
-        else
-            return 1+parent.depth();
-    }
+	}
 
-    protected void checkInterrupted() throws InterruptedException {
-        if (Thread.interrupted()){
-            throw new InterruptedException();
-        }
+	/**
+	 * Returns the maximum depth of the subtree of which this node is the root.
+	 * 
+	 * @return
+	 */
+	public int subTreeMaxdepth() {
+		int maxDepth = 0;
+		if (getChildren().isEmpty())
+			maxDepth = depth();
+		else {
 
-    }
+			for (Node<?> child : getChildren()) {
+				int childMaxDepth = child.subTreeMaxdepth();
+				if (childMaxDepth > maxDepth) {
+					maxDepth = childMaxDepth;
+				}
+			}
 
-    /**
-     * Returns the maximum depth of the subtree of which this node is the
-     * root.
-     * @return
-     */
-    public int subTreeMaxdepth(){
-        int maxDepth = 0;
-        if(getChildren().isEmpty())
-            maxDepth = depth();
-        else{
-
-            for(Node<?> child: getChildren()){
-                int childMaxDepth = child.subTreeMaxdepth();
-                if(childMaxDepth > maxDepth){
-                    maxDepth = childMaxDepth;
-                }
-            }
-
-        }
-         return maxDepth;
-    }
+		}
+		return maxDepth;
+	}
 
 }

@@ -3,7 +3,7 @@ package mint.inference.gp;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.booleans.*;
 import mint.inference.gp.tree.nonterminals.doubles.*;
-import mint.inference.gp.tree.nonterminals.integer.CastIntegersOperator;
+import mint.inference.gp.tree.nonterminals.integers.CastIntegersOperator;
 import mint.inference.gp.tree.terminals.BooleanVariableAssignmentTerminal;
 import mint.inference.gp.tree.terminals.DoubleVariableAssignmentTerminal;
 import mint.inference.gp.tree.terminals.VariableTerminal;

@@ -7,7 +7,7 @@ import mint.inference.gp.tree.nonterminals.doubles.CastDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.CosDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.ExpDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.LogDoublesOperator;
-import mint.inference.gp.tree.nonterminals.integer.CastIntegersOperator;
+import mint.inference.gp.tree.nonterminals.integers.CastIntegersOperator;
 import mint.inference.gp.tree.terminals.DoubleVariableAssignmentTerminal;
 import mint.inference.gp.tree.terminals.IntegerVariableAssignmentTerminal;
 import mint.tracedata.types.DoubleVariableAssignment;

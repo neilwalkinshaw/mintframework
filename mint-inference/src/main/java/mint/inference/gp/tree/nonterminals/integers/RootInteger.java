@@ -1,4 +1,4 @@
-package mint.inference.gp.tree.nonterminals.integer;
+package mint.inference.gp.tree.nonterminals.integers;
 
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.Node;

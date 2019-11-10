@@ -2,8 +2,9 @@ package mint.inference.gp.fitness;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import mint.inference.gp.CallableNodeExecutor;
 import mint.inference.gp.tree.Node;
@@ -14,13 +15,13 @@ import mint.tracedata.types.VariableAssignment;
  */
 public abstract class SingleOutputFitness<T> extends Fitness {
 
-	final Map<List<VariableAssignment<?>>, VariableAssignment<?>> evalSet;
+	final MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evalSet;
 
 	protected final int maxDepth;
 	protected Node<VariableAssignment<T>> individual;
 	List<Double> distances;
 
-	public SingleOutputFitness(Map<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
+	public SingleOutputFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
 			Node<VariableAssignment<T>> individual, int maxDepth) {
 		this.evalSet = evals;
 		this.individual = individual;
@@ -40,7 +41,7 @@ public abstract class SingleOutputFitness<T> extends Fitness {
 	public Double call() throws InterruptedException {
 		distances.clear();
 		double penaltyFactor = 0;
-		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entrySet()) {
+		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
 			boolean penalize = false;
 			if (Thread.interrupted())
 				throw new InterruptedException();

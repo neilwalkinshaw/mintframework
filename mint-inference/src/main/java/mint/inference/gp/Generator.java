@@ -5,7 +5,7 @@ import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
 import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
-import mint.inference.gp.tree.nonterminals.integer.RootInteger;
+import mint.inference.gp.tree.nonterminals.integers.RootInteger;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
 import mint.inference.gp.tree.nonterminals.strings.RootString;
