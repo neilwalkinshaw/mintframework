@@ -105,6 +105,20 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>4.1</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>xml</artifactId>
+			<version>1.3.4</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/javax.xml-1.3.4.jar</systemPath>
+		</dependency>
+				<dependency>
+			<groupId>com.microsoft</groupId>
+			<artifactId>z3</artifactId>
+			<version>4.8.7</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/com.microsoft.z3-4.8.7.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 </project>
