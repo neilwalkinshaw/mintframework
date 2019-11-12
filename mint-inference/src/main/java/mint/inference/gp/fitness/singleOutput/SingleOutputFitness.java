@@ -44,26 +44,20 @@ public abstract class SingleOutputFitness<T> extends Fitness {
 		distances.clear();
 		double penaltyFactor = 0;
 		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
-			boolean penalize = false;
 			if (Thread.interrupted())
 				throw new InterruptedException();
 			double distance = 0D;
 			T actual = null;
-			try {
-				CallableNodeExecutor<T> executor = new CallableNodeExecutor<T>(individual, current.getKey());
+			CallableNodeExecutor<T> executor = new CallableNodeExecutor<T>(individual, current.getKey());
 
-				try {
-					actual = executor.call();
-				} catch (Exception e) { // GP candidate has crashed.
-					e.printStackTrace();
+			try {
+				actual = executor.call();
+				if (actual == null) {
 					penaltyFactor = 100;
+					return distance + penaltyFactor;
 				}
-				if (actual == null)
-					penaltyFactor = 100;
-				if (!penalize) {
-					distance = (distance(actual, current.getValue().getValue()));
-					distances.add(distance);
-				}
+				distance = distance(actual, current.getValue().getValue());
+				distances.add(distance);
 			} catch (InvalidDistanceException e) {
 				penaltyFactor = 100;
 			}
@@ -100,5 +94,26 @@ public abstract class SingleOutputFitness<T> extends Fitness {
 	@Override
 	public int hashCode() {
 		return individual.hashCode();
+	}
+
+	public boolean correct() throws InterruptedException {
+		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
+			if (Thread.interrupted())
+				throw new InterruptedException();
+			T actual = null;
+			CallableNodeExecutor<T> executor = new CallableNodeExecutor<T>(individual, current.getKey());
+
+			try {
+				actual = executor.call();
+				if (actual == null) {
+					return false;
+				}
+				if (distance(actual, current.getValue().getValue()) > 0)
+					return false;
+			} catch (InvalidDistanceException e) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

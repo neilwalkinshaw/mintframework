@@ -6,6 +6,7 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.RealExpr;
+import com.microsoft.z3.SeqExpr;
 
 import mint.inference.gp.tree.nonterminals.booleans.AndBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
@@ -22,9 +23,11 @@ import mint.inference.gp.tree.nonterminals.integers.SubtractIntegersOperator;
 import mint.inference.gp.tree.terminals.BooleanVariableAssignmentTerminal;
 import mint.inference.gp.tree.terminals.DoubleVariableAssignmentTerminal;
 import mint.inference.gp.tree.terminals.IntegerVariableAssignmentTerminal;
+import mint.inference.gp.tree.terminals.StringVariableAssignmentTerminal;
 import mint.tracedata.types.BooleanVariableAssignment;
 import mint.tracedata.types.DoubleVariableAssignment;
 import mint.tracedata.types.IntegerVariableAssignment;
+import mint.tracedata.types.StringVariableAssignment;
 
 public class NodeSimplifier {
 
@@ -50,6 +53,11 @@ public class NodeSimplifier {
 		}
 		if (exp.isSub()) {
 			return (Node<IntegerVariableAssignment>) makeBinary(exp.getArgs(), new SubtractIntegersOperator());
+		}
+		if (exp.isMul() && Integer.valueOf(exp.getArgs()[0].toString()) == -1 && exp.getArgs().length == 2) {
+			IntegerVariableAssignment zero = new IntegerVariableAssignment("0", 0);
+			Node<IntegerVariableAssignment> c2 = fromZ3((IntExpr) exp.getArgs()[1]);
+			return new SubtractIntegersOperator(new IntegerVariableAssignmentTerminal(zero, true), c2);
 		}
 		if (exp.isMul()) {
 			return (Node<IntegerVariableAssignment>) makeBinary(exp.getArgs(), new MultiplyIntegersOperator());
@@ -153,6 +161,15 @@ public class NodeSimplifier {
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
 
+	public static Node<StringVariableAssignment> fromZ3(SeqExpr exp) {
+		if (exp.isConst() && exp.getFuncDecl().getName().toString().equals("String"))
+			return new StringVariableAssignmentTerminal(exp.getSExpr());
+		if (exp.isConst())
+			return new StringVariableAssignmentTerminal(
+					new StringVariableAssignment(exp.getFuncDecl().getName().toString()), false);
+		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
+	}
+
 	public static Node<?> fromZ3(Expr exp) {
 		if (exp instanceof BoolExpr)
 			return fromZ3((BoolExpr) exp);
@@ -160,6 +177,9 @@ public class NodeSimplifier {
 			return fromZ3((IntExpr) exp);
 		if (exp instanceof RealExpr)
 			return fromZ3((RealExpr) exp);
+		if (exp instanceof SeqExpr) {
+			return fromZ3((SeqExpr) exp);
+		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
 

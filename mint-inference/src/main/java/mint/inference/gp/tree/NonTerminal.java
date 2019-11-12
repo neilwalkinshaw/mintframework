@@ -90,7 +90,6 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 	protected abstract String nodeString();
 
 	protected String childrenString() {
-		// simplify();
 		String retString = "";
 		for (int i = 0; i < children.size(); i++) {
 			if (i > 0)

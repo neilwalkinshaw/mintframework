@@ -98,7 +98,7 @@ public class GuardSRPlayground {
 		Node<?> best = (Node<?>) gp.evolve(100);
 		System.out.println(best);
 		System.out.println(best.simp());
-		System.out.println(best.isCorrect(trainingSet));
+		System.out.println(gp.isCorrect(best));
 	}
 
 }

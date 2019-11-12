@@ -11,11 +11,11 @@ public class StringVariableAssignment extends VariableAssignment<String> {
 	public StringVariableAssignment(String name, String value) {
 		super(name, value);
 	}
-	
+
 	public StringVariableAssignment(String name, String value, boolean add) {
 		super(name, value);
 		if (add)
-		addValue(value);
+			addValue(value);
 	}
 
 	public StringVariableAssignment(String name) {
@@ -80,5 +80,4 @@ public class StringVariableAssignment extends VariableAssignment<String> {
 		if (!values.contains(v))
 			values.add(v);
 	}
-
 }

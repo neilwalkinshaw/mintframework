@@ -13,6 +13,9 @@ import mint.inference.evo.Chromosome;
 import mint.inference.evo.GPConfiguration;
 import mint.inference.evo.Selection;
 import mint.inference.evo.TournamentSelection;
+import mint.inference.gp.fitness.latentVariable.BooleanFitness;
+import mint.inference.gp.fitness.latentVariable.IntegerFitness;
+import mint.inference.gp.fitness.latentVariable.StringFitness;
 import mint.inference.gp.selection.LatentVariableTournament;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.BooleanVariableAssignment;
@@ -66,5 +69,25 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		}
 		return new Iterate(new ArrayList<Chromosome>(), population, gpConf.getCrossOver(), gpConf.getMutation(), gen,
 				gpConf.getDepth(), new Random(Configuration.getInstance().SEED));
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean isCorrect(Chromosome c) {
+		int maxDepth = 0;
+		try {
+			if (((Node<?>) c).getType() == "string")
+				return new StringFitness(evals, (Node<VariableAssignment<String>>) c, maxDepth).correct();
+			else if (((Node<?>) c).getType() == "integer")
+				return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c, maxDepth).correct();
+			else if (((Node<?>) c).getType() == "boolean") {
+				return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c, maxDepth).correct();
+			}
+			System.out.println(c.getClass());
+			throw new IllegalArgumentException(
+					"Could not calculate correctness for node of type " + ((Node<?>) c).getType());
+		} catch (InterruptedException e) {
+			return false;
+		}
 	}
 }

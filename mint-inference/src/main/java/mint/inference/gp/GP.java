@@ -83,4 +83,6 @@ public abstract class GP<T> extends AbstractEvo {
 	public Map<Node<?>, List<Double>> getDistances() {
 		return distances;
 	}
+
+	public abstract boolean isCorrect(Chromosome c);
 }

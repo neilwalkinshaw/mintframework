@@ -2,16 +2,12 @@ package mint.inference.gp.tree;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import org.apache.commons.collections4.MultiValuedMap;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.evo.Chromosome;
-import mint.inference.gp.CallableNodeExecutor;
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
 import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
@@ -162,21 +158,6 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 	}
 
 	public abstract Set<T> varsInTree();
-
-	@SuppressWarnings("unchecked")
-	public boolean isCorrect(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evalSet) {
-		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
-			try {
-				CallableNodeExecutor<T> executor = new CallableNodeExecutor<T>((Node<VariableAssignment<T>>) this,
-						current.getKey());
-				if (executor.call() != current.getValue().getValue())
-					return false;
-			} catch (Exception e) { // GP candidate has crashed.
-				return false;
-			}
-		}
-		return true;
-	}
 
 	public abstract Expr toZ3(Context ctx);
 

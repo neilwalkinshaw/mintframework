@@ -13,6 +13,11 @@ import mint.inference.evo.Chromosome;
 import mint.inference.evo.GPConfiguration;
 import mint.inference.evo.Selection;
 import mint.inference.evo.TournamentSelection;
+import mint.inference.gp.fitness.singleOutput.SingleOutputBooleanFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputDoubleFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputIntegerFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputListFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputStringFitness;
 import mint.inference.gp.selection.SingleOutputTournament;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.BooleanVariableAssignment;
@@ -76,5 +81,34 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 		}
 		return new Iterate(new ArrayList<Chromosome>(), population, gpConf.getCrossOver(), gpConf.getMutation(), gen,
 				gpConf.getDepth(), new Random(Configuration.getInstance().SEED));
+	}
+
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public boolean isCorrect(Chromosome toEvaluateC) {
+		Node<?> toEvaluate = (Node<?>) toEvaluateC;
+		int maxDepth = 0;
+		try {
+
+			if (toEvaluate.getType().equals("string"))
+				return new SingleOutputStringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth)
+						.correct();
+			else if (toEvaluate.getType().equals("double"))
+				return new SingleOutputDoubleFitness(evals, (Node<VariableAssignment<Double>>) toEvaluate, maxDepth)
+						.correct();
+			else if (toEvaluate.getType().equals("integer"))
+				return new SingleOutputIntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth)
+						.correct();
+			else if (toEvaluate.getType().equals("List"))
+				return new SingleOutputListFitness(evals, (Node<VariableAssignment<List>>) toEvaluate, maxDepth)
+						.correct();
+			else {
+				assert (toEvaluate.getType().equals("boolean"));
+				return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth)
+						.correct();
+			}
+		} catch (InterruptedException e) {
+			return false;
+		}
 	}
 }
