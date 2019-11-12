@@ -52,7 +52,7 @@ public class DataModelTestGeneratorTest {
 	}
 
 	@Test
-	public void complexTest() throws Z3Exception {
+	public void complexTest() {
 		vars = new HashSet<VariableAssignment<?>>();
 		vars.add(new BooleanVariableAssignment("pump"));
 		vars.add(new DoubleVariableAssignment("methane"));

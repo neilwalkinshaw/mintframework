@@ -10,6 +10,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.fitness.Fitness;
+import mint.inference.gp.fitness.latentVariable.BooleanFitness;
 import mint.inference.gp.fitness.latentVariable.IntegerFitness;
 import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.fitness.latentVariable.StringFitness;
@@ -36,6 +37,8 @@ public class LatentVariableTournament extends IOTournamentSelection<VariableAssi
 		Node<?> toEvaluate = (Node<?>) toEvaluateC;
 		if (toEvaluate.getType().equals("string"))
 			return new StringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth);
+		else if (toEvaluate.getType().equals("boolean"))
+			return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth);
 		else {
 			assert (toEvaluate.getType().equals("integer"));
 			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth);

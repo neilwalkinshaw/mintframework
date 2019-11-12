@@ -1,5 +1,8 @@
 package mint.inference.gp.tree.terminals;
 
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.Terminal;
@@ -85,5 +88,13 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 		if (!isConstant()) {
 			terminal.setValue(0);
 		}
+	}
+
+	@Override
+	public Expr toZ3(Context ctx) {
+		if (this.isConstant()) {
+			return ctx.mkInt(this.getTerminal().getValue());
+		}
+		return ctx.mkIntConst(this.getName());
 	}
 }

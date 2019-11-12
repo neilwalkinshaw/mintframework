@@ -1,5 +1,9 @@
 package mint.inference.gp.tree.nonterminals.integers;
 
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+import com.microsoft.z3.RealExpr;
+
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
@@ -12,51 +16,61 @@ import mint.tracedata.types.IntegerVariableAssignment;
  */
 public class CastIntegersOperator extends IntegerNonTerminal {
 
+	public CastIntegersOperator() {
+	}
 
-    public CastIntegersOperator(){}
+	public CastIntegersOperator(Node<DoubleVariableAssignment> a) {
+		super();
+		addChild(a);
+	}
 
-    public CastIntegersOperator(Node<DoubleVariableAssignment> a){
-        super();
-        addChild(a);
-    }
+	@Override
+	public NonTerminal<IntegerVariableAssignment> createInstance(Generator g, int depth) {
+		return new CastIntegersOperator(g.generateRandomDoubleExpression(depth));
+	}
 
-    @Override
-    public NonTerminal<IntegerVariableAssignment> createInstance(Generator g, int depth){
-      return  new CastIntegersOperator(g.generateRandomDoubleExpression(depth));
-    }
+	@Override
+	public IntegerVariableAssignment evaluate() throws InterruptedException {
+		checkInterrupted();
+		Double child = (Double) getChild(0).evaluate().getValue();
+		IntegerVariableAssignment iva = new IntegerVariableAssignment("result");
+		if (child.isInfinite() || child.isNaN()) {
+			iva.setValue(0);
+		} else {
+			iva.setValue(child.intValue());
+		}
+		vals.add(iva);
+		return iva;
+	}
 
-    @Override
-    public IntegerVariableAssignment evaluate() throws InterruptedException {
-        checkInterrupted();
-        Double child = (Double)getChild(0).evaluate().getValue();
-        IntegerVariableAssignment iva = new IntegerVariableAssignment("result");
-        if(child.isInfinite() || child.isNaN()) {
-            iva.setValue(0);
-        }
-        else{
-            iva.setValue(child.intValue());
-        }
-        vals.add(iva);
-        return iva;
-    }
+	@Override
+	public boolean accept(NodeVisitor visitor) throws InterruptedException {
+		visitor.visitEnter(this);
+		for (Node<?> child : children) {
+			child.accept(visitor);
+		}
+		return visitor.visitExit(this);
+	}
 
-    @Override
-    public boolean accept(NodeVisitor visitor) throws InterruptedException {
-        visitor.visitEnter(this);
-        for(Node<?> child:children){
-            child.accept(visitor);
-        }
-        return visitor.visitExit(this);
-    }
+	@Override
+	public String nodeString() {
+		return "IntCast(" + childrenString() + ")";
+	}
 
-    @Override
-    public Node<IntegerVariableAssignment> copy() {
-        return new CastIntegersOperator((Node<DoubleVariableAssignment>)getChild(0).copy());
-    }
+	@Override
+	public String opString() {
+		return "to_int";
+	}
 
-    @Override
-    public String nodeString(){
-        return "IntCast("+childrenString()+")";
-    }
+	@Override
+	public Expr toZ3(Context ctx) {
+		RealExpr b1 = (RealExpr) getChild(0).toZ3(ctx);
+		return ctx.mkReal2Int(b1);
+	}
+
+	@Override
+	protected NonTerminal<IntegerVariableAssignment> newInstance() {
+		return new CastIntegersOperator();
+	}
 
 }

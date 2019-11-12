@@ -24,7 +24,7 @@ import mint.tracedata.types.VariableAssignment;
 
 public class SRPlayground {
 
-	public static void main(String[] args) throws Z3Exception {
+	public static void main(String[] args) {
 		BasicConfigurator.resetConfiguration();
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);

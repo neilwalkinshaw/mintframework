@@ -3,6 +3,7 @@ package mint.inference.gp.tree.doubles;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import mint.inference.gp.tree.nonterminals.doubles.CastDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.CosDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.ExpDoublesOperator;

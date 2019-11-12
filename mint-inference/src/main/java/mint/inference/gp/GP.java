@@ -48,7 +48,6 @@ public abstract class GP<T> extends AbstractEvo {
 			population = gen.generateDoublePopulation(i, gpConf.getDepth());
 		} else if (type.equals("Integer")) {
 			population = gen.generateIntegerPopulation(i, gpConf.getDepth());
-
 		} else if (type.equals("String")) {
 			population = gen.generateStringPopulation(i, gpConf.getDepth());
 		} else if (type.equals("Boolean")) {

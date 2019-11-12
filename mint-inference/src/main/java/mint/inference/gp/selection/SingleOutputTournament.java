@@ -10,10 +10,12 @@ import org.apache.commons.collections4.MultiValuedMap;
 
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.fitness.Fitness;
-import mint.inference.gp.fitness.latentVariable.IntegerFitness;
-import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
-import mint.inference.gp.fitness.latentVariable.StringFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputBooleanFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputDoubleFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputIntegerFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputListFitness;
+import mint.inference.gp.fitness.singleOutput.SingleOutputStringFitness;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeComparator;
 import mint.tracedata.types.VariableAssignment;
@@ -35,13 +37,21 @@ public class SingleOutputTournament extends IOTournamentSelection<VariableAssign
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public LatentVariableFitness<?> getFitness(Chromosome toEvaluateC) {
-		Node<?> toEvaluate = (Node<?>) toEvaluateC;
-		if (toEvaluate.getType().equals("string"))
-			return new StringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth);
-		else {
-			assert (toEvaluate.getType().equals("integer"));
-			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth);
+	public SingleOutputFitness<?> getFitness(Chromosome toEvaluateC) {
+		{
+			Node<?> toEvaluate = (Node<?>) toEvaluateC;
+			if (toEvaluate.getType().equals("string"))
+				return new SingleOutputStringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth);
+			else if (toEvaluate.getType().equals("double"))
+				return new SingleOutputDoubleFitness(evals, (Node<VariableAssignment<Double>>) toEvaluate, maxDepth);
+			else if (toEvaluate.getType().equals("integer"))
+				return new SingleOutputIntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth);
+			else if (toEvaluate.getType().equals("List"))
+				return new SingleOutputListFitness(evals, (Node<VariableAssignment<List>>) toEvaluate, maxDepth);
+			else {
+				assert (toEvaluate.getType().equals("boolean"));
+				return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth);
+			}
 		}
 	}
 

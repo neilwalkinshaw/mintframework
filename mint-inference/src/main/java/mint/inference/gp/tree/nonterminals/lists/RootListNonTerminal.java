@@ -3,6 +3,9 @@ package mint.inference.gp.tree.nonterminals.lists;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
@@ -70,15 +73,6 @@ public class RootListNonTerminal extends NonTerminal<ListVariableAssignment> {
 	}
 
 	@Override
-	public Node<ListVariableAssignment> copy() {
-		List<Node<?>> result = new ArrayList<Node<?>>();
-		for (int i = 0; i < getChildren().size(); i++) {
-			result.add(getChild(i).copy());
-		}
-		return new RootListNonTerminal(result);
-	}
-
-	@Override
 	public String nodeString() {
 		return "R:" + childrenString();
 	}
@@ -111,6 +105,21 @@ public class RootListNonTerminal extends NonTerminal<ListVariableAssignment> {
 	@Override
 	public Terminal<ListVariableAssignment> getTermFromVals() {
 		return null;
+	}
+
+	@Override
+	public String opString() {
+		return "";
+	}
+
+	@Override
+	public Expr toZ3(Context ctx) {
+		return getChild(0).toZ3(ctx);
+	}
+
+	@Override
+	protected NonTerminal<ListVariableAssignment> newInstance() {
+		return new RootListNonTerminal(types);
 	}
 
 }

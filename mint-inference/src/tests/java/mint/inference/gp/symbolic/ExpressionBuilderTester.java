@@ -35,7 +35,7 @@ public class ExpressionBuilderTester {
      * print ok
      */
     @Test
-    public void testWikipediaSymbexExample() throws Z3Exception {
+    public void testWikipediaSymbexExample() {
         NonTerminal nt = new EQArithOperator(new MultiplyDoublesOperator(getConst(2D),getVar("y")),getConst(12D));
         NonTerminal ifN = new IfThenElseOperator(nt,getConst(5D),getConst(6D));
         ExpressionBuilder eb = new ExpressionBuilder(ifN, new Context());
@@ -46,7 +46,7 @@ public class ExpressionBuilderTester {
 
 
     @Test
-    public void testEQIfThenElse() throws Z3Exception {
+    public void testEQIfThenElse() {
         VariableAssignment<Double> var = new DoubleVariableAssignment("i",200D);
         VariableAssignment<Double> add = new DoubleVariableAssignment("j",0D);
         VariableAssignment<Double> one = new DoubleVariableAssignment("one",1D);
@@ -65,7 +65,7 @@ public class ExpressionBuilderTester {
     }
 
     @Test
-    public void testGTIfThenElse() throws Z3Exception {
+    public void testGTIfThenElse() {
         VariableAssignment<Double> var = new DoubleVariableAssignment("i",200D);
         VariableAssignment<Double> add = new DoubleVariableAssignment("j",0D);
         VariableAssignment<Double> one = new DoubleVariableAssignment("one",1D);
@@ -84,7 +84,7 @@ public class ExpressionBuilderTester {
     }
 
     @Test
-    public void testLTIfThenElse() throws Z3Exception {
+    public void testLTIfThenElse() {
         VariableAssignment<Double> var = new DoubleVariableAssignment("i",0D);
         VariableAssignment<Double> add = new DoubleVariableAssignment("j",0D);
         VariableAssignment<Double> one = new DoubleVariableAssignment("one",1D);

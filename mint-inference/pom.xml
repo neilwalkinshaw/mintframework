@@ -31,6 +31,14 @@
 					<argLine>-Djava.library.path=lib</argLine>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.11</source>
+					<target>1.11</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -46,7 +54,6 @@
 			<url>file://${basedir}/lib</url>
 		</repository>
 	</repositories>
-
 
 	<dependencies>
 		<dependency>
@@ -79,12 +86,6 @@
 			<groupId>daikon</groupId>
 			<artifactId>daikon</artifactId>
 			<version>4.6.4</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>z3</groupId>
-			<artifactId>z3</artifactId>
-			<version>10.9.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

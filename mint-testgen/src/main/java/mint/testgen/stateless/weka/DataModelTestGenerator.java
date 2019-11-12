@@ -126,7 +126,7 @@ public class DataModelTestGenerator extends WekaModelTestGenerator {
 
 	
 
-	private ExpressionToZ3 getConvertor(Expression target) throws Z3Exception {
+	private ExpressionToZ3 getConvertor(Expression target) {
 		if(contextMap.containsKey(target))
 			return contextMap.get(target);
 		else

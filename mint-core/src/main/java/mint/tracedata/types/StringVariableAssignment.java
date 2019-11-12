@@ -11,6 +11,12 @@ public class StringVariableAssignment extends VariableAssignment<String> {
 	public StringVariableAssignment(String name, String value) {
 		super(name, value);
 	}
+	
+	public StringVariableAssignment(String name, String value, boolean add) {
+		super(name, value);
+		if (add)
+		addValue(value);
+	}
 
 	public StringVariableAssignment(String name) {
 		super(name);

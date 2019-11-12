@@ -50,7 +50,7 @@ public class Iterate extends AbstractIterator {
 		Node<?> toMutate = pickRandomBiasEarly(nt, rand.nextDouble());
 
 		toMutate.mutate(gen, rand.nextInt(maxDepth - toMutate.depth()));
-		return root;
+		return root.simp();
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class Iterate extends AbstractIterator {
 		} catch (Exception e) {
 			LOGGER.debug(crossOverA + ", " + crossOverB);
 		}
-		return aCopy;
+		return aCopy.simp();
 	}
 
 	protected void removeUnviableNodes(List<Node<?>> nt) {

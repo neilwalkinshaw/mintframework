@@ -22,7 +22,9 @@ public class SingleOutputBooleanFitness extends SingleOutputFitness<Boolean> {
 	public Double call() {
 		NodeExecutor<Boolean> executor = new NodeExecutor<Boolean>(individual);
 		double tp = 0.0000001D, fp = 0.0000001D, tn = 0.0000001D, fn = 0.0000001D;
+//		double tp = 0.000000D, fp = 0.000000D, tn = 0.000000D, fn = 0.000000D;
 		boolean penalize = false;
+		boolean allCorrect = true;
 		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
 			VariableAssignment<?> expectedVar = current.getValue();
 			if (!expectedVar.withinLimits()) {
@@ -34,6 +36,8 @@ public class SingleOutputBooleanFitness extends SingleOutputFitness<Boolean> {
 
 			try {
 				Boolean actual = executor.execute(current.getKey());
+				if (expected != actual)
+					allCorrect = false;
 				if (expected == true) {
 					if (actual.booleanValue() == true) {
 						tp++;
@@ -61,6 +65,8 @@ public class SingleOutputBooleanFitness extends SingleOutputFitness<Boolean> {
 		if (penalize)
 			return 100000D;
 		else {
+			if (allCorrect)
+				return 0D;
 			double errorRate = 1 - errorRate(tp, fp, tn, fn);
 			return errorRate;
 		}

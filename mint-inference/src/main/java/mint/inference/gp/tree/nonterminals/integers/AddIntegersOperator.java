@@ -1,5 +1,9 @@
 package mint.inference.gp.tree.nonterminals.integers;
 
+import com.microsoft.z3.ArithExpr;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
@@ -50,18 +54,8 @@ public class AddIntegersOperator extends IntegerNonTerminal {
 	}
 
 	@Override
-	public Node<IntegerVariableAssignment> copy() {
-		IntegerNonTerminal created = new AddIntegersOperator();
-		for (Node<?> child : getChildren()) {
-			created.addChild(child.copy());
-		}
-		created.setResVar(copyResVar());
-		return created;
-	}
-
-	@Override
 	public String nodeString() {
-		return "(+ " + childrenString() + ")";
+		return "Add(" + childrenString() + ")";
 	}
 
 	@Override
@@ -70,5 +64,20 @@ public class AddIntegersOperator extends IntegerNonTerminal {
 			visitChildren(visitor);
 		}
 		return visitor.visitExit(this);
+	}
+
+	@Override
+	public String opString() {
+		return "+";
+	}
+
+	@Override
+	public Expr toZ3(Context ctx) {
+		return ctx.mkAdd((ArithExpr) getChild(0).toZ3(ctx), (ArithExpr) getChild(1).toZ3(ctx));
+	}
+
+	@Override
+	protected NonTerminal<IntegerVariableAssignment> newInstance() {
+		return new AddIntegersOperator();
 	}
 }

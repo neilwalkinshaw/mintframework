@@ -82,11 +82,6 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 
 	public abstract NonTerminal<T> createInstance(Generator g, int depth);
 
-	@Override
-	public String toString() {
-		return nodeString();
-	}
-
 	/**
 	 * String that returns a summary of the node and its children.
 	 * 
@@ -99,7 +94,7 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		String retString = "";
 		for (int i = 0; i < children.size(); i++) {
 			if (i > 0)
-				retString += ",";
+				retString += " ";
 			retString += children.get(i).toString();
 		}
 		return retString;
@@ -141,4 +136,33 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		}
 		return vars;
 	}
+
+	@Override
+//	public String toString() {
+//		return nodeString();
+//	}
+
+	public String toString() {
+		if (opString() == "")
+			return "(" + opString() + childrenString() + ")";
+		else
+			return "(" + opString() + " " + childrenString() + ")";
+	}
+
+	public abstract String opString();
+
+	public void clearChildren() {
+		children.clear();
+	}
+
+	@Override
+	public Node<T> copy() {
+		NonTerminal<T> copy = this.newInstance();
+		for (Node<?> child : children) {
+			copy.addChild(child.copy());
+		}
+		return copy;
+	}
+
+	protected abstract NonTerminal<T> newInstance();
 }

@@ -23,7 +23,10 @@ import mint.inference.gp.tree.nonterminals.booleans.EQArithOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQStringOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
+import mint.inference.gp.tree.nonterminals.booleans.GTBooleanIntegersOperator;
 import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
+import mint.inference.gp.tree.nonterminals.booleans.LTBooleanIntegersOperator;
+import mint.inference.gp.tree.nonterminals.booleans.NotBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.OrBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
 import mint.inference.gp.tree.nonterminals.doubles.AddDoublesOperator;
@@ -140,9 +143,9 @@ public class ExpressionBuilder implements NodeVisitor {
 		try {
 			BoolExpr ex = null;
 			if (eqBooleanOperator.numVarsInTree() == 0) {
-				ex = ctx.MkBool(eqBooleanOperator.evaluate().getValue());
+				ex = ctx.mkBool(eqBooleanOperator.evaluate().getValue());
 			} else {
-				ex = ctx.MkEq(findExpr(eqBooleanOperator.getChildren().get(0)),
+				ex = ctx.mkEq(findExpr(eqBooleanOperator.getChildren().get(0)),
 						findExpr(eqBooleanOperator.getChildren().get(1)));
 				ex = addAdditionalConstraints(ex, eqBooleanOperator);
 			}
@@ -165,12 +168,12 @@ public class ExpressionBuilder implements NodeVisitor {
 		try {
 			BoolExpr ex = null;
 			if (eqBooleanOperator.numVarsInTree() == 0) {
-				ex = ctx.MkBool(eqBooleanOperator.evaluate().getValue());
+				ex = ctx.mkBool(eqBooleanOperator.evaluate().getValue());
 			} else {
 				ArithExpr exp1 = findArithExpr(eqBooleanOperator.getChildren().get(0));
 				ArithExpr exp2 = findArithExpr(eqBooleanOperator.getChildren().get(1));
 
-				ex = ctx.MkEq(exp1, exp2);
+				ex = ctx.mkEq(exp1, exp2);
 				ex = addAdditionalConstraints(ex, eqBooleanOperator);
 			}
 			additionalConstraints.put(eqBooleanOperator, ex);
@@ -193,11 +196,11 @@ public class ExpressionBuilder implements NodeVisitor {
 		try {
 			BoolExpr ex = null;
 			if (andBooleanOperator.numVarsInTree() == 0) {
-				ex = ctx.MkBool(andBooleanOperator.evaluate().getValue());
+				ex = ctx.mkBool(andBooleanOperator.evaluate().getValue());
 			} else {
 				BoolExpr[] ands = new BoolExpr[] { findExpr(andBooleanOperator.getChildren().get(0)),
 						findExpr(andBooleanOperator.getChildren().get(1)) };
-				ex = ctx.MkAnd(ands);
+				ex = ctx.mkAnd(ands);
 				// ex = addAdditionalConstraints(andExpr, andBooleanOperator);
 			}
 			additionalConstraints.put(andBooleanOperator, ex);
@@ -220,9 +223,9 @@ public class ExpressionBuilder implements NodeVisitor {
 		try {
 			BoolExpr ex = null;
 			if (gtBooleanDoublesOperator.numVarsInTree() == 0) {
-				ex = ctx.MkBool(gtBooleanDoublesOperator.evaluate().getValue());
+				ex = ctx.mkBool(gtBooleanDoublesOperator.evaluate().getValue());
 			} else {
-				ex = ctx.MkGt(findArithExpr(gtBooleanDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkGt(findArithExpr(gtBooleanDoublesOperator.getChildren().get(0)),
 						findArithExpr(gtBooleanDoublesOperator.getChildren().get(1)));
 				ex = addAdditionalConstraints(ex, gtBooleanDoublesOperator);
 			}
@@ -246,9 +249,9 @@ public class ExpressionBuilder implements NodeVisitor {
 		try {
 			BoolExpr ex = null;
 			if (ltBooleanDoublesOperator.numVarsInTree() == 0) {
-				ex = ctx.MkBool(ltBooleanDoublesOperator.evaluate().getValue());
+				ex = ctx.mkBool(ltBooleanDoublesOperator.evaluate().getValue());
 			} else {
-				ex = ctx.MkLt(findArithExpr(ltBooleanDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkLt(findArithExpr(ltBooleanDoublesOperator.getChildren().get(0)),
 						findArithExpr(ltBooleanDoublesOperator.getChildren().get(1)));
 				ex = addAdditionalConstraints(ex, ltBooleanDoublesOperator);
 			}
@@ -273,11 +276,11 @@ public class ExpressionBuilder implements NodeVisitor {
 		try {
 			BoolExpr ex = null;
 			if (orBooleanOperator.numVarsInTree() == 0) {
-				ex = ctx.MkBool(orBooleanOperator.evaluate().getValue());
+				ex = ctx.mkBool(orBooleanOperator.evaluate().getValue());
 			} else {
 				BoolExpr[] ors = new BoolExpr[] { findExpr(orBooleanOperator.getChildren().get(0)),
 						findExpr(orBooleanOperator.getChildren().get(1)) };
-				ex = ctx.MkOr(ors);
+				ex = ctx.mkOr(ors);
 				ex = addAdditionalConstraints(ex, orBooleanOperator);
 			}
 			additionalConstraints.put(orBooleanOperator, ex);
@@ -300,7 +303,7 @@ public class ExpressionBuilder implements NodeVisitor {
 		ArithExpr ex = null;
 		if (integerNonTerminal.numVarsInTree() == 0) {
 			try {
-				ex = ctx.MkReal(integerNonTerminal.evaluate().getValue().toString());
+				ex = ctx.mkReal(integerNonTerminal.evaluate().getValue().toString());
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -336,22 +339,22 @@ public class ExpressionBuilder implements NodeVisitor {
 			BoolExpr be = findExpr(ifThenElseOperator.getChildren().get(0));
 			BoolExpr tr = null, fl = null;
 			if (additionalConstraints.get(ifThenElseOperator.getChildren().get(1)) != null) {
-				tr = ctx.MkAnd(
+				tr = ctx.mkAnd(
 						new BoolExpr[] { be, additionalConstraints.get(ifThenElseOperator.getChildren().get(1)) });
 			} else {
 				tr = be;
 			}
 			if (additionalConstraints.get(ifThenElseOperator.getChildren().get(2)) != null) {
-				fl = ctx.MkAnd(
+				fl = ctx.mkAnd(
 						new BoolExpr[] { not(be), additionalConstraints.get(ifThenElseOperator.getChildren().get(2)) });
 			} else {
 				fl = not(be);
 			}
 
-			BoolExpr or = ctx.MkOr(new BoolExpr[] { tr, fl });
+			BoolExpr or = ctx.mkOr(new BoolExpr[] { tr, fl });
 			additionalConstraints.put(ifThenElseOperator, or);
 
-			ArithExpr exp = (ArithExpr) ctx.MkITE(be, findArithExpr(ifThenElseOperator.getChildren().get(1)),
+			ArithExpr exp = (ArithExpr) ctx.mkITE(be, findArithExpr(ifThenElseOperator.getChildren().get(1)),
 					findArithExpr(ifThenElseOperator.getChildren().get(2)));
 			arithConstraints.put(ifThenElseOperator, exp);
 
@@ -375,9 +378,9 @@ public class ExpressionBuilder implements NodeVisitor {
 				val = divideDoublesOperator.evaluate().getValue().toString();
 				if (val.equals("Infinity")) {
 					Double max = Double.MAX_VALUE;
-					ex = ctx.MkReal(max.toString());
+					ex = ctx.mkReal(max.toString());
 				} else
-					ex = ctx.MkReal(val);
+					ex = ctx.mkReal(val);
 			} catch (Z3Exception e) {
 				LOGGER.debug("Parser error for DivideDoublesOperator, parsing: " + val);
 			} catch (InterruptedException e) {
@@ -385,7 +388,7 @@ public class ExpressionBuilder implements NodeVisitor {
 			}
 		} else {
 			try {
-				ex = ctx.MkDiv(findArithExpr(divideDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkDiv(findArithExpr(divideDoublesOperator.getChildren().get(0)),
 						findArithExpr(divideDoublesOperator.getChildren().get(1)));
 			} catch (Z3Exception e) {
 				e.printStackTrace();
@@ -411,9 +414,9 @@ public class ExpressionBuilder implements NodeVisitor {
 				String val = addDoublesOperator.evaluate().getValue().toString();
 				if (val.equals("Infinity")) {
 					Double max = Double.MAX_VALUE;
-					ex = ctx.MkReal(max.toString());
+					ex = ctx.mkReal(max.toString());
 				} else
-					ex = ctx.MkReal(val);
+					ex = ctx.mkReal(val);
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -421,7 +424,7 @@ public class ExpressionBuilder implements NodeVisitor {
 			}
 		} else {
 			try {
-				ex = ctx.MkAdd(new ArithExpr[] { findArithExpr(addDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkAdd(new ArithExpr[] { findArithExpr(addDoublesOperator.getChildren().get(0)),
 						findArithExpr(addDoublesOperator.getChildren().get(1)) });
 			} catch (Z3Exception e) {
 				e.printStackTrace();
@@ -443,7 +446,7 @@ public class ExpressionBuilder implements NodeVisitor {
 		ArithExpr ex = null;
 		if (castDoublesOperator.numVarsInTree() == 0) {
 			try {
-				ex = ctx.MkInt(castDoublesOperator.evaluate().getValue().toString());
+				ex = ctx.mkInt(castDoublesOperator.evaluate().getValue().toString());
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -470,9 +473,9 @@ public class ExpressionBuilder implements NodeVisitor {
 				String val = cosDoublesOperator.evaluate().getValue().toString();
 				if (val.equals("Infinity") || val.equals("NaN")) {
 					Double max = Double.MAX_VALUE;
-					ex = ctx.MkReal(max.toString());
+					ex = ctx.mkReal(max.toString());
 				} else
-					ex = ctx.MkReal(val);
+					ex = ctx.mkReal(val);
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -520,9 +523,9 @@ public class ExpressionBuilder implements NodeVisitor {
 				String val = multiplyDoublesOperator.evaluate().getValue().toString();
 				if (val.equals("Infinity") || val.equals("NaN")) {
 					Double max = Double.MAX_VALUE;
-					ex = ctx.MkReal(max.toString());
+					ex = ctx.mkReal(max.toString());
 				} else
-					ex = ctx.MkReal(val);
+					ex = ctx.mkReal(val);
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -530,7 +533,7 @@ public class ExpressionBuilder implements NodeVisitor {
 			}
 		} else {
 			try {
-				ex = ctx.MkMul(new ArithExpr[] { findArithExpr(multiplyDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkMul(new ArithExpr[] { findArithExpr(multiplyDoublesOperator.getChildren().get(0)),
 						findArithExpr(multiplyDoublesOperator.getChildren().get(1)) });
 			} catch (Z3Exception e) {
 				e.printStackTrace();
@@ -555,9 +558,9 @@ public class ExpressionBuilder implements NodeVisitor {
 				String val = pwrDoublesOperator.evaluate().getValue().toString();
 				if (val.equals("Infinity") || val.equals("NaN")) {
 					Double max = Double.MAX_VALUE;
-					ex = ctx.MkReal(max.toString());
+					ex = ctx.mkReal(max.toString());
 				} else
-					ex = ctx.MkReal(val);
+					ex = ctx.mkReal(val);
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -565,7 +568,7 @@ public class ExpressionBuilder implements NodeVisitor {
 			}
 		} else {
 			try {
-				ex = ctx.MkPower(findArithExpr(pwrDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkPower(findArithExpr(pwrDoublesOperator.getChildren().get(0)),
 						findArithExpr(pwrDoublesOperator.getChildren().get(1)));
 			} catch (Z3Exception e) {
 				e.printStackTrace();
@@ -608,14 +611,14 @@ public class ExpressionBuilder implements NodeVisitor {
 		ArithExpr ex = null;
 		if (subtractDoublesOperator.numVarsInTree() == 0) {
 			try {
-				ex = ctx.MkSub(new ArithExpr[] { findArithExpr(subtractDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkSub(new ArithExpr[] { findArithExpr(subtractDoublesOperator.getChildren().get(0)),
 						findArithExpr(subtractDoublesOperator.getChildren().get(1)) });
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				ex = ctx.MkMul(new ArithExpr[] { findArithExpr(subtractDoublesOperator.getChildren().get(0)),
+				ex = ctx.mkMul(new ArithExpr[] { findArithExpr(subtractDoublesOperator.getChildren().get(0)),
 						findArithExpr(subtractDoublesOperator.getChildren().get(1)) });
 			} catch (Z3Exception e) {
 				e.printStackTrace();
@@ -639,11 +642,11 @@ public class ExpressionBuilder implements NodeVisitor {
 			BoolExpr eq = null;
 			if (booleanVariableAssignmentTerminal.isConstant()) {
 				if (booleanVariableAssignmentTerminal.evaluate().getValue() == true)
-					eq = ctx.MkTrue();
+					eq = ctx.mkTrue();
 				else
-					eq = ctx.MkFalse();
+					eq = ctx.mkFalse();
 			} else {
-				eq = ctx.MkBoolConst(booleanVariableAssignmentTerminal.getName());
+				eq = ctx.mkBoolConst(booleanVariableAssignmentTerminal.getName());
 			}
 			additionalConstraints.put(booleanVariableAssignmentTerminal, eq);
 		} catch (Z3Exception e) {
@@ -662,7 +665,7 @@ public class ExpressionBuilder implements NodeVisitor {
 	public boolean visitExit(DoubleVariableAssignmentTerminal doubleVariableAssignmentTerminal) {
 		try {
 			if (doubleVariableAssignmentTerminal.isConstant()) {
-				RatNum num = ctx.MkReal(doubleVariableAssignmentTerminal.evaluate().getValue().toString());
+				RatNum num = ctx.mkReal(doubleVariableAssignmentTerminal.evaluate().getValue().toString());
 				arithConstraints.put(doubleVariableAssignmentTerminal, num);
 			} else {
 				ArithExpr variable = addRealVariable(doubleVariableAssignmentTerminal.getName());
@@ -703,7 +706,7 @@ public class ExpressionBuilder implements NodeVisitor {
 	public boolean visitExit(IntegerVariableAssignmentTerminal integerVariableAssignmentTerminal) {
 		try {
 			if (integerVariableAssignmentTerminal.isConstant()) {
-				ArithExpr num = ctx.MkInt(integerVariableAssignmentTerminal.evaluate().getValue().toString());
+				ArithExpr num = ctx.mkInt(integerVariableAssignmentTerminal.evaluate().getValue().toString());
 				arithConstraints.put(integerVariableAssignmentTerminal, num);
 			} else {
 				ArithExpr variable = addIntVariable((integerVariableAssignmentTerminal.getName()));
@@ -746,23 +749,23 @@ public class ExpressionBuilder implements NodeVisitor {
 		return false;
 	}
 
-	private ArithExpr addRealVariable(String varName) throws Z3Exception {
+	private ArithExpr addRealVariable(String varName) {
 		ArithExpr var = null;
 		if (variables.containsKey(varName)) {
 			var = variables.get(varName);
 		} else {
-			var = ctx.MkRealConst(ctx.MkSymbol(varName));
+			var = ctx.mkRealConst(ctx.mkSymbol(varName));
 			variables.put(varName, var);
 		}
 		return var;
 	}
 
-	private ArithExpr addIntVariable(String varName) throws Z3Exception {
+	private ArithExpr addIntVariable(String varName) {
 		ArithExpr var = null;
 		if (variables.containsKey(varName)) {
 			var = variables.get(varName);
 		} else {
-			var = ctx.MkIntConst(ctx.MkSymbol(varName));
+			var = ctx.mkIntConst(ctx.mkSymbol(varName));
 			variables.put(varName, var);
 		}
 		return var;
@@ -771,7 +774,7 @@ public class ExpressionBuilder implements NodeVisitor {
 	private BoolExpr not(BoolExpr target) {
 		BoolExpr neg = null;
 		try {
-			neg = ctx.MkNot(target);
+			neg = ctx.mkNot(target);
 
 		} catch (Z3Exception e) {
 			e.printStackTrace();
@@ -779,7 +782,7 @@ public class ExpressionBuilder implements NodeVisitor {
 		return neg;
 	}
 
-	private BoolExpr addAdditionalConstraints(BoolExpr eqExpr, NonTerminal eqBooleanOperator) {
+	private BoolExpr addAdditionalConstraints(BoolExpr eqExpr, NonTerminal<?> eqBooleanOperator) {
 		BoolExpr combined = eqExpr;
 		List<BoolExpr> others = new ArrayList<BoolExpr>();
 		for (Object child : eqBooleanOperator.getChildren()) {
@@ -791,7 +794,7 @@ public class ExpressionBuilder implements NodeVisitor {
 		if (!others.isEmpty()) {
 			others.add(eqExpr);
 			try {
-				combined = ctx.MkAnd(others.toArray(new BoolExpr[others.size()]));
+				combined = ctx.mkAnd(others.toArray(new BoolExpr[others.size()]));
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			}
@@ -799,7 +802,7 @@ public class ExpressionBuilder implements NodeVisitor {
 		return combined;
 	}
 
-	private void checkChildren(NonTerminal nt) {
+	private void checkChildren(NonTerminal<?> nt) {
 		List<BoolExpr> others = new ArrayList<BoolExpr>();
 		for (Object child : nt.getChildren()) {
 			BoolExpr constraint = additionalConstraints.get(child);
@@ -809,11 +812,89 @@ public class ExpressionBuilder implements NodeVisitor {
 		}
 		if (!others.isEmpty()) {
 			try {
-				BoolExpr combined = ctx.MkAnd(others.toArray(new BoolExpr[others.size()]));
+				BoolExpr combined = ctx.mkAnd(others.toArray(new BoolExpr[others.size()]));
 				additionalConstraints.put(nt, combined);
 			} catch (Z3Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public boolean visitEnter(GTBooleanIntegersOperator gtBooleanIntegersOperator) {
+		return true;
+	}
+
+	@Override
+	public boolean visitExit(GTBooleanIntegersOperator gtBooleanIntegersOperator) {
+		try {
+			BoolExpr ex = null;
+			if (gtBooleanIntegersOperator.numVarsInTree() == 0) {
+				ex = ctx.mkBool(gtBooleanIntegersOperator.evaluate().getValue());
+			} else {
+				ex = ctx.mkGt(findArithExpr(gtBooleanIntegersOperator.getChildren().get(0)),
+						findArithExpr(gtBooleanIntegersOperator.getChildren().get(1)));
+				ex = addAdditionalConstraints(ex, gtBooleanIntegersOperator);
+			}
+			additionalConstraints.put(gtBooleanIntegersOperator, ex);
+		} catch (Z3Exception e) {
+			e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean visitEnter(LTBooleanIntegersOperator ltBooleanIntegersOperator) {
+		return true;
+	}
+
+	@Override
+	public boolean visitExit(LTBooleanIntegersOperator ltBooleanIntegersOperator) {
+		try {
+			BoolExpr ex = null;
+			if (ltBooleanIntegersOperator.numVarsInTree() == 0) {
+				ex = ctx.mkBool(ltBooleanIntegersOperator.evaluate().getValue());
+			} else {
+				ex = ctx.mkLt(findArithExpr(ltBooleanIntegersOperator.getChildren().get(0)),
+						findArithExpr(ltBooleanIntegersOperator.getChildren().get(1)));
+				ex = addAdditionalConstraints(ex, ltBooleanIntegersOperator);
+			}
+			additionalConstraints.put(ltBooleanIntegersOperator, ex);
+
+		} catch (Z3Exception e) {
+			e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean visitEnter(NotBooleanOperator notBooleanOperator) {
+		return true;
+	}
+
+	@Override
+	public boolean visitExit(NotBooleanOperator notBooleanOperator) {
+		try {
+			BoolExpr ex = null;
+			if (notBooleanOperator.numVarsInTree() == 0) {
+				ex = ctx.mkBool(notBooleanOperator.evaluate().getValue());
+			} else {
+				ex = ctx.mkNot(findExpr(notBooleanOperator.getChildren().get(0)));
+				ex = addAdditionalConstraints(ex, notBooleanOperator);
+			}
+			additionalConstraints.put(notBooleanOperator, ex);
+		} catch (Z3Exception e) {
+			e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 }

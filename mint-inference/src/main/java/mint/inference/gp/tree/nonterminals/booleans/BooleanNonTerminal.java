@@ -11,24 +11,26 @@ import mint.tracedata.types.BooleanVariableAssignment;
  */
 public abstract class BooleanNonTerminal extends NonTerminal<BooleanVariableAssignment> {
 
-    Node<BooleanVariableAssignment> base;
+	Node<BooleanVariableAssignment> base;
 
-    public BooleanNonTerminal(){}
+	public BooleanNonTerminal() {
+	}
 
-    public BooleanNonTerminal(Node<?> b){
-        this.base = base;
-    }
+	@SuppressWarnings("unchecked")
+	public BooleanNonTerminal(Node<?> b) {
+		this.base = (Node<BooleanVariableAssignment>) b;
+	}
 
-    @Override
-    public String getType() {
-        return "boolean";
-    }
+	@Override
+	public String getType() {
+		return "boolean";
+	}
 
-    @Override
-    public Terminal<BooleanVariableAssignment> getTermFromVals(){
-        BooleanVariableAssignment bvar = new BooleanVariableAssignment("res",(Boolean)vals.iterator().next());
-        BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar,true);
-        return term;
-    }
+	@Override
+	public Terminal<BooleanVariableAssignment> getTermFromVals() {
+		BooleanVariableAssignment bvar = new BooleanVariableAssignment("res", (Boolean) vals.iterator().next());
+		BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar, true);
+		return term;
+	}
 
 }

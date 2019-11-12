@@ -9,6 +9,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class IntegerVariableAssignment extends NumberVariableAssignment<Integer> {
+	// Cannot use min and Integer.MAX_VAlUE because calculating their difference
+	// causes an arithmetic overflow
+	private final static int min = -1000;
+	private final static int max = 1000;
+
 	private static List<Integer> values = new ArrayList<Integer>();
 
 	private final static Logger LOGGER = Logger.getLogger(IntegerVariableAssignment.class.getName());
@@ -34,12 +39,12 @@ public class IntegerVariableAssignment extends NumberVariableAssignment<Integer>
 	}
 
 	public IntegerVariableAssignment(String name, Integer value) {
-		super(name, value, getMinVal(Integer.MIN_VALUE), getMaxVal(Integer.MAX_VALUE));
+		super(name, value, getMinVal(min), getMaxVal(max));
 		assert max > 0;
 	}
 
 	public IntegerVariableAssignment(String name, Integer value, boolean add) {
-		super(name, value, getMinVal(Integer.MIN_VALUE), getMaxVal(Integer.MAX_VALUE));
+		super(name, value, getMinVal(min), getMaxVal(max));
 		if (add)
 			addValue(value);
 		assert max > 0;
@@ -55,12 +60,12 @@ public class IntegerVariableAssignment extends NumberVariableAssignment<Integer>
 	}
 
 	public IntegerVariableAssignment(String name) {
-		super(name, getMinVal(Integer.MIN_VALUE), getMaxVal(Integer.MAX_VALUE));
+		super(name, getMinVal(min), getMaxVal(max));
 		assert max > 0;
 	}
 
 	public IntegerVariableAssignment(String name, Collection<Integer> from) {
-		super(name, Integer.MIN_VALUE, Integer.MAX_VALUE, from);
+		super(name, min, max, from);
 	}
 
 	@Override
@@ -107,7 +112,7 @@ public class IntegerVariableAssignment extends NumberVariableAssignment<Integer>
 		else if (value.trim().equals("*"))
 			setNull(true);
 		else if (value.trim().equals("E")) // special error value...
-			iva.setValue(Integer.MIN_VALUE);
+			iva.setValue(min);
 		else
 			iva.setStringValue(value);
 		iva.setMax(max);
@@ -133,6 +138,9 @@ public class IntegerVariableAssignment extends NumberVariableAssignment<Integer>
 
 	@Override
 	protected Integer generateRandom() {
+//		if (!values.isEmpty())
+//			return values.get(rand.nextInt(values.size()));
+		System.out.println("max:" + max + " min: " + min);
 		Integer retVal = min + rand.nextInt((max - min));
 		return retVal;
 	}

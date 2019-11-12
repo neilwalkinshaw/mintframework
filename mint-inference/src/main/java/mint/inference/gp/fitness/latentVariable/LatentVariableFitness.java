@@ -45,6 +45,7 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 
 	private double calculateDistance(Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current,
 			Set<VariableAssignment<T>> undef) throws InterruptedException {
+		System.out.println("Individual: " + individual);
 		individual.reset();
 		List<VariableAssignment<?>> ctx = makeCtx(current);
 		CallableNodeExecutor<T> executor = new CallableNodeExecutor<>(individual, ctx);
@@ -56,6 +57,8 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 				actual = executor.call();
 				minDistance = distance(executor.call(), current.getValue().getValue());
 				individual.reset();
+				System.out.println("inputs: " + current.getKey() + " expected: " + current.getValue().getValue()
+						+ " actual: " + actual + " distance: " + minDistance);
 			}
 
 			for (VariableAssignment<T> var : undef) {
@@ -121,26 +124,6 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 //		System.out.println("individual: " + individual);
 		double proportionUnusedVars = totalUnusedVars.size() / (double) individual.numVarsInTree();
 		return fitness + proportionUnusedVars;
-	}
-
-	public boolean correct() throws InterruptedException {
-		Set<String> totalUsedVars = totalUsedVars();
-
-		Set<VariableAssignment<T>> undef = undefVars(individual, totalUsedVars);
-
-		Set<String> totalUnusedVars = totalUsedVars;
-		for (VariableAssignment<T> vName : individual.varsInTree()) {
-			totalUnusedVars.remove(vName.getName());
-		}
-
-		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
-			double minDistance = calculateDistance(current, undef);
-			if (minDistance > 0D) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	private Set<String> totalUsedVars() {
