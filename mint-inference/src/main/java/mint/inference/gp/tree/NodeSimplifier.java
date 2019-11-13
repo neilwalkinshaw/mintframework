@@ -54,7 +54,7 @@ public class NodeSimplifier {
 		if (exp.isSub()) {
 			return (Node<IntegerVariableAssignment>) makeBinary(exp.getArgs(), new SubtractIntegersOperator());
 		}
-		if (exp.isMul() && Integer.valueOf(exp.getArgs()[0].toString()) == -1 && exp.getArgs().length == 2) {
+		if (exp.isMul() && exp.getArgs()[0].toString().equals("-1") && exp.getArgs().length == 2) {
 			IntegerVariableAssignment zero = new IntegerVariableAssignment("0", 0);
 			Node<IntegerVariableAssignment> c2 = fromZ3((IntExpr) exp.getArgs()[1]);
 			return new SubtractIntegersOperator(new IntegerVariableAssignmentTerminal(zero, true), c2);
