@@ -80,4 +80,11 @@ public class StringVariableAssignment extends VariableAssignment<String> {
 		if (!values.contains(v))
 			values.add(v);
 	}
+
+	@Override
+	public String toString() {
+		if (value == null)
+			return name;
+		return name + "=" + value;
+	}
 }

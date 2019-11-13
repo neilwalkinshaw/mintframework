@@ -27,7 +27,7 @@ public class StringSRPlayground {
 		Generator gpGenerator = new Generator(new Random(0));
 
 		List<VariableTerminal<?>> stringTerms = new ArrayList<VariableTerminal<?>>();
-		stringTerms.add(new StringVariableAssignmentTerminal(new StringVariableAssignment("r1"), false));
+//		stringTerms.add(new StringVariableAssignmentTerminal(new StringVariableAssignment("r1"), false));
 		stringTerms.add(new StringVariableAssignmentTerminal("coke"));
 		stringTerms.add(new StringVariableAssignmentTerminal("pepsi"));
 		stringTerms.add(new StringVariableAssignmentTerminal("beer"));
@@ -43,15 +43,15 @@ public class StringSRPlayground {
 		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet,
 				new GPConfiguration(10, 0.9f, 0.01f, 7, 7));
 
-		Node<?> best = (Node<?>) gp.evolve(40);
+		Node<?> best = (Node<?>) gp.evolve(4);
 		best.simplify();
 
 		for (VariableAssignment<?> var : best.varsInTree()) {
 			System.out.println(var.getName() + "->" + var.typeString());
 		}
 
-		System.out.println(best);
-		System.out.println(best.simp());
+		System.out.println("best: " + best);
+		System.out.println("best simp: " + best.simp());
 		System.out.println(gp.isCorrect(best));
 
 	}

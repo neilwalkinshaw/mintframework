@@ -162,8 +162,9 @@ public class NodeSimplifier {
 	}
 
 	public static Node<StringVariableAssignment> fromZ3(SeqExpr exp) {
-		if (exp.isConst() && exp.getFuncDecl().getName().toString().equals("String"))
-			return new StringVariableAssignmentTerminal(exp.getSExpr());
+		if (exp.isConst() && exp.getFuncDecl().getName().toString().equals("String")) {
+			return new StringVariableAssignmentTerminal(exp.getString());
+		}
 		if (exp.isConst())
 			return new StringVariableAssignmentTerminal(
 					new StringVariableAssignment(exp.getFuncDecl().getName().toString()), false);
