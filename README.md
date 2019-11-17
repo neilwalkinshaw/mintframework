@@ -79,3 +79,16 @@ For a complete list of options you can run ming with `-help` argument. Here we i
                                   algorithms (See WEKA documentation)
 
 ![Example state machinie](/mint-inference/src/tests/resources/MJExample2.png)
+
+## Avoiding stack overflows with large diverse trace sets
+
+The state merging process involves a recursive state-comparison (pull-requests welcome) whereby large diverse trace sets can lead to a stack overflow. This can be overcome by increasing the default stack size for the JVM. If running from the command line with Maven, the most straightforward approach is to change the Maven configuration by adding a special configuration file.
+
+* In the root directory (mintframework) create a new directory called `.mvn'.
+* Within that directory insert a file called `jvm.config`
+* In that file, place the following string: `-Xss512m`
+* Include any other directives you wish to provide to the VM.
+
+When you run from the command line, Maven should detect this file and use it.
+
+For large sets of long, diverse traces, it might be worth increasing the stack size (there are recursive processes in place that can otherwise lead to stack-overflows for big trace-sets). For this, add the VM directive -Xss512M to the command
