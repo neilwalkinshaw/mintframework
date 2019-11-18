@@ -58,7 +58,7 @@ public abstract class GP<T> extends AbstractEvo {
 			LOGGER.error("Failed to generate population for undefined type.");
 		}
 		population.addAll(seeds);
-		System.out.println("Population: " + population);
+//		System.out.println("Population: " + population);
 		return population;
 	}
 
