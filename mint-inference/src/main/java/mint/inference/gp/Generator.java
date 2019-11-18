@@ -2,8 +2,10 @@ package mint.inference.gp;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.microsoft.z3.Context;
 
@@ -145,9 +147,21 @@ public class Generator {
 
 	public List<Chromosome> generateIntegerPopulation(int size, int maxD) {
 		List<Chromosome> population = new ArrayList<Chromosome>();
+		Set<String> stringPopulation = new HashSet<String>();
 		for (int i = 0; i < size; i++) {
 			RootInteger ri = new RootInteger();
-			population.add(ri.createInstance(this, maxD));
+			Chromosome instance;
+			// We want to make sure the initial population is filled with unique individuals
+			// if we can. If there are no nonterminals then we can't do this.
+			if (!iFunctions.isEmpty()) {
+				do {
+					instance = ri.createInstance(this, maxD);
+				} while (stringPopulation.contains(instance.toString()));
+			} else {
+				instance = ri.createInstance(this, maxD);
+			}
+			population.add(instance);
+			stringPopulation.add(instance.toString());
 		}
 		return population;
 	}
