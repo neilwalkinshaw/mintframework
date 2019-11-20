@@ -59,4 +59,8 @@ public abstract class VariableTerminal<T extends VariableAssignment<?>> extends 
 		return LATENT;
 	}
 
+	public String typeString() {
+		return this.getTerminal().typeString();
+	}
+
 }

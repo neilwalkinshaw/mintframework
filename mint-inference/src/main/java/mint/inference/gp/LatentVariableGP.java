@@ -95,17 +95,6 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		}
 	}
 
-//	private List<Chromosome> removeDuplicates() {
-//		List<Chromosome> newPop = new ArrayList<Chromosome>();
-//		for (Chromosome c : population) {
-//			Node<?> node = (Node<?>) c;
-//			if (!gen.populationContains(newPop, node)) {
-//				newPop.add(c);
-//			}
-//		}
-//		return newPop;
-//	}
-
 	@Override
 	public Chromosome evolve(int lim) {
 		System.out.println("Michael's");
@@ -152,16 +141,6 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		}
 
 		return fittest;
-	}
-
-	@Override
-	public List<Chromosome> removeDuplicates(List<Chromosome> pop) {
-		List<Chromosome> newPop = new ArrayList<Chromosome>();
-		for (Chromosome c : pop) {
-			if (!gen.populationContains(newPop, c))
-				newPop.add(c);
-		}
-		return newPop;
 	}
 
 }

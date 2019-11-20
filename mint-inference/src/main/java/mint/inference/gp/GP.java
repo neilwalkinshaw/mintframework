@@ -1,5 +1,6 @@
 package mint.inference.gp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -86,4 +87,14 @@ public abstract class GP<T> extends AbstractEvo {
 	}
 
 	public abstract boolean isCorrect(Chromosome c);
+
+	@Override
+	public List<Chromosome> removeDuplicates(List<Chromosome> pop) {
+		List<Chromosome> newPop = new ArrayList<Chromosome>();
+		for (Chromosome c : pop) {
+			if (!gen.populationContains(newPop, c))
+				newPop.add(c);
+		}
+		return newPop;
+	}
 }

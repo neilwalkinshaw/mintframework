@@ -76,11 +76,11 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 	protected AbstractIterator getIterator(List<Chromosome> population) {
 		if (selection != null) {
 			List<Chromosome> elites = selection.getElite();
-			return new Iterate(elites, population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen, getGPConf().getDepth(),
-					new Random(Configuration.getInstance().SEED));
+			return new Iterate(elites, population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen,
+					getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 		}
-		return new Iterate(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen,
-				getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
+		return new Iterate(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(),
+				getGPConf().getMutation(), gen, getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 	}
 
 	@Override
