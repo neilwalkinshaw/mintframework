@@ -57,19 +57,20 @@ public class NodeSimplifier {
 		if (exp.isMul() && exp.getArgs()[0].toString().equals("-1") && exp.getArgs().length == 2) {
 			IntegerVariableAssignment zero = new IntegerVariableAssignment("0", 0);
 			Node<IntegerVariableAssignment> c2 = fromZ3((IntExpr) exp.getArgs()[1]);
-			return new SubtractIntegersOperator(new IntegerVariableAssignmentTerminal(zero, true), c2);
+			return new SubtractIntegersOperator(new IntegerVariableAssignmentTerminal(zero, true, false), c2);
 		}
 		if (exp.isMul()) {
 			return (Node<IntegerVariableAssignment>) makeBinary(exp.getArgs(), new MultiplyIntegersOperator());
 		}
 		if (exp.isConst()) {
 			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString());
-			return new IntegerVariableAssignmentTerminal(num, false);
+			// This sets all "r" variable names to be latent
+			return new IntegerVariableAssignmentTerminal(num, false, exp.toString().startsWith("r"));
 		}
 		if (exp.isIntNum()) {
 			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString(),
 					Integer.valueOf(exp.toString()));
-			return new IntegerVariableAssignmentTerminal(num, true);
+			return new IntegerVariableAssignmentTerminal(num, true, false);
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
@@ -85,15 +86,16 @@ public class NodeSimplifier {
 		if (exp.isMul() && Double.valueOf(exp.getArgs()[0].toString()) == -1 && exp.getArgs().length == 2) {
 			DoubleVariableAssignment zero = new DoubleVariableAssignment("0", 0D);
 			Node<DoubleVariableAssignment> c2 = fromZ3((RealExpr) exp.getArgs()[1]);
-			return new SubtractDoublesOperator(new DoubleVariableAssignmentTerminal(zero, true), c2);
+			return new SubtractDoublesOperator(new DoubleVariableAssignmentTerminal(zero, true, false), c2);
 		}
 		if (exp.isConst()) {
 			DoubleVariableAssignment num = new DoubleVariableAssignment(exp.toString());
-			return new DoubleVariableAssignmentTerminal(num, false);
+			// This sets all "r" variable names to be latent
+			return new DoubleVariableAssignmentTerminal(num, false, exp.toString().startsWith("r"));
 		}
 		if (exp.isRatNum()) {
 			DoubleVariableAssignment num = new DoubleVariableAssignment(exp.toString(), Double.valueOf(exp.toString()));
-			return new DoubleVariableAssignmentTerminal(num, true);
+			return new DoubleVariableAssignmentTerminal(num, true, false);
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
@@ -156,7 +158,7 @@ public class NodeSimplifier {
 		if (exp.isConst()) {
 			BooleanVariableAssignment num = new BooleanVariableAssignment(exp.toString(),
 					Boolean.valueOf(exp.toString()));
-			return new BooleanVariableAssignmentTerminal(num, true);
+			return new BooleanVariableAssignmentTerminal(num, true, false);
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
@@ -165,9 +167,12 @@ public class NodeSimplifier {
 		if (exp.isConst() && exp.getFuncDecl().getName().toString().equals("String")) {
 			return new StringVariableAssignmentTerminal(exp.getString());
 		}
-		if (exp.isConst())
-			return new StringVariableAssignmentTerminal(
-					new StringVariableAssignment(exp.getFuncDecl().getName().toString()), false);
+		if (exp.isConst()) {
+			String vname = exp.getFuncDecl().getName().toString();
+			// This sets all "r" variable names to be latent
+			return new StringVariableAssignmentTerminal(new StringVariableAssignment(vname), false,
+					vname.startsWith("r"));
+		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
 

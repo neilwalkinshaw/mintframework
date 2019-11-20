@@ -182,9 +182,9 @@ public class GPTestRunner extends TestRunner {
 
 		List<VariableTerminal<?>> boolTerms = new ArrayList<VariableTerminal<?>>();
 		VariableAssignment<Boolean> truevar = new BooleanVariableAssignment("truez", true);
-		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true);
+		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true, false);
 		VariableAssignment<Boolean> falsevar = new BooleanVariableAssignment("falsez", false);
-		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true);
+		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true, false);
 		boolTerms.add(trueterm);
 		boolTerms.add(falseterm);
 		gpGenerator.setBooleanTerminals(boolTerms);
@@ -217,7 +217,7 @@ public class GPTestRunner extends TestRunner {
 			if (var.typeString().equals(":D")) {
 				DoubleVariableAssignment dvar = new DoubleVariableAssignment(var.getName());
 				dvar.setParameter(true);
-				doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, false));
+				doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, false, false));
 			}
 
 		}
@@ -233,9 +233,9 @@ public class GPTestRunner extends TestRunner {
 		dvar3.setParameter(false);
 		dvar3.setMax(20D);
 		dvar3.setMin(-20D);
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar2, true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar3, true));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar2, true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar3, true, false));
 		return doubleTerms;
 	}
 
@@ -260,7 +260,7 @@ public class GPTestRunner extends TestRunner {
 		Map<String, Integer> consts = IntegerVariableAssignment.getConstMap();
 		for (String i : IntegerVariableAssignment.getConstMap().keySet()) {
 			IntegerVariableAssignment var = new IntegerVariableAssignment(i, consts.get(i));
-			intTerms.add(new IntegerVariableAssignmentTerminal(var, true));
+			intTerms.add(new IntegerVariableAssignmentTerminal(var, true, false));
 		}
 		// intTerms.add(new IntegerVariableAssignmentTerminal(dvar2, true));
 		// intTerms.add(new IntegerVariableAssignmentTerminal(dvar3, true));

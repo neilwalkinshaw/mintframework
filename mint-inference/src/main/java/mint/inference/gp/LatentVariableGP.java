@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.log4j.Logger;
 
 import mint.Configuration;
 import mint.inference.evo.AbstractIterator;
@@ -15,6 +16,7 @@ import mint.inference.evo.Selection;
 import mint.inference.evo.TournamentSelection;
 import mint.inference.gp.fitness.latentVariable.BooleanFitness;
 import mint.inference.gp.fitness.latentVariable.IntegerFitness;
+import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.fitness.latentVariable.StringFitness;
 import mint.inference.gp.selection.LatentVariableTournament;
 import mint.inference.gp.tree.Node;
@@ -29,6 +31,8 @@ import mint.tracedata.types.VariableAssignment;
  */
 public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
+	private final static Logger LOGGER = Logger.getLogger(GP.class.getName());
+
 	protected TournamentSelection selection = null;
 
 	public LatentVariableGP(Generator gen, MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
@@ -41,7 +45,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
 	@Override
 	public Selection getSelection(List<Chromosome> currentPop) {
-		selection = new LatentVariableTournament(evals, currentPop, gpConf.getDepth());
+		selection = new LatentVariableTournament(evals, currentPop, getGPConf().getDepth());
 		return selection;
 	}
 
@@ -64,11 +68,11 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 	protected AbstractIterator getIterator(List<Chromosome> population) {
 		if (selection != null) {
 			List<Chromosome> elites = selection.getElite();
-			return new Iterate(elites, population, gpConf.getCrossOver(), gpConf.getMutation(), gen, gpConf.getDepth(),
-					new Random(Configuration.getInstance().SEED));
+			return new Iterate(elites, population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen,
+					getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 		}
-		return new Iterate(new ArrayList<Chromosome>(), population, gpConf.getCrossOver(), gpConf.getMutation(), gen,
-				gpConf.getDepth(), new Random(Configuration.getInstance().SEED));
+		return new Iterate(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(),
+				getGPConf().getMutation(), gen, getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 	}
 
 	@Override
@@ -90,4 +94,74 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 			return false;
 		}
 	}
+
+//	private List<Chromosome> removeDuplicates() {
+//		List<Chromosome> newPop = new ArrayList<Chromosome>();
+//		for (Chromosome c : population) {
+//			Node<?> node = (Node<?>) c;
+//			if (!gen.populationContains(newPop, node)) {
+//				newPop.add(c);
+//			}
+//		}
+//		return newPop;
+//	}
+
+	@Override
+	public Chromosome evolve(int lim) {
+		System.out.println("Michael's");
+		assert (lim > 0);
+		population = generatePopulation(getGPConf().getPopulationSize() - seeds.size());
+
+		population.addAll(seeds);
+
+		System.out.println("Population: " + population);
+
+		AbstractIterator it = getIterator(population);
+		Chromosome fittest = null;
+		double bestFitness = 0;
+		for (int i = 0; i < lim; i++) {
+
+			population = it.iterate(this);
+
+			for (Chromosome c : getPopulation()) {
+				LatentVariableFitness<?> fit;
+				if (((Node<?>) c).getType() == "string")
+					fit = new StringFitness(evals, (Node<VariableAssignment<String>>) c, this.getGPConf().getDepth());
+				else if (((Node<?>) c).getType() == "integer")
+					fit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c, this.getGPConf().getDepth());
+				else {
+					assert (((Node<?>) c).getType() == "boolean");
+					fit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c, this.getGPConf().getDepth());
+				}
+				try {
+					double fitness = fit.call();
+					if (fittest == null || fitness < bestFitness) {
+						fittest = c;
+						bestFitness = fitness;
+					}
+				} catch (InterruptedException e) {
+				}
+			}
+
+			LOGGER.debug("GP iteration: " + i + " - best fitness: " + bestFitness + " New population: " + population);
+
+			if (bestFitness <= 0D)
+				break;
+
+			it = getIterator(population);
+		}
+
+		return fittest;
+	}
+
+	@Override
+	public List<Chromosome> removeDuplicates(List<Chromosome> pop) {
+		List<Chromosome> newPop = new ArrayList<Chromosome>();
+		for (Chromosome c : pop) {
+			if (!gen.populationContains(newPop, c))
+				newPop.add(c);
+		}
+		return newPop;
+	}
+
 }

@@ -12,6 +12,7 @@ import mint.inference.gp.CallableNodeExecutor;
 import mint.inference.gp.fitness.Fitness;
 import mint.inference.gp.fitness.InvalidDistanceException;
 import mint.inference.gp.tree.Node;
+import mint.inference.gp.tree.terminals.VariableTerminal;
 import mint.tracedata.types.VariableAssignment;
 
 /**
@@ -44,7 +45,7 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 	}
 
 	private double calculateDistance(Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current,
-			Set<VariableAssignment<T>> undef) throws InterruptedException {
+			Set<VariableTerminal<?>> latent) throws InterruptedException {
 		individual.reset();
 		List<VariableAssignment<?>> ctx = makeCtx(current);
 		CallableNodeExecutor<T> executor = new CallableNodeExecutor<>(individual, ctx);
@@ -52,21 +53,22 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 		T actual = null;
 
 		try {
-			if (undef.isEmpty()) {
+			if (latent.isEmpty()) {
 				actual = executor.call();
 				minDistance = distance(actual, current.getValue().getValue());
 				individual.reset();
 			}
 
-			for (VariableAssignment<T> var : undef) {
-				T[] values = (T[]) var.getValues().toArray();
+			for (VariableTerminal<?> var : latent) {
+				T[] values = (T[]) var.getTerminal().getValues().toArray();
 				for (T value : values) {
 					var.setValue(value);
-					ctx.add(var.copy());
+					ctx.add(var.getTerminal().copy());
 					executor = new CallableNodeExecutor<>(individual, ctx);
 					actual = executor.call();
 					double offBy = distance(actual, current.getValue().getValue());
-//					System.out.println("value: "+value+" expected: "+current.getValue().getValue()+" actual: "+actual+" distance: "+offBy);
+//					System.out.println("value: " + value + " expected: " + current.getValue().getValue() + " actual: "
+//							+ actual + " distance: " + offBy);
 					if (offBy < minDistance) {
 						minDistance = offBy;
 					}
@@ -95,20 +97,19 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 		}
 
 		double mistakes = 0D;
-		Set<String> totalUsedVars = totalUsedVars();
 		List<Double> distances = new ArrayList<Double>();
 
-		Set<VariableAssignment<T>> undef = undefVars(individual, totalUsedVars);
+		Set<VariableTerminal<?>> latent = latentVars(individual);
 
 //		System.out.println("Evaluating: " + individual + " Undef: " + undef);
 
-		Set<String> totalUnusedVars = totalUsedVars;
-		for (VariableAssignment<T> vName : individual.varsInTree()) {
+		Set<String> totalUnusedVars = totalUsedVars();
+		for (VariableTerminal<?> vName : individual.varsInTree()) {
 			totalUnusedVars.remove(vName.getName());
 		}
 
 		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
-			double minDistance = calculateDistance(current, undef);
+			double minDistance = calculateDistance(current, latent);
 			distances.add(minDistance);
 			if (minDistance > 0D) {
 				mistakes++;
@@ -123,7 +124,7 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 
 //		System.out.println("individual: " + individual);
 		double proportionUnusedVars = totalUnusedVars.size() / (double) individual.numVarsInTree();
-		return fitness + proportionUnusedVars;
+		return fitness + proportionUnusedVars + latent.size();
 	}
 
 	private Set<String> totalUsedVars() {
@@ -144,12 +145,11 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 		return ctx;
 	}
 
-	private Set<VariableAssignment<T>> undefVars(Node<VariableAssignment<T>> exp, Set<String> defVars) {
-		Set<VariableAssignment<T>> varsInTree = exp.varsInTree();
-		for (VariableAssignment<T> v1 : exp.varsInTree()) {
-			if (defVars.contains(v1.getName())) {
-				varsInTree.remove(v1);
-			}
+	private Set<VariableTerminal<?>> latentVars(Node<VariableAssignment<T>> exp) {
+		Set<VariableTerminal<?>> varsInTree = new HashSet<VariableTerminal<?>>();
+		for (VariableTerminal<?> v1 : exp.varsInTree()) {
+			if (v1.isLatent())
+				varsInTree.add(v1);
 		}
 		return varsInTree;
 	}
@@ -186,10 +186,10 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 	public boolean correct() throws InterruptedException {
 		Set<String> totalUsedVars = totalUsedVars();
 
-		Set<VariableAssignment<T>> undef = undefVars(individual, totalUsedVars);
+		Set<VariableTerminal<?>> undef = latentVars(individual);
 
 		Set<String> totalUnusedVars = totalUsedVars;
-		for (VariableAssignment<T> vName : individual.varsInTree()) {
+		for (VariableTerminal<?> vName : individual.varsInTree()) {
 			totalUnusedVars.remove(vName.getName());
 		}
 

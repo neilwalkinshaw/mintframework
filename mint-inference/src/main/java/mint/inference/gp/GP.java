@@ -41,19 +41,19 @@ public abstract class GP<T> extends AbstractEvo {
 	}
 
 	@Override
-	protected List<Chromosome> generatePopulation(int i) {
+	public List<Chromosome> generatePopulation(int i) {
 		String type = getType();
 		List<Chromosome> population = null;
 		if (type.equals("Double")) {
-			population = gen.generateDoublePopulation(i, gpConf.getDepth());
+			population = gen.generateDoublePopulation(i, getGPConf().getDepth());
 		} else if (type.equals("Integer")) {
-			population = gen.generateIntegerPopulation(i, gpConf.getDepth());
+			population = gen.generateIntegerPopulation(i, getGPConf().getDepth());
 		} else if (type.equals("String")) {
-			population = gen.generateStringPopulation(i, gpConf.getDepth());
+			population = gen.generateStringPopulation(i, getGPConf().getDepth());
 		} else if (type.equals("Boolean")) {
-			population = gen.generateBooleanPopulation(i, gpConf.getDepth());
+			population = gen.generateBooleanPopulation(i, getGPConf().getDepth());
 		} else if (type.equals("List")) {
-			population = gen.generateListPopulation(i, gpConf.getDepth(), getTypeString());
+			population = gen.generateListPopulation(i, getGPConf().getDepth(), getTypeString());
 		} else {
 			LOGGER.error("Failed to generate population for undefined type.");
 		}

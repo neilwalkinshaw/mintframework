@@ -1,9 +1,7 @@
 package mint.inference.gp.tree;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import mint.tracedata.types.VariableAssignment;
 
@@ -65,16 +63,5 @@ public abstract class Terminal<V extends VariableAssignment<?>> extends Node<V> 
 	@Override
 	public int size() {
 		return 1;
-	}
-
-	@Override
-	public Set<V> varsInTree() {
-		if (this.isConstant()) {
-			return new HashSet<V>();
-		} else {
-			Set<V> vars = new HashSet<V>();
-			vars.add(terminal);
-			return vars;
-		}
 	}
 }

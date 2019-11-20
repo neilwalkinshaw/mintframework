@@ -1,5 +1,8 @@
 package mint.inference.gp.tree.terminals;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
@@ -14,8 +17,8 @@ import mint.tracedata.types.VariableAssignment;
  */
 public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanVariableAssignment> {
 
-	public BooleanVariableAssignmentTerminal(VariableAssignment<Boolean> var, boolean constant) {
-		super(constant);
+	public BooleanVariableAssignmentTerminal(VariableAssignment<Boolean> var, boolean constant, boolean latent) {
+		super(constant, latent);
 		this.terminal = (BooleanVariableAssignment) var;
 	}
 
@@ -28,9 +31,9 @@ public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanV
 	}
 
 	@Override
-	public Terminal<BooleanVariableAssignment> copy() {
+	public BooleanVariableAssignmentTerminal copy() {
 		VariableAssignment<Boolean> copied = terminal.copy();
-		return new BooleanVariableAssignmentTerminal(copied, constant);
+		return new BooleanVariableAssignmentTerminal(copied, constant, LATENT);
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanV
 	@Override
 	protected Terminal<BooleanVariableAssignment> getTermFromVals() {
 		BooleanVariableAssignment bvar = new BooleanVariableAssignment("res", (Boolean) vals.iterator().next());
-		BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar, true);
+		BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar, true, false);
 		return term;
 	}
 
@@ -71,4 +74,12 @@ public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanV
 		}
 		return ctx.mkBoolConst(this.getName());
 	}
+
+	@Override
+	public Set<VariableTerminal<?>> varsInTree() {
+		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
+		v.add(this.copy());
+		return v;
+	}
+
 }

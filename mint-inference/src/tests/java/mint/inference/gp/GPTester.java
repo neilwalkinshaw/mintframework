@@ -65,12 +65,12 @@ public class GPTester {
 		gpGenerator.setDoubleFunctions(doubleNonTerms);
 
 		List<VariableTerminal<?>> doubleTerms = new ArrayList<VariableTerminal<?>>();
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false, false));
 		// doubleTerms.add(new DoubleVariableAssignmentTerminal(new
 		// DoubleVariableAssignment("2",2.0), true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1", 1D), true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0", 0.5D), true));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1", 1D), true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0", 0.5D), true, false));
 		gpGenerator.setDoubleTerminals(doubleTerms);
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
@@ -87,9 +87,9 @@ public class GPTester {
 
 		List<VariableTerminal<?>> boolTerms = new ArrayList<VariableTerminal<?>>();
 		VariableAssignment<Boolean> truevar = new BooleanVariableAssignment("true", true);
-		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true);
+		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true, false);
 		VariableAssignment<Boolean> falsevar = new BooleanVariableAssignment("false", false);
-		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true);
+		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true, false);
 		boolTerms.add(trueterm);
 		boolTerms.add(falseterm);
 		gpGenerator.setBooleanTerminals(boolTerms);
@@ -126,11 +126,11 @@ public class GPTester {
 		gpGenerator.setDoubleFunctions(doubleNonTerms);
 
 		List<VariableTerminal<?>> doubleTerms = new ArrayList<VariableTerminal<?>>();
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("2", 2.0), true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1", 1D), true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0", 0D), true));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("2", 2.0), true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1", 1D), true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0", 0D), true, false));
 		gpGenerator.setDoubleTerminals(doubleTerms);
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
@@ -147,9 +147,9 @@ public class GPTester {
 
 		List<VariableTerminal<?>> boolTerms = new ArrayList<VariableTerminal<?>>();
 		VariableAssignment<Boolean> truevar = new BooleanVariableAssignment("true", true);
-		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true);
+		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true, false);
 		VariableAssignment<Boolean> falsevar = new BooleanVariableAssignment("false", false);
-		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true);
+		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true, false);
 		boolTerms.add(trueterm);
 		boolTerms.add(falseterm);
 		gpGenerator.setBooleanTerminals(boolTerms);
@@ -174,10 +174,10 @@ public class GPTester {
 		gpGenerator.setDoubleFunctions(doubleNonTerms);
 
 		List<VariableTerminal<?>> doubleTerms = new ArrayList<VariableTerminal<?>>();
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1", 1.0), true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0.5", 0.5), true));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("a"), false, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("b"), false, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1", 1.0), true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0.5", 0.5), true, false));
 		// doubleTerms.add(new ReadAuxTerminal());
 		gpGenerator.setDoubleTerminals(doubleTerms);
 
@@ -196,9 +196,9 @@ public class GPTester {
 
 		List<VariableTerminal<?>> boolTerms = new ArrayList<VariableTerminal<?>>();
 		VariableAssignment<Boolean> truevar = new BooleanVariableAssignment("true", true);
-		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true);
+		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true, false);
 		VariableAssignment<Boolean> falsevar = new BooleanVariableAssignment("false", false);
-		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true);
+		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true, false);
 		boolTerms.add(trueterm);
 		boolTerms.add(falseterm);
 		gpGenerator.setBooleanTerminals(boolTerms);
@@ -247,9 +247,9 @@ public class GPTester {
 		VariableAssignment<Double> add = new DoubleVariableAssignment("j", 0D);
 		VariableAssignment<Double> one = new DoubleVariableAssignment("one", 1D);
 
-		DoubleVariableAssignmentTerminal varvar = new DoubleVariableAssignmentTerminal(var, true);
-		DoubleVariableAssignmentTerminal addvar = new DoubleVariableAssignmentTerminal(add, true);
-		DoubleVariableAssignmentTerminal incvar = new DoubleVariableAssignmentTerminal(one, false);
+		DoubleVariableAssignmentTerminal varvar = new DoubleVariableAssignmentTerminal(var, true, false);
+		DoubleVariableAssignmentTerminal addvar = new DoubleVariableAssignmentTerminal(add, true, false);
+		DoubleVariableAssignmentTerminal incvar = new DoubleVariableAssignmentTerminal(one, false, false);
 
 		BooleanNonTerminal intvar = new EQBooleanOperator(addvar, new SubtractDoublesOperator(incvar, incvar));
 

@@ -1,5 +1,8 @@
 package mint.inference.gp.tree.terminals;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
@@ -16,8 +19,8 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 
 	protected int origVal;
 
-	public IntegerVariableAssignmentTerminal(VariableAssignment<Integer> var, boolean constant) {
-		super(constant);
+	public IntegerVariableAssignmentTerminal(VariableAssignment<Integer> var, boolean constant, boolean latent) {
+		super(constant, latent);
 		if (var.getValue() != null)
 			origVal = var.getValue();
 		this.terminal = (IntegerVariableAssignment) var;
@@ -25,21 +28,20 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 
 	// For initialising constants
 	public IntegerVariableAssignmentTerminal(int value) {
-		super(true);
+		super(true, false);
 		IntegerVariableAssignment var = new IntegerVariableAssignment(String.valueOf(value), value, true);
 		this.terminal = var;
 	}
 
 	// For initialising variables
-	public IntegerVariableAssignmentTerminal(String name) {
-		super(false);
+	public IntegerVariableAssignmentTerminal(String name, boolean latent) {
+		super(false, latent);
 		IntegerVariableAssignment var = new IntegerVariableAssignment(name);
 		this.terminal = var;
 	}
 
 	@Override
 	public void setValue(Object val) {
-
 		if (val instanceof Integer) {
 			Integer intval = (Integer) val;
 			terminal.setValue(intval);
@@ -49,7 +51,7 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 	@Override
 	protected Terminal<IntegerVariableAssignment> getTermFromVals() {
 		IntegerVariableAssignment ivar = new IntegerVariableAssignment("res", (Integer) vals.iterator().next());
-		IntegerVariableAssignmentTerminal term = new IntegerVariableAssignmentTerminal(ivar, true);
+		IntegerVariableAssignmentTerminal term = new IntegerVariableAssignmentTerminal(ivar, true, false);
 		return term;
 	}
 
@@ -66,9 +68,9 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 	}
 
 	@Override
-	public Terminal<IntegerVariableAssignment> copy() {
+	public IntegerVariableAssignmentTerminal copy() {
 		VariableAssignment<Integer> copied = terminal.copy();
-		return new IntegerVariableAssignmentTerminal(copied, constant);
+		return new IntegerVariableAssignmentTerminal(copied, constant, LATENT);
 	}
 
 	@Override
@@ -96,5 +98,12 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 			return ctx.mkInt(this.getTerminal().getValue());
 		}
 		return ctx.mkIntConst(this.getName());
+	}
+
+	@Override
+	public Set<VariableTerminal<?>> varsInTree() {
+		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
+		v.add(this.copy());
+		return v;
 	}
 }

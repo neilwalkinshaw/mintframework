@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import mint.inference.evo.Chromosome;
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.terminals.VariableTerminal;
 import mint.tracedata.types.VariableAssignment;
 
 /**
@@ -126,11 +128,11 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 	}
 
 	@Override
-	public Set<T> varsInTree() {
-		Set<T> vars = new HashSet<T>();
+	public Set<VariableTerminal<?>> varsInTree() {
+		Set<VariableTerminal<?>> vars = new HashSet<VariableTerminal<?>>();
 		for (Node<?> child : this.getChildren()) {
-			for (VariableAssignment<?> var : child.varsInTree()) {
-				vars.add((T) var);
+			for (VariableTerminal<?> var : child.varsInTree()) {
+				vars.add(var);
 			}
 		}
 		return vars;
@@ -164,4 +166,18 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 	}
 
 	protected abstract NonTerminal<T> newInstance();
+
+	@Override
+	public boolean sameSyntax(Chromosome c) {
+		if (this.getClass().equals(c.getClass())) {
+			if (this.getChildren().size() == ((NonTerminal<T>) c).getChildren().size()) {
+				for (int i = 0; i < this.getChildren().size(); i++) {
+					if (!(this.getChild(i).sameSyntax(((NonTerminal<T>) c).getChild(i))))
+						return false;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 }

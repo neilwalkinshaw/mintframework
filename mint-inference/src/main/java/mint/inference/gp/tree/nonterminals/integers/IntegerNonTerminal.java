@@ -39,7 +39,7 @@ public abstract class IntegerNonTerminal extends NonTerminal<IntegerVariableAssi
 	@Override
 	public Terminal<IntegerVariableAssignment> getTermFromVals() {
 		IntegerVariableAssignment ivar = new IntegerVariableAssignment("res", (Integer) vals.iterator().next());
-		IntegerVariableAssignmentTerminal term = new IntegerVariableAssignmentTerminal(ivar, true);
+		IntegerVariableAssignmentTerminal term = new IntegerVariableAssignmentTerminal(ivar, true, false);
 		return term;
 	}
 

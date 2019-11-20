@@ -216,13 +216,13 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 			if (var.typeString().equals(":B")) {
 				BooleanVariableAssignment iv = new BooleanVariableAssignment(var.getName());
 				iv.setParameter(true);
-				intTerms.add(new BooleanVariableAssignmentTerminal(iv, false));
+				intTerms.add(new BooleanVariableAssignmentTerminal(iv, false, false));
 			}
 		}
 		VariableAssignment<Boolean> truevar = new BooleanVariableAssignment("true", true);
-		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true);
+		BooleanVariableAssignmentTerminal trueterm = new BooleanVariableAssignmentTerminal(truevar, true, false);
 		VariableAssignment<Boolean> falsevar = new BooleanVariableAssignment("false", false);
-		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true);
+		BooleanVariableAssignmentTerminal falseterm = new BooleanVariableAssignmentTerminal(falsevar, true, false);
 		intTerms.add(trueterm);
 		intTerms.add(falseterm);
 		return intTerms;
@@ -235,7 +235,7 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 			if (var.typeString().equals(":I")) {
 				IntegerVariableAssignment iv = new IntegerVariableAssignment(var.getName());
 				iv.setParameter(true);
-				intTerms.add(new IntegerVariableAssignmentTerminal(iv, false));
+				intTerms.add(new IntegerVariableAssignmentTerminal(iv, false, false));
 			}
 		}
 		IntegerVariableAssignment dvar = new IntegerVariableAssignment("randA", -200);
@@ -252,9 +252,9 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 		dvar3.setMin(-2000);
 		// doubleTerms.add(new DoubleVariableAssignmentTerminal(new
 		// DoubleVariableAssignment("0.1",0.1D), true));
-		intTerms.add(new IntegerVariableAssignmentTerminal(dvar, true));
-		intTerms.add(new IntegerVariableAssignmentTerminal(dvar2, true));
-		intTerms.add(new IntegerVariableAssignmentTerminal(dvar3, true));
+		intTerms.add(new IntegerVariableAssignmentTerminal(dvar, true, false));
+		intTerms.add(new IntegerVariableAssignmentTerminal(dvar2, true, false));
+		intTerms.add(new IntegerVariableAssignmentTerminal(dvar3, true, false));
 		return intTerms;
 	}
 
@@ -272,7 +272,7 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 					if (!doneVars.contains(var.getName())) {
 						StringVariableAssignment param = new StringVariableAssignment(var.getName());
 						param.setParameter(true);
-						stringTerms.add(new StringVariableAssignmentTerminal(param, true));
+						stringTerms.add(new StringVariableAssignmentTerminal(param, true, false));
 						doneVars.add(var.getName());
 					}
 				}
@@ -289,7 +289,8 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 		}
 		// generate concrete String terminals from seed values.
 		for (String value : values) {
-			stringTerms.add(new StringVariableAssignmentTerminal(new StringVariableAssignment(value, value), true));
+			stringTerms
+					.add(new StringVariableAssignmentTerminal(new StringVariableAssignment(value, value), true, false));
 		}
 		return stringTerms;
 	}
@@ -302,20 +303,20 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 				if (var.typeString().equals(":D")) {
 					DoubleVariableAssignment dvar = new DoubleVariableAssignment(var.getName());
 					dvar.setParameter(true);
-					DoubleVariableAssignmentTerminal param = new DoubleVariableAssignmentTerminal(dvar, false);
+					DoubleVariableAssignmentTerminal param = new DoubleVariableAssignmentTerminal(dvar, false, false);
 					doubleTerms.add(param);
 				}
 			}
 		}
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0.5", 0.5D), true));
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0", 0D), true));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0.5", 0.5D), true, false));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0", 0D), true, false));
 		// doubleTerms.add(new DoubleVariableAssignmentTerminal(new
 		// DoubleVariableAssignment("2",2D), true));
 		DoubleVariableAssignment dvar = new DoubleVariableAssignment("randA", -1D);
 		dvar.setParameter(false);
 		dvar.setMax(2000D);
 		dvar.setMin(-2000D);
-		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, true));
+		doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, true, false));
 		return doubleTerms;
 	}
 

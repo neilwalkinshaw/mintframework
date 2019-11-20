@@ -2,10 +2,8 @@ package mint.inference.gp;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import com.microsoft.z3.Context;
 
@@ -107,7 +105,7 @@ public class Generator {
 	 * return selectRandomNonTerminal(nonTerms, maxD); }
 	 */
 
-	public Chromosome generateRandomExpression(int maxD, List<NonTerminal<?>> nonTerms,
+	public Chromosome generateRandomExpressionOld(int maxD, List<NonTerminal<?>> nonTerms,
 			List<VariableTerminal<?>> terms) {
 		if (nonTerms.isEmpty() || maxD < 2) {
 			return selectRandomTerminal(terms);
@@ -127,13 +125,25 @@ public class Generator {
 		}
 	}
 
-	public List<Chromosome> generateDoublePopulation(int size, int maxD) {
-		List<Chromosome> population = new ArrayList<Chromosome>();
-		for (int i = 0; i < size; i++) {
-			RootDouble rd = new RootDouble();
-			population.add(rd.createInstance(this, maxD));
+	public Chromosome generateRandomExpression(int maxD, List<NonTerminal<?>> nonTerms,
+			List<VariableTerminal<?>> terms) {
+		if (nonTerms.isEmpty() || maxD < 2) {
+			return selectRandomTerminal(terms);
+		} else {
+			if (rand.nextDouble() > 0.7)
+				return selectRandomTerminal(terms);
+
+			NonTerminal<?> selected = nonTerms.get(rand.nextInt(nonTerms.size()));
+			return selected.createInstance(this, maxD - 1);
 		}
-		return population;
+	}
+
+	public boolean populationContains(List<Chromosome> population, Chromosome c1) {
+		for (Chromosome c2 : population) {
+			if (c1.sameSyntax(c2))
+				return true;
+		}
+		return false;
 	}
 
 	public List<Chromosome> generateBooleanPopulation(int size, int maxD) {
@@ -145,9 +155,17 @@ public class Generator {
 		return population;
 	}
 
+	public List<Chromosome> generateDoublePopulation(int size, int maxD) {
+		List<Chromosome> population = new ArrayList<Chromosome>();
+		for (int i = 0; i < size; i++) {
+			RootDouble rd = new RootDouble();
+			population.add(rd.createInstance(this, maxD));
+		}
+		return population;
+	}
+
 	public List<Chromosome> generateIntegerPopulation(int size, int maxD) {
 		List<Chromosome> population = new ArrayList<Chromosome>();
-		Set<String> stringPopulation = new HashSet<String>();
 		for (int i = 0; i < size; i++) {
 			RootInteger ri = new RootInteger();
 			Chromosome instance;
@@ -156,12 +174,11 @@ public class Generator {
 			if (!iFunctions.isEmpty()) {
 				do {
 					instance = ri.createInstance(this, maxD);
-				} while (stringPopulation.contains(instance.toString()));
+				} while (populationContains(population, instance));
 			} else {
 				instance = ri.createInstance(this, maxD);
 			}
 			population.add(instance);
-			stringPopulation.add(instance.toString());
 		}
 		return population;
 	}

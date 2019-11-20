@@ -1,5 +1,8 @@
 package mint.inference.gp.tree.terminals;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -15,14 +18,14 @@ import mint.tracedata.types.VariableAssignment;
  */
 public class StringVariableAssignmentTerminal extends VariableTerminal<StringVariableAssignment> {
 
-	public StringVariableAssignmentTerminal(VariableAssignment<String> var, boolean constant) {
-		super(constant);
+	public StringVariableAssignmentTerminal(VariableAssignment<String> var, boolean constant, boolean latent) {
+		super(constant, latent);
 		this.terminal = (StringVariableAssignment) var;
 	}
 
 	// For initialising constants
 	public StringVariableAssignmentTerminal(String value) {
-		super(true);
+		super(true, false);
 		StringVariableAssignment var = new StringVariableAssignment(value, value, true);
 		this.terminal = var;
 	}
@@ -36,9 +39,9 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 	}
 
 	@Override
-	public Terminal<StringVariableAssignment> copy() {
+	public StringVariableAssignmentTerminal copy() {
 		VariableAssignment<String> copied = terminal.copy();
-		return new StringVariableAssignmentTerminal(copied, constant);
+		return new StringVariableAssignmentTerminal(copied, constant, LATENT);
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 	@Override
 	protected Terminal<StringVariableAssignment> getTermFromVals() {
 		StringVariableAssignment svar = new StringVariableAssignment("res", vals.iterator().next().toString());
-		StringVariableAssignmentTerminal term = new StringVariableAssignmentTerminal(svar, true);
+		StringVariableAssignmentTerminal term = new StringVariableAssignmentTerminal(svar, true, false);
 		return term;
 	}
 
@@ -71,5 +74,12 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 			return ctx.mkString(val);
 		}
 		return ctx.mkConst(ctx.mkFuncDecl(this.getName(), new Sort[] {}, ctx.mkStringSort()));
+	}
+
+	@Override
+	public Set<VariableTerminal<?>> varsInTree() {
+		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
+		v.add(this.copy());
+		return v;
 	}
 }

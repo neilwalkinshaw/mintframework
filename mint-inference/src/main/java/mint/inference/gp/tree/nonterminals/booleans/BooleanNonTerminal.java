@@ -29,7 +29,7 @@ public abstract class BooleanNonTerminal extends NonTerminal<BooleanVariableAssi
 	@Override
 	public Terminal<BooleanVariableAssignment> getTermFromVals() {
 		BooleanVariableAssignment bvar = new BooleanVariableAssignment("res", (Boolean) vals.iterator().next());
-		BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar, true);
+		BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar, true, false);
 		return term;
 	}
 

@@ -10,6 +10,7 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
+import mint.inference.evo.AbstractEvo;
 import mint.inference.evo.AbstractIterator;
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.tree.Node;
@@ -62,8 +63,7 @@ public class Iterate extends AbstractIterator {
 		try {
 			crossOverA = selectCrossOverPoint(aCopy, null);
 			crossOverB = selectCrossOverPoint(bCopy, crossOverA);
-			if (crossOverB == null) {
-
+			if (crossOverB == null || crossOverA == null) {
 				// LOGGER.debug("null crossover for children of "+aCopy);
 				return (parentA);
 			}
@@ -71,6 +71,8 @@ public class Iterate extends AbstractIterator {
 			crossOverA.swapWith(crossOverB);
 
 		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
 			LOGGER.debug(crossOverA + ", " + crossOverB);
 		}
 		return aCopy.simp();
@@ -204,7 +206,35 @@ public class Iterate extends AbstractIterator {
 			worklist.addAll(toAdd);
 //			currentDepth++;
 		}
+	}
 
+	@Override
+	public List<Chromosome> iterate(AbstractEvo gp) {
+		Collections.shuffle(population);
+		List<Chromosome> newPopulation = new ArrayList<>();
+		for (Chromosome el : elite) {
+			newPopulation.add(el.copy());
+		}
+		int numberCrossover = (int) ((population.size() - elite.size()) * crossOver);
+		int numberMutation = (int) ((population.size() - elite.size()) * mutation);
+		for (int crossOvers = 0; crossOvers < numberCrossover; crossOvers++) {
+			sel = gp.getSelection(population);
+			List<Chromosome> parents = sel.select(gp.getGPConf(), 2);
+			newPopulation.add(crossOver(parents.get(0), parents.get(1)));
+		}
+		for (int mutations = 0; mutations < numberMutation; mutations++) {
+			newPopulation.add(mutate(population.get(rand.nextInt(population.size()))));
+		}
+
+		newPopulation = gp.removeDuplicates(newPopulation);
+
+		int remainder = gp.getGPConf().getPopulationSize() - newPopulation.size();
+		if (remainder > 0) {
+			newPopulation.addAll(gp.generatePopulation(remainder));
+		}
+
+		Collections.shuffle(newPopulation);
+		return newPopulation;
 	}
 
 }

@@ -1,5 +1,8 @@
 package mint.inference.gp.tree.terminals;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
@@ -16,8 +19,8 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 
 	double origVal;
 
-	public DoubleVariableAssignmentTerminal(VariableAssignment<Double> var, boolean constant) {
-		super(constant);
+	public DoubleVariableAssignmentTerminal(VariableAssignment<Double> var, boolean constant, boolean latent) {
+		super(constant, latent);
 		if (var.getValue() != null)
 			origVal = var.getValue();
 		this.terminal = (DoubleVariableAssignment) var;
@@ -37,7 +40,7 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 	@Override
 	protected Terminal<DoubleVariableAssignment> getTermFromVals() {
 		DoubleVariableAssignment dvar = new DoubleVariableAssignment("res", (Double) vals.iterator().next());
-		DoubleVariableAssignmentTerminal term = new DoubleVariableAssignmentTerminal(dvar, true);
+		DoubleVariableAssignmentTerminal term = new DoubleVariableAssignmentTerminal(dvar, true, false);
 		return term;
 	}
 
@@ -56,9 +59,9 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 	}
 
 	@Override
-	public Terminal<DoubleVariableAssignment> copy() {
+	public DoubleVariableAssignmentTerminal copy() {
 		VariableAssignment<Double> copied = terminal.copy();
-		return new DoubleVariableAssignmentTerminal(copied, constant);
+		return new DoubleVariableAssignmentTerminal(copied, constant, LATENT);
 	}
 
 	@Override
@@ -86,5 +89,12 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 			return ctx.mkReal(this.getTerminal().getValue().longValue());
 		}
 		return ctx.mkRealConst(this.getName());
+	}
+
+	@Override
+	public Set<VariableTerminal<?>> varsInTree() {
+		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
+		v.add(this.copy());
+		return v;
 	}
 }

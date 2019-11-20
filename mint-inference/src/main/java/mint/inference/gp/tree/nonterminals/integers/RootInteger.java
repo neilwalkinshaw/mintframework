@@ -44,7 +44,7 @@ public class RootInteger extends IntegerNonTerminal {
 
 	@Override
 	public String nodeString() {
-		return childrenString();
+		return "R:" + childrenString();
 	}
 
 	@Override

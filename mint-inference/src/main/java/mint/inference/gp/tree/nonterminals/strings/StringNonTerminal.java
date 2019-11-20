@@ -12,25 +12,25 @@ import mint.tracedata.types.StringVariableAssignment;
  */
 public abstract class StringNonTerminal extends NonTerminal<StringVariableAssignment> {
 
-    @Override
-    public String getType() {
-        return "string";
-    }
+	@Override
+	public String getType() {
+		return "string";
+	}
 
-    @Override
-    public boolean accept(NodeVisitor visitor) throws InterruptedException {
-        visitor.visitEnter(this);
-        for(Node<?> child:children){
-            child.accept(visitor);
-        }
-        return visitor.visitExit(this);
-    }
+	@Override
+	public boolean accept(NodeVisitor visitor) throws InterruptedException {
+		visitor.visitEnter(this);
+		for (Node<?> child : children) {
+			child.accept(visitor);
+		}
+		return visitor.visitExit(this);
+	}
 
-    @Override
-    public Terminal<StringVariableAssignment> getTermFromVals(){
-        StringVariableAssignment svar = new StringVariableAssignment("res",vals.iterator().next().toString());
-        StringVariableAssignmentTerminal term = new StringVariableAssignmentTerminal(svar,true);
-        return term;
-    }
+	@Override
+	public Terminal<StringVariableAssignment> getTermFromVals() {
+		StringVariableAssignment svar = new StringVariableAssignment("res", vals.iterator().next().toString());
+		StringVariableAssignmentTerminal term = new StringVariableAssignmentTerminal(svar, true, false);
+		return term;
+	}
 
 }

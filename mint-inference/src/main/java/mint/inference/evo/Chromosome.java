@@ -9,4 +9,6 @@ public interface Chromosome {
 
 	public Chromosome simp();
 
+	public boolean sameSyntax(Chromosome c);
+
 }

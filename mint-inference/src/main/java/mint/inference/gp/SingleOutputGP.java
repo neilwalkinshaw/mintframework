@@ -53,7 +53,7 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 
 	@Override
 	public Selection getSelection(List<Chromosome> currentPop) {
-		selection = new SingleOutputTournament(evals, currentPop, gpConf.getDepth(), mem_dist);
+		selection = new SingleOutputTournament(evals, currentPop, getGPConf().getDepth(), mem_dist);
 		return selection;
 	}
 
@@ -76,11 +76,11 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 	protected AbstractIterator getIterator(List<Chromosome> population) {
 		if (selection != null) {
 			List<Chromosome> elites = selection.getElite();
-			return new Iterate(elites, population, gpConf.getCrossOver(), gpConf.getMutation(), gen, gpConf.getDepth(),
+			return new Iterate(elites, population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen, getGPConf().getDepth(),
 					new Random(Configuration.getInstance().SEED));
 		}
-		return new Iterate(new ArrayList<Chromosome>(), population, gpConf.getCrossOver(), gpConf.getMutation(), gen,
-				gpConf.getDepth(), new Random(Configuration.getInstance().SEED));
+		return new Iterate(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen,
+				getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 	}
 
 	@Override

@@ -31,7 +31,6 @@ public abstract class AbstractIterator {
 	}
 
 	public List<Chromosome> iterate(AbstractEvo gp) {
-
 		Collections.shuffle(population);
 		List<Chromosome> newPopulation = new ArrayList<>();
 		for (Chromosome el : elite) {
@@ -41,14 +40,14 @@ public abstract class AbstractIterator {
 		int numberMutation = (int) ((population.size() - elite.size()) * mutation);
 		for (int crossOvers = 0; crossOvers < numberCrossover; crossOvers++) {
 			sel = gp.getSelection(population);
-			List<Chromosome> parents = sel.select(gp.gpConf, 2);
+			List<Chromosome> parents = sel.select(gp.getGPConf(), 2);
 			newPopulation.add(crossOver(parents.get(0), parents.get(1)));
 		}
 		for (int mutations = 0; mutations < numberMutation; mutations++) {
 			newPopulation.add(mutate(population.get(rand.nextInt(population.size()))));
 		}
 
-		int remainder = gp.gpConf.getPopulationSize() - newPopulation.size();
+		int remainder = gp.getGPConf().getPopulationSize() - newPopulation.size();
 		if (remainder > 0) {
 			newPopulation.addAll(gp.generatePopulation(remainder));
 		}

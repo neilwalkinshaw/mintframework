@@ -38,8 +38,8 @@ public class GuardSRPlayground {
 
 		// Boolean terminals
 		List<VariableTerminal<?>> boolTerms = new ArrayList<VariableTerminal<?>>();
-		boolTerms.add(new BooleanVariableAssignmentTerminal(new BooleanVariableAssignment("tr", true), true));
-		boolTerms.add(new BooleanVariableAssignmentTerminal(new BooleanVariableAssignment("fa", false), true));
+		boolTerms.add(new BooleanVariableAssignmentTerminal(new BooleanVariableAssignment("tr", true), true, false));
+		boolTerms.add(new BooleanVariableAssignmentTerminal(new BooleanVariableAssignment("fa", false), true, false));
 		gpGenerator.setBooleanTerminals(boolTerms);
 
 		// Boolean nonterminals
@@ -53,7 +53,7 @@ public class GuardSRPlayground {
 
 		// Integer terminals
 		List<VariableTerminal<?>> integerTerms = new ArrayList<VariableTerminal<?>>();
-		integerTerms.add(new IntegerVariableAssignmentTerminal("r1"));
+		integerTerms.add(new IntegerVariableAssignmentTerminal("r1", true));
 		integerTerms.add(new IntegerVariableAssignmentTerminal(50));
 		integerTerms.add(new IntegerVariableAssignmentTerminal(100));
 		integerTerms.add(new IntegerVariableAssignmentTerminal(0));

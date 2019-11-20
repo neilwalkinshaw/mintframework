@@ -13,6 +13,7 @@ import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
 import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
+import mint.inference.gp.tree.terminals.VariableTerminal;
 import mint.tracedata.types.VariableAssignment;
 
 /**
@@ -157,7 +158,7 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		return maxDepth;
 	}
 
-	public abstract Set<T> varsInTree();
+	public abstract Set<VariableTerminal<?>> varsInTree();
 
 	public abstract Expr toZ3(Context ctx);
 

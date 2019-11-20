@@ -8,11 +8,12 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.microsoft.z3.Z3Exception;
-
+import mint.inference.evo.Chromosome;
 import mint.inference.evo.GPConfiguration;
 import mint.inference.gp.Generator;
 import mint.inference.gp.LatentVariableGP;
+import mint.inference.gp.fitness.latentVariable.IntegerFitness;
+import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.integers.AddIntegersOperator;
@@ -29,7 +30,7 @@ public class SRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(0));
+		Generator gpGenerator = new Generator(new Random(1));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());
@@ -37,12 +38,12 @@ public class SRPlayground {
 		gpGenerator.setIntegerFunctions(intNonTerms);
 
 		List<VariableTerminal<?>> intTerms = new ArrayList<VariableTerminal<?>>();
-		intTerms.add(new IntegerVariableAssignmentTerminal("i0"));
-		intTerms.add(new IntegerVariableAssignmentTerminal("r1"));
+		intTerms.add(new IntegerVariableAssignmentTerminal("i0", false));
+		intTerms.add(new IntegerVariableAssignmentTerminal("r1", true));
+		intTerms.add(new IntegerVariableAssignmentTerminal(0));
+//		intTerms.add(new IntegerVariableAssignmentTerminal(10));
 		intTerms.add(new IntegerVariableAssignmentTerminal(50));
 		intTerms.add(new IntegerVariableAssignmentTerminal(100));
-//		intTerms.add(new IntegerVariableAssignmentTerminal(10));
-		intTerms.add(new IntegerVariableAssignmentTerminal(0));
 		gpGenerator.setIntegerTerminals(intTerms);
 
 		MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> trainingSet = new HashSetValuedHashMap<List<VariableAssignment<?>>, VariableAssignment<?>>();
@@ -83,11 +84,36 @@ public class SRPlayground {
 		System.out.println("Int values: " + IntegerVariableAssignment.values());
 
 		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet,
-				new GPConfiguration(20, 0.9f, 0.01f, 7, 7));
+				new GPConfiguration(20, 0.9f, 0.01f, 7, 2));
 
-		Node<?> best = (Node<?>) gp.evolve(40);
+		AddIntegersOperator seed = new AddIntegersOperator(new IntegerVariableAssignmentTerminal("i0", false),
+				new IntegerVariableAssignmentTerminal("r1", true));
+//		gp.addSeed(seed);
+
+		Node<?> best = (Node<?>) gp.evolve(10);
 		best.simplify();
 		System.out.println(best);
-	}
+		System.out.println();
 
+//		for (Chromosome c1 : gp.getPopulation()) {
+//			for (Chromosome c2 : gp.getPopulation()) {
+//				System.out.print(c1 + " == " + c2 + "? ");
+//				System.out.print(c1.sameSyntax(c2) + " ");
+//			}
+//			System.out.println();
+//		}
+
+		int counter = 0;
+		for (Chromosome c : gp.getPopulation()) {
+			counter++;
+			Node<?> node = (Node<?>) c;
+			LatentVariableFitness<?> fit = new IntegerFitness(trainingSet, (Node<VariableAssignment<Integer>>) node, 0);
+			try {
+				System.out.println(counter + ". " + node + ": " + fit.call());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }

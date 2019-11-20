@@ -38,6 +38,11 @@ public abstract class AbstractEvo {
 			this.seeds = seeds;
 	}
 
+	public void addSeed(Chromosome seed) {
+		if (seed != null)
+			this.seeds.add(seed);
+	}
+
 	public abstract Selection getSelection(List<Chromosome> currentPop);
 
 	public List<Chromosome> getPopulation() {
@@ -46,9 +51,11 @@ public abstract class AbstractEvo {
 
 	public Chromosome evolve(int lim) {
 		assert (lim > 0);
-		population = generatePopulation(gpConf.getPopulationSize() - seeds.size());
+		population = generatePopulation(getGPConf().getPopulationSize() - seeds.size());
 
 		population.addAll(seeds);
+
+		System.out.println("Population: " + population);
 
 		AbstractIterator it = getIterator(population);
 		Chromosome fittest = null;
@@ -63,6 +70,8 @@ public abstract class AbstractEvo {
 				// LOGGER.debug("Best fitness: "+it.getLatestSelection().getBestFitness());
 				fittest = latestSelection.elite.get(0);
 				LOGGER.debug("GP iteration: " + i + " - best fitness: " + bestFitness);
+				System.out.println("New population: " + population);
+
 				if (bestFitness <= 0D)
 					break;
 			}
@@ -82,6 +91,11 @@ public abstract class AbstractEvo {
 	 * @param i
 	 * @return
 	 */
-	protected abstract List<Chromosome> generatePopulation(int i);
+	public abstract List<Chromosome> generatePopulation(int i);
 
+	public GPConfiguration getGPConf() {
+		return gpConf;
+	}
+
+	public abstract List<Chromosome> removeDuplicates(List<Chromosome> pop);
 }
