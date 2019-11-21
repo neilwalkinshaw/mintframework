@@ -168,32 +168,26 @@ public class Iterate extends AbstractIterator {
 	 * this their subtree depth must be < childMaxDepth, and they must be of the
 	 * same type as target.
 	 *
-	 *
 	 * @param tree
 	 * @param nt
 	 * @param target
 	 */
-	protected void addAllChildren(Node<?> tree, List<Node<?>> nt, Node<?> target/* , int depth */) {
-//		int currentDepth = 1;
+	protected void addAllChildren(Node<?> tree, List<Node<?>> nt, Node<?> target) {
 		Stack<Node<?>> worklist = new Stack<Node<?>>();
 		for (Node<?> child : tree.getChildren()) {
-			// if((child.subTreeMaxdepth() - currentDepth) > depth)
-			// continue;
 			worklist.push(child);
 			if (target != null) {
 				if (!target.getType().equals(child.getType()))
 					continue;
 			}
 			nt.add(child);
-			Collections.shuffle(nt);
+			Collections.shuffle(nt, rand);
 		}
 		while (!worklist.isEmpty()) {
 			List<Node<?>> toAdd = new ArrayList<Node<?>>();
 			List<Node<?>> forThisDepth = new ArrayList<Node<?>>();
 			Node<?> c = worklist.pop();
 			for (Node<?> child : c.getChildren()) {
-				// if((child.subTreeMaxdepth() - currentDepth) > depth)
-				// continue;
 				toAdd.add(child);
 				if (target != null) {
 					if (!target.getType().equals(child.getType()))
@@ -201,16 +195,15 @@ public class Iterate extends AbstractIterator {
 				}
 				forThisDepth.add(child);
 			}
-			Collections.shuffle(forThisDepth);
+			Collections.shuffle(forThisDepth, rand);
 			nt.addAll(forThisDepth);
 			worklist.addAll(toAdd);
-//			currentDepth++;
 		}
 	}
 
 	@Override
 	public List<Chromosome> iterate(AbstractEvo gp) {
-		Collections.shuffle(population);
+		Collections.shuffle(population, rand);
 		List<Chromosome> newPopulation = new ArrayList<>();
 		for (Chromosome el : elite) {
 			newPopulation.add(el.copy());
@@ -233,7 +226,7 @@ public class Iterate extends AbstractIterator {
 			newPopulation.addAll(gp.generatePopulation(remainder));
 		}
 
-		Collections.shuffle(newPopulation);
+		Collections.shuffle(newPopulation, rand);
 		return newPopulation;
 	}
 

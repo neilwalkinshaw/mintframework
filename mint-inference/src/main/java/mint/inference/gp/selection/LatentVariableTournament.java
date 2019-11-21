@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Future;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -26,8 +27,8 @@ public class LatentVariableTournament extends IOTournamentSelection<VariableAssi
 	protected Map<Node<?>, List<Double>> distances = null;
 
 	public LatentVariableTournament(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			List<Chromosome> totalPopulation, int maxDepth) {
-		super(evals, totalPopulation, maxDepth);
+			List<Chromosome> totalPopulation, int maxDepth, Random rand) {
+		super(evals, totalPopulation, maxDepth, rand);
 		distances = new HashMap<Node<?>, List<Double>>();
 	}
 

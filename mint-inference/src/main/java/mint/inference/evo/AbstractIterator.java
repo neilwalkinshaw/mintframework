@@ -31,7 +31,7 @@ public abstract class AbstractIterator {
 	}
 
 	public List<Chromosome> iterate(AbstractEvo gp) {
-		Collections.shuffle(population);
+		Collections.shuffle(population, rand);
 		List<Chromosome> newPopulation = new ArrayList<>();
 		for (Chromosome el : elite) {
 			newPopulation.add(el.copy());
@@ -52,7 +52,7 @@ public abstract class AbstractIterator {
 			newPopulation.addAll(gp.generatePopulation(remainder));
 		}
 
-		Collections.shuffle(newPopulation);
+		Collections.shuffle(newPopulation, rand);
 		return newPopulation;
 	}
 

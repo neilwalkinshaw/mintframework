@@ -45,7 +45,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
 	@Override
 	public Selection getSelection(List<Chromosome> currentPop) {
-		selection = new LatentVariableTournament(evals, currentPop, getGPConf().getDepth());
+		selection = new LatentVariableTournament(evals, currentPop, getGPConf().getDepth(), gen.rand);
 		return selection;
 	}
 

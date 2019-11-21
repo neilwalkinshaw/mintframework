@@ -61,17 +61,17 @@ public class SRPlayground {
 		System.out.println("IntTerms: " + intTerms);
 		System.out.println("Int values: " + IntegerVariableAssignment.values());
 
-		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(9, 0.9f, 0.01f, 7, 2));
+		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(9, 0.9f, 0.01f, 4, 2));
 
 //		AddIntegersOperator seed = new AddIntegersOperator(new IntegerVariableAssignmentTerminal("i0", false),
 //				new IntegerVariableAssignmentTerminal("r1", true));
 //		gp.addSeed(seed);
 
-		Node<?> best = (Node<?>) gp.evolve(10);
+		Node<?> best = (Node<?>) gp.evolve(40);
 		best.simplify();
 		System.out.println(best);
-		System.out.println();
 
+//		System.out.println();
 //		for (Chromosome c1 : gp.getPopulation()) {
 //			for (Chromosome c2 : gp.getPopulation()) {
 //				System.out.print(c1 + " == " + c2 + "? ");

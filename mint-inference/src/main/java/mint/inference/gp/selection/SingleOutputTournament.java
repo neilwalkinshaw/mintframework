@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Future;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -29,8 +30,8 @@ public class SingleOutputTournament extends IOTournamentSelection<VariableAssign
 	boolean mem_dist = false;
 
 	public SingleOutputTournament(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			List<Chromosome> totalPopulation, int maxDepth, boolean mem_dist) {
-		super(evals, totalPopulation, maxDepth);
+			List<Chromosome> totalPopulation, int maxDepth, boolean mem_dist, Random rand) {
+		super(evals, totalPopulation, maxDepth, rand);
 		distances = new HashMap<Node<?>, List<Double>>();
 		this.mem_dist = mem_dist;
 	}

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,18 +35,20 @@ public abstract class TournamentSelection implements Selection {
 	protected int eliteSize;
 	protected double bestFitness;
 	protected int maxDepth;
+	protected Random rand;
 
 	public List<Chromosome> getElite() {
 		return elite;
 	}
 
-	public TournamentSelection(List<Chromosome> totalPopulation, int maxDepth) {
+	public TournamentSelection(List<Chromosome> totalPopulation, int maxDepth, Random rand) {
 		this.summaryCache = new HashMap<Chromosome, String>();
 		eliteSize = 10;
 		this.totalPopulation = totalPopulation;
 		this.bestFitness = Double.MAX_VALUE;
 		this.maxDepth = maxDepth;
 		this.fitnessCache = new HashMap<Chromosome, Double>();
+		this.rand = rand;
 	}
 
 	@Override
@@ -78,14 +81,9 @@ public abstract class TournamentSelection implements Selection {
 	protected List<List<Chromosome>> partition(int tournamentSize, int number) {
 		List<List<Chromosome>> best = new ArrayList<List<Chromosome>>();
 		while (best.size() < number) {
-
-			Collections.shuffle(totalPopulation);
 			List<Chromosome> pop = new ArrayList<Chromosome>();
-			// if(counter < elite.size()){
-			// pop.add(elite.get(counter));
-			// }
 			for (int i = pop.size(); i < tournamentSize; i++) {
-				pop.add(totalPopulation.get(i).copy());
+				pop.add(totalPopulation.get(rand.nextInt(totalPopulation.size())).copy());
 			}
 			best.add(pop);
 		}

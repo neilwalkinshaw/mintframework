@@ -53,7 +53,7 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 
 	@Override
 	public Selection getSelection(List<Chromosome> currentPop) {
-		selection = new SingleOutputTournament(evals, currentPop, getGPConf().getDepth(), mem_dist);
+		selection = new SingleOutputTournament(evals, currentPop, getGPConf().getDepth(), mem_dist, gen.rand);
 		return selection;
 	}
 

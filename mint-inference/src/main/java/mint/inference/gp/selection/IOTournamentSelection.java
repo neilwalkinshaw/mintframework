@@ -1,6 +1,7 @@
 package mint.inference.gp.selection;
 
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
@@ -16,8 +17,8 @@ public abstract class IOTournamentSelection<T> extends TournamentSelection {
 	protected MultiValuedMap<List<VariableAssignment<?>>, T> evals;
 
 	public IOTournamentSelection(MultiValuedMap<List<VariableAssignment<?>>, T> evals, List<Chromosome> totalPopulation,
-			int maxDepth) {
-		super(totalPopulation, maxDepth);
+			int maxDepth, Random rand) {
+		super(totalPopulation, maxDepth, rand);
 		this.evals = evals;
 	}
 

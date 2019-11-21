@@ -1,7 +1,6 @@
 package mint.inference.gp;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -104,26 +103,6 @@ public class Generator {
 	 * threshold())&&!terms.isEmpty()){ return selectRandomTerminal(terms); } else
 	 * return selectRandomNonTerminal(nonTerms, maxD); }
 	 */
-
-	public Chromosome generateRandomExpressionOld(int maxD, List<NonTerminal<?>> nonTerms,
-			List<VariableTerminal<?>> terms) {
-		if (nonTerms.isEmpty() || maxD < 2) {
-			return selectRandomTerminal(terms);
-		} else {
-			List<Node<?>> nodes = new ArrayList<Node<?>>();
-			nodes.addAll(terms);
-			nodes.addAll(nonTerms);
-			Collections.shuffle(nodes);
-			Object toBeAdded = nodes.get(0);
-			if (terms.contains(toBeAdded)) {
-				VariableTerminal<?> selected = (VariableTerminal<?>) toBeAdded;
-				return selected.copy();
-			} else {
-				NonTerminal<?> selected = (NonTerminal<?>) toBeAdded;
-				return selected.createInstance(this, maxD - 1);
-			}
-		}
-	}
 
 	public Chromosome generateRandomExpression(int maxD, List<NonTerminal<?>> nonTerms,
 			List<VariableTerminal<?>> terms) {
