@@ -13,6 +13,10 @@ import mint.inference.evo.Chromosome;
 import mint.inference.evo.GPConfiguration;
 import mint.inference.evo.Selection;
 import mint.inference.evo.TournamentSelection;
+import mint.inference.gp.fitness.latentVariable.BooleanFitness;
+import mint.inference.gp.fitness.latentVariable.IntegerFitness;
+import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
+import mint.inference.gp.fitness.latentVariable.StringFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputBooleanFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputDoubleFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputIntegerFitness;
@@ -81,6 +85,29 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 		}
 		return new Iterate(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(),
 				getGPConf().getMutation(), gen, getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
+	}
+
+	@Override
+	public void evaluatePopulation(List<Chromosome> pop) {
+		for (Chromosome c : pop) {
+			LatentVariableFitness<?> fit;
+			Node<?> node = (Node<?>) c;
+			if (node.getFitness() == null) {
+				if (node.getType() == "string")
+					fit = new StringFitness(evals, (Node<VariableAssignment<String>>) c);
+				else if (node.getType() == "integer")
+					fit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c);
+				else {
+					assert (node.getType() == "boolean");
+					fit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c);
+				}
+				try {
+					double fitness = fit.call();
+					node.setFitness(fitness);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
 	}
 
 	@Override

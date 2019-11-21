@@ -5,6 +5,8 @@ package mint.inference.evo;
  */
 public interface Chromosome {
 
+	public Double getFitness();
+
 	public Chromosome copy();
 
 	public Chromosome simp();

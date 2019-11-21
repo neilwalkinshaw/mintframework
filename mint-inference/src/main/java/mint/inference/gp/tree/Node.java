@@ -24,7 +24,9 @@ import mint.tracedata.types.VariableAssignment;
  *
  * Created by neilwalkinshaw on 03/03/15.
  */
-public abstract class Node<T extends VariableAssignment<?>> implements Chromosome {
+public abstract class Node<T extends VariableAssignment<?>> implements Chromosome, Comparable<Node<?>> {
+
+	private Double fitness = null;
 
 	protected static int ids = 0;
 
@@ -38,7 +40,6 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 
 	public Node() {
 		id = ids++;
-
 	}
 
 	public NonTerminal<?> getParent() {
@@ -170,5 +171,20 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		Node<T> retVal = (Node<T>) NodeSimplifier.fromZ3(z3Expr);
 		ctx.close();
 		return retVal;
+	}
+
+	@Override
+	public Double getFitness() {
+		return fitness;
+	}
+
+	public void setFitness(double f) {
+		this.fitness = f;
+	}
+
+	@Override
+	public int compareTo(Node<?> arg0) {
+		Double fit = this.fitness;
+		return fit.compareTo(arg0.fitness);
 	}
 }

@@ -22,22 +22,13 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 
 	final MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evalSet;
 
-	protected final int maxDepth;
 	protected Node<VariableAssignment<T>> individual;
 	protected boolean needHidden;
-
-	public LatentVariableFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			Node<VariableAssignment<T>> individual, int maxDepth) {
-		this.evalSet = evals;
-		this.individual = individual;
-		this.maxDepth = maxDepth;
-	}
 
 	public LatentVariableFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
 			Node<VariableAssignment<T>> individual) {
 		this.evalSet = evals;
 		this.individual = individual;
-		this.maxDepth = 1;
 	}
 
 	public Node<?> getIndividual() {

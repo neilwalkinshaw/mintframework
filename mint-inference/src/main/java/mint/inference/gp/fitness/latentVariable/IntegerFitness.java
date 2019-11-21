@@ -14,8 +14,8 @@ import mint.tracedata.types.VariableAssignment;
 public class IntegerFitness extends LatentVariableFitness<Integer> {
 
 	public IntegerFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			Node<VariableAssignment<Integer>> individual, int maxDepth) {
-		super(evals, individual, maxDepth);
+			Node<VariableAssignment<Integer>> individual) {
+		super(evals, individual);
 	}
 
 	@Override

@@ -14,6 +14,7 @@ public abstract class AbstractEvo {
 	protected GPConfiguration gpConf;
 	protected Collection<Chromosome> seeds;
 	protected List<Chromosome> population;
+	Chromosome fittest = null;
 
 	private final static Logger LOGGER = Logger.getLogger(AbstractEvo.class.getName());
 
@@ -55,10 +56,7 @@ public abstract class AbstractEvo {
 
 		population.addAll(seeds);
 
-		System.out.println("Population: " + population);
-
 		AbstractIterator it = getIterator(population);
-		Chromosome fittest = null;
 		for (int i = 0; i < lim; i++) {
 
 			population = it.iterate(this);
@@ -98,4 +96,7 @@ public abstract class AbstractEvo {
 	}
 
 	public abstract List<Chromosome> removeDuplicates(List<Chromosome> pop);
+
+	public abstract void evaluatePopulation(List<Chromosome> pop);
+
 }

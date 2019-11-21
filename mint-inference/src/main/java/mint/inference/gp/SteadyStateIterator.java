@@ -2,7 +2,6 @@ package mint.inference.gp;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -10,6 +9,8 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+import mint.inference.evo.AbstractEvo;
 import mint.inference.evo.AbstractIterator;
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.tree.Node;
@@ -25,14 +26,14 @@ import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
  *
  * Created by neilwalkinshaw on 06/03/15.
  */
-public class Iterate extends AbstractIterator {
+public class SteadyStateIterator extends AbstractIterator {
 	protected Generator gen;
 	protected int maxDepth;
 
-	private final static Logger LOGGER = Logger.getLogger(Iterate.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(SteadyStateIterator.class.getName());
 
-	public Iterate(List<Chromosome> elite, List<Chromosome> population, double crossOver, double mutation, Generator g,
-			int maxD, Random r) {
+	public SteadyStateIterator(List<Chromosome> elite, List<Chromosome> population, double crossOver, double mutation,
+			Generator g, int maxD, Random r) {
 		super(elite, population, crossOver, mutation, r);
 		this.gen = g;
 		this.maxDepth = maxD;
@@ -198,6 +199,38 @@ public class Iterate extends AbstractIterator {
 			nt.addAll(forThisDepth);
 			worklist.addAll(toAdd);
 		}
+	}
+
+	@Override
+	public List<Chromosome> iterate(AbstractEvo gp) {
+		List<Chromosome> newPopulation = new ArrayList<Chromosome>(population);
+
+		int numberCrossover = (int) ((population.size() - elite.size()) * crossOver);
+		int numberMutation = (int) ((population.size() - elite.size()) * mutation);
+		for (int crossOvers = 0; crossOvers < numberCrossover; crossOvers++) {
+			sel = gp.getSelection(population);
+			List<Chromosome> parents = sel.select(gp.getGPConf(), 2);
+			newPopulation.add(crossOver(parents.get(0), parents.get(1)));
+		}
+		for (int mutations = 0; mutations < numberMutation; mutations++) {
+			newPopulation.add(mutate(population.get(rand.nextInt(population.size()))));
+		}
+
+		gp.evaluatePopulation(newPopulation);
+
+		System.out.println("newPop:");
+		newPopulation = gp.removeDuplicates(newPopulation);
+		Collections.sort(newPopulation);
+
+		newPopulation = newPopulation.subList(0, gp.getGPConf().getPopulationSize());
+
+		int remainder = gp.getGPConf().getPopulationSize() - newPopulation.size();
+		if (remainder > 0) {
+			newPopulation.addAll(gp.generatePopulation(remainder));
+		}
+
+		Collections.shuffle(newPopulation, rand);
+		return newPopulation;
 	}
 
 }

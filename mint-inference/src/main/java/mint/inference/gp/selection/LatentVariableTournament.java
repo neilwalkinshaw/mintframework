@@ -37,12 +37,12 @@ public class LatentVariableTournament extends IOTournamentSelection<VariableAssi
 	public LatentVariableFitness<?> getFitness(Chromosome toEvaluateC) {
 		Node<?> toEvaluate = (Node<?>) toEvaluateC;
 		if (toEvaluate.getType().equals("string"))
-			return new StringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth);
+			return new StringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate);
 		else if (toEvaluate.getType().equals("boolean"))
-			return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth);
+			return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate);
 		else {
 			assert (toEvaluate.getType().equals("integer"));
-			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth);
+			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate);
 		}
 	}
 

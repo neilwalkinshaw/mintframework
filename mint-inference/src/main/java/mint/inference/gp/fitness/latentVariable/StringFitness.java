@@ -13,8 +13,8 @@ import mint.tracedata.types.VariableAssignment;
 public class StringFitness extends LatentVariableFitness<String> {
 
 	public StringFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			Node<VariableAssignment<String>> individual, int maxDepth) {
-		super(evals, individual, maxDepth);
+			Node<VariableAssignment<String>> individual) {
+		super(evals, individual);
 	}
 
 	/**

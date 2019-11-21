@@ -12,8 +12,8 @@ import mint.tracedata.types.VariableAssignment;
  */
 public class BooleanFitness extends LatentVariableFitness<Boolean> {
 	public BooleanFitness(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			Node<VariableAssignment<Boolean>> toEvaluate, int maxDepth) {
-		super(evals, toEvaluate, maxDepth);
+			Node<VariableAssignment<Boolean>> toEvaluate) {
+		super(evals, toEvaluate);
 	}
 
 //	@Override

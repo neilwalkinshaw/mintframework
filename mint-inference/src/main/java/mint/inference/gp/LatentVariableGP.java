@@ -8,6 +8,7 @@ import java.util.Random;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.log4j.Logger;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import mint.Configuration;
 import mint.inference.evo.AbstractIterator;
 import mint.inference.evo.Chromosome;
@@ -34,6 +35,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 	private final static Logger LOGGER = Logger.getLogger(GP.class.getName());
 
 	protected TournamentSelection selection = null;
+	private Chromosome fittest = null;
 
 	public LatentVariableGP(Generator gen, MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
 			GPConfiguration gpConf) {
@@ -68,30 +70,70 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 	protected AbstractIterator getIterator(List<Chromosome> population) {
 		if (selection != null) {
 			List<Chromosome> elites = selection.getElite();
-			return new Iterate(elites, population, getGPConf().getCrossOver(), getGPConf().getMutation(), gen,
-					getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
+			return new SteadyStateIterator(elites, population, getGPConf().getCrossOver(), getGPConf().getMutation(),
+					gen, getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 		}
-		return new Iterate(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(),
+		return new SteadyStateIterator(new ArrayList<Chromosome>(), population, getGPConf().getCrossOver(),
 				getGPConf().getMutation(), gen, getGPConf().getDepth(), new Random(Configuration.getInstance().SEED));
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean isCorrect(Chromosome c) {
-		int maxDepth = 0;
 		try {
 			if (((Node<?>) c).getType() == "string")
-				return new StringFitness(evals, (Node<VariableAssignment<String>>) c, maxDepth).correct();
+				return new StringFitness(evals, (Node<VariableAssignment<String>>) c).correct();
 			else if (((Node<?>) c).getType() == "integer")
-				return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c, maxDepth).correct();
+				return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c).correct();
 			else if (((Node<?>) c).getType() == "boolean") {
-				return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c, maxDepth).correct();
+				return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c).correct();
 			}
 			System.out.println(c.getClass());
 			throw new IllegalArgumentException(
 					"Could not calculate correctness for node of type " + ((Node<?>) c).getType());
 		} catch (InterruptedException e) {
 			return false;
+		}
+	}
+
+	public String popInfo() {
+		List<Chromosome> orderedByFitness = new ArrayList<Chromosome>(population);
+		Collections.sort(orderedByFitness);
+
+		List<String> popString = new ArrayList<String>();
+
+		for (Chromosome c : orderedByFitness) {
+			popString.add(c + ": " + c.getFitness());
+		}
+
+		return popString.toString();
+	}
+
+	@Override
+	public void evaluatePopulation(List<Chromosome> pop) {
+		for (Chromosome c : pop) {
+			LatentVariableFitness<?> fit;
+			Node<?> node = (Node<?>) c;
+			if (node.getFitness() == null) {
+				if (node.getType() == "string")
+					fit = new StringFitness(evals, (Node<VariableAssignment<String>>) c);
+				else if (node.getType() == "integer")
+					fit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c);
+				else {
+					assert (node.getType() == "boolean");
+					fit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c);
+				}
+				try {
+					double fitness = fit.call();
+					node.setFitness(fitness);
+
+					// We need to have a secondary fitness function in here to break ties
+					if (fittest == null || fitness < fittest.getFitness()) {
+						fittest = c;
+					}
+				} catch (InterruptedException e) {
+				}
+			}
 		}
 	}
 
@@ -107,35 +149,16 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		System.out.println("Population: " + population);
 
 		AbstractIterator it = getIterator(population);
-		Chromosome fittest = null;
-		double bestFitness = 0;
 		for (int i = 0; i < lim; i++) {
 
 			population = it.iterate(this);
 
-			for (Chromosome c : getPopulation()) {
-				LatentVariableFitness<?> fit;
-				if (((Node<?>) c).getType() == "string")
-					fit = new StringFitness(evals, (Node<VariableAssignment<String>>) c, this.getGPConf().getDepth());
-				else if (((Node<?>) c).getType() == "integer")
-					fit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c, this.getGPConf().getDepth());
-				else {
-					assert (((Node<?>) c).getType() == "boolean");
-					fit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c, this.getGPConf().getDepth());
-				}
-				try {
-					double fitness = fit.call();
-					if (fittest == null || fitness < bestFitness) {
-						fittest = c;
-						bestFitness = fitness;
-					}
-				} catch (InterruptedException e) {
-				}
-			}
+			evaluatePopulation(population);
 
-			LOGGER.debug("GP iteration: " + i + " - best fitness: " + bestFitness + " New population: " + population);
+			LOGGER.debug("GP iteration: " + i + " - best fitness: " + fittest.getFitness() + " New population: "
+					+ popInfo());
 
-			if (bestFitness <= 0D)
+			if (fittest.getFitness() <= 0D)
 				break;
 
 			it = getIterator(population);

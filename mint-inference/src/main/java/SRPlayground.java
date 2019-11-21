@@ -27,7 +27,7 @@ public class SRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(0));
+		Generator gpGenerator = new Generator(new Random(1));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());
@@ -61,15 +61,16 @@ public class SRPlayground {
 		System.out.println("IntTerms: " + intTerms);
 		System.out.println("Int values: " + IntegerVariableAssignment.values());
 
-		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(9, 0.9f, 0.01f, 4, 2));
+		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(9, 0.9f, 0.01f, 5, 2));
 
 //		AddIntegersOperator seed = new AddIntegersOperator(new IntegerVariableAssignmentTerminal("i0", false),
 //				new IntegerVariableAssignmentTerminal("r1", true));
 //		gp.addSeed(seed);
 
-		Node<?> best = (Node<?>) gp.evolve(40);
+		Node<?> best = (Node<?>) gp.evolve(10);
 		best.simplify();
-		System.out.println(best);
+		System.out.println(best + ": " + best.getFitness());
+		System.out.println("correct? " + gp.isCorrect(best));
 
 //		System.out.println();
 //		for (Chromosome c1 : gp.getPopulation()) {
