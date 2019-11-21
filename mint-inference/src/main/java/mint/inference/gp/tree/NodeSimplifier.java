@@ -54,23 +54,18 @@ public class NodeSimplifier {
 		if (exp.isSub()) {
 			return (Node<IntegerVariableAssignment>) makeBinary(exp.getArgs(), new SubtractIntegersOperator());
 		}
-		if (exp.isMul() && exp.getArgs()[0].toString().equals("-1") && exp.getArgs().length == 2) {
-			IntegerVariableAssignment zero = new IntegerVariableAssignment("0", 0);
-			Node<IntegerVariableAssignment> c2 = fromZ3((IntExpr) exp.getArgs()[1]);
-			return new SubtractIntegersOperator(new IntegerVariableAssignmentTerminal(zero, true, false), c2);
-		}
 		if (exp.isMul()) {
 			return (Node<IntegerVariableAssignment>) makeBinary(exp.getArgs(), new MultiplyIntegersOperator());
-		}
-		if (exp.isConst()) {
-			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString());
-			// This sets all "r" variable names to be latent
-			return new IntegerVariableAssignmentTerminal(num, false, exp.toString().startsWith("r"));
 		}
 		if (exp.isIntNum()) {
 			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString(),
 					Integer.valueOf(exp.toString()));
 			return new IntegerVariableAssignmentTerminal(num, true, false);
+		}
+		if (exp.isConst()) {
+			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString());
+			// This sets all "r" variable names to be latent
+			return new IntegerVariableAssignmentTerminal(num, false, exp.toString().startsWith("r"));
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}

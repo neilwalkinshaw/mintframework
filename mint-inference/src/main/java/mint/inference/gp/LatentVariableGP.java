@@ -146,7 +146,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
 		population.addAll(seeds);
 
-		System.out.println("Population: " + population);
+		LOGGER.debug("Population: " + population);
 
 		AbstractIterator it = getIterator(population);
 		for (int i = 0; i < lim; i++) {
@@ -155,8 +155,8 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
 			evaluatePopulation(population);
 
-			LOGGER.debug("GP iteration: " + i + " - best fitness: " + fittest.getFitness() + " New population: "
-					+ popInfo());
+			LOGGER.debug("GP iteration: " + i + " - best individual: " + fittest + " fitness: " + fittest.getFitness()
+					+ " New population: " + popInfo());
 
 			if (fittest.getFitness() <= 0D)
 				break;

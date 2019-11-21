@@ -218,11 +218,11 @@ public class SteadyStateIterator extends AbstractIterator {
 
 		gp.evaluatePopulation(newPopulation);
 
-		System.out.println("newPop:");
 		newPopulation = gp.removeDuplicates(newPopulation);
 		Collections.sort(newPopulation);
 
-		newPopulation = newPopulation.subList(0, gp.getGPConf().getPopulationSize());
+		if (newPopulation.size() > gp.getGPConf().getPopulationSize())
+			newPopulation = newPopulation.subList(0, gp.getGPConf().getPopulationSize());
 
 		int remainder = gp.getGPConf().getPopulationSize() - newPopulation.size();
 		if (remainder > 0) {
