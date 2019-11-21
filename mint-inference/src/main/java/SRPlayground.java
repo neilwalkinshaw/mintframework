@@ -8,12 +8,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import mint.inference.evo.Chromosome;
 import mint.inference.evo.GPConfiguration;
 import mint.inference.gp.Generator;
 import mint.inference.gp.LatentVariableGP;
-import mint.inference.gp.fitness.latentVariable.IntegerFitness;
-import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.integers.AddIntegersOperator;
@@ -30,7 +27,7 @@ public class SRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(1));
+		Generator gpGenerator = new Generator(new Random(0));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());
@@ -39,17 +36,13 @@ public class SRPlayground {
 
 		List<VariableTerminal<?>> intTerms = new ArrayList<VariableTerminal<?>>();
 		intTerms.add(new IntegerVariableAssignmentTerminal("i0", false));
-		intTerms.add(new IntegerVariableAssignmentTerminal("r1", true));
+		intTerms.add(new IntegerVariableAssignmentTerminal("r2", true));
 		intTerms.add(new IntegerVariableAssignmentTerminal(0));
-//		intTerms.add(new IntegerVariableAssignmentTerminal(10));
 		intTerms.add(new IntegerVariableAssignmentTerminal(50));
 		intTerms.add(new IntegerVariableAssignmentTerminal(100));
 		gpGenerator.setIntegerTerminals(intTerms);
 
 		MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> trainingSet = new HashSetValuedHashMap<List<VariableAssignment<?>>, VariableAssignment<?>>();
-
-		IntegerVariableAssignment o150 = new IntegerVariableAssignment("o1", 50);
-		IntegerVariableAssignment o1100 = new IntegerVariableAssignment("o1", 100);
 
 		List<VariableAssignment<?>> s1 = new ArrayList<VariableAssignment<?>>();
 		s1.add(new IntegerVariableAssignment("i0", 50));
@@ -60,34 +53,18 @@ public class SRPlayground {
 		List<VariableAssignment<?>> s3 = new ArrayList<VariableAssignment<?>>();
 		s3.add(new IntegerVariableAssignment("i0", 100));
 
-		trainingSet.put(s1, o150);
-		trainingSet.put(s2, o1100);
-		trainingSet.put(s3, o1100);
-
-//		IntegerVariableAssignment o160 = new IntegerVariableAssignment("o1", 60);
-
-//		List<VariableAssignment<?>> s1 = new ArrayList<VariableAssignment<?>>();
-//		s1.add(new IntegerVariableAssignment("i0", 40));
-//
-//		List<VariableAssignment<?>> s2 = new ArrayList<VariableAssignment<?>>();
-//		s2.add(new IntegerVariableAssignment("i0", 50));
-//
-//		List<VariableAssignment<?>> s3 = new ArrayList<VariableAssignment<?>>();
-//		s3.add(new IntegerVariableAssignment("i0", 90));
-//
-//		trainingSet.put(s1, o150);
-//		trainingSet.put(s2, o160);
-//		trainingSet.put(s3, o1100);
+		trainingSet.put(s1, new IntegerVariableAssignment("o1", 50));
+		trainingSet.put(s2, new IntegerVariableAssignment("o1", 100));
+		trainingSet.put(s3, new IntegerVariableAssignment("o1", 100));
 
 		System.out.println("Training set: " + trainingSet);
 		System.out.println("IntTerms: " + intTerms);
 		System.out.println("Int values: " + IntegerVariableAssignment.values());
 
-		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet,
-				new GPConfiguration(20, 0.9f, 0.01f, 7, 2));
+		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(9, 0.9f, 0.01f, 7, 2));
 
-		AddIntegersOperator seed = new AddIntegersOperator(new IntegerVariableAssignmentTerminal("i0", false),
-				new IntegerVariableAssignmentTerminal("r1", true));
+//		AddIntegersOperator seed = new AddIntegersOperator(new IntegerVariableAssignmentTerminal("i0", false),
+//				new IntegerVariableAssignmentTerminal("r1", true));
 //		gp.addSeed(seed);
 
 		Node<?> best = (Node<?>) gp.evolve(10);
@@ -103,17 +80,17 @@ public class SRPlayground {
 //			System.out.println();
 //		}
 
-		int counter = 0;
-		for (Chromosome c : gp.getPopulation()) {
-			counter++;
-			Node<?> node = (Node<?>) c;
-			LatentVariableFitness<?> fit = new IntegerFitness(trainingSet, (Node<VariableAssignment<Integer>>) node, 0);
-			try {
-				System.out.println(counter + ". " + node + ": " + fit.call());
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		int counter = 0;
+//		for (Chromosome c : gp.getPopulation()) {
+//			counter++;
+//			Node<?> node = (Node<?>) c;
+//			LatentVariableFitness<?> fit = new IntegerFitness(trainingSet, (Node<VariableAssignment<Integer>>) node, 0);
+//			try {
+//				System.out.println(counter + ". " + node + ": " + fit.call());
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 	}
 }

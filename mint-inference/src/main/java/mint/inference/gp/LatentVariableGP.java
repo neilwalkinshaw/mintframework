@@ -98,6 +98,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 	@Override
 	public Chromosome evolve(int lim) {
 		System.out.println("Michael's");
+		System.out.println("Evals: " + this.evals);
 		assert (lim > 0);
 		population = generatePopulation(getGPConf().getPopulationSize() - seeds.size());
 
