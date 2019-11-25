@@ -158,11 +158,6 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
 				LOGGER.debug("Execution interrupted during simplification.");
 			}
 		}
-		try {
-			evolved.simplify();
-		} catch (Exception e) {
-			LOGGER.debug("Failed during simplification...");
-		}
 	}
 
 	private Generator makeGenerator(Set<TraceElement> payload) {

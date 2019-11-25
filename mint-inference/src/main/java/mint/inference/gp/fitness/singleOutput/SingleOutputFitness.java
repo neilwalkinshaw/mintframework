@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import mint.inference.gp.CallableNodeExecutor;
 import mint.inference.gp.fitness.Fitness;
 import mint.inference.gp.fitness.InvalidDistanceException;
@@ -115,5 +116,10 @@ public abstract class SingleOutputFitness<T> extends Fitness {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public List<Double> breakTies() {
+		return Arrays.asList(new Double[] { (double) individual.size() });
 	}
 }

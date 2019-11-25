@@ -37,13 +37,6 @@ public class RootBoolean extends BooleanNonTerminal {
 	}
 
 	@Override
-	public void simplify() {
-		for (Node<?> child : getChildren()) {
-			child.simplify();
-		}
-	}
-
-	@Override
 	public String nodeString() {
 		return "R:" + childrenString();
 	}

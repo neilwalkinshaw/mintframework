@@ -23,13 +23,6 @@ public class RootDouble extends DoubleNonTerminal {
 	}
 
 	@Override
-	public void simplify() {
-		for (Node<?> child : getChildren()) {
-			child.simplify();
-		}
-	}
-
-	@Override
 	public NonTerminal<DoubleVariableAssignment> createInstance(Generator g, int depth) {
 		return new RootDouble(g.generateRandomDoubleExpression(depth));
 	}

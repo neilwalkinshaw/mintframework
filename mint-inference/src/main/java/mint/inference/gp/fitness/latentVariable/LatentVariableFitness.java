@@ -1,10 +1,12 @@
 package mint.inference.gp.fitness.latentVariable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
@@ -94,10 +96,9 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 
 //		System.out.println("Evaluating: " + individual + " Undef: " + undef);
 
-		Set<String> totalUnusedVars = totalUsedVars();
-		for (VariableTerminal<?> vName : individual.varsInTree()) {
-			totalUnusedVars.remove(vName.getName());
-		}
+		Set<String> totalVars = totalUsedVars();
+		Set<String> totalUsedVars = individual.varsInTree().stream().map(s -> s.getName()).collect(Collectors.toSet());
+		totalVars.removeAll(totalUsedVars);
 
 		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
 			double minDistance = calculateDistance(current, latent);
@@ -113,9 +114,14 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 			return fitness;
 		}
 
-//		System.out.println("individual: " + individual);
-		double proportionUnusedVars = totalUnusedVars.size() / (double) individual.numVarsInTree();
-		return fitness + proportionUnusedVars + latent.size();
+		// If we've used all of the available inputs then don't penalise use of latent
+		// variables
+		if (totalVars.isEmpty())
+			return fitness;
+
+		// If we've not used all of the available inputs, penalise by the number of
+		// latent variables used
+		return fitness + latent.size();
 	}
 
 	private Set<String> totalUsedVars() {
@@ -192,5 +198,19 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 		}
 
 		return true;
+	}
+
+	// We want to break ties first by expressions which use all the input variables
+	// and then by size
+
+	@Override
+	public List<Double> breakTies() {
+		Set<String> totalVars = totalUsedVars();
+		Set<String> totalUsedVars = individual.varsInTree().stream().map(s -> s.getName()).collect(Collectors.toSet());
+		totalVars.removeAll(totalUsedVars);
+
+		System.out.println("  individual: " + individual + " totalVars: " + totalVars + " size: " + individual.size());
+
+		return Arrays.asList((double) totalVars.size(), (double) individual.size());
 	}
 }

@@ -36,13 +36,6 @@ public class RootString extends StringNonTerminal {
 	}
 
 	@Override
-	public void simplify() {
-		for (Node<?> child : getChildren()) {
-			child.simplify();
-		}
-	}
-
-	@Override
 	public String nodeString() {
 		return childrenString();
 	}

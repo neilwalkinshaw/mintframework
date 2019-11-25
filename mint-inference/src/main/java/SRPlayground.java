@@ -27,7 +27,7 @@ public class SRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(1));
+		Generator gpGenerator = new Generator(new Random(3));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());
@@ -68,7 +68,6 @@ public class SRPlayground {
 //		gp.addSeed(seed);
 
 		Node<?> best = (Node<?>) gp.evolve(10);
-		best.simplify();
 		System.out.println(best + ": " + best.getFitness());
 		System.out.println("correct? " + gp.isCorrect(best));
 

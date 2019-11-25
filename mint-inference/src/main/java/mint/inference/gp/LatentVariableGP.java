@@ -35,7 +35,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 	private final static Logger LOGGER = Logger.getLogger(GP.class.getName());
 
 	protected TournamentSelection selection = null;
-	private Chromosome fittest = null;
+	private Node<?> fittest = null;
 
 	public LatentVariableGP(Generator gen, MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
 			GPConfiguration gpConf) {
@@ -127,11 +127,36 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 					double fitness = fit.call();
 					node.setFitness(fitness);
 
-					// We need to have a secondary fitness function in here to break ties
 					if (fittest == null || fitness < fittest.getFitness()) {
-						fittest = c;
+						System.out.println("  New champion: " + node);
+						fittest = node;
+					} else if (fittest != null) {
+						LatentVariableFitness<?> bestFit;
+						if (fittest.getType() == "string")
+							bestFit = new StringFitness(evals, (Node<VariableAssignment<String>>) fittest);
+						else if (fittest.getType() == "integer")
+							bestFit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) fittest);
+						else {
+							assert (fittest.getType() == "boolean");
+							bestFit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) fittest);
+						}
+						List<Double> newTieBreak = fit.breakTies();
+						List<Double> bestTieBreak = bestFit.breakTies();
+
+						for (int i = 0; i < Math.min(newTieBreak.size(), bestTieBreak.size()); i++) {
+							if (newTieBreak.get(i) > bestTieBreak.get(i)) {
+								break;
+							}
+							if (newTieBreak.get(i) < bestTieBreak.get(i)) {
+								fittest = (Node<?>) c;
+								break;
+							}
+						}
 					}
+
 				} catch (InterruptedException e) {
+					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		}
@@ -139,8 +164,6 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
 	@Override
 	public Chromosome evolve(int lim) {
-		System.out.println("Michael's");
-		System.out.println("Evals: " + this.evals);
 		assert (lim > 0);
 		population = generatePopulation(getGPConf().getPopulationSize() - seeds.size());
 
@@ -162,6 +185,7 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 				break;
 
 			it = getIterator(population);
+
 		}
 
 		return fittest;

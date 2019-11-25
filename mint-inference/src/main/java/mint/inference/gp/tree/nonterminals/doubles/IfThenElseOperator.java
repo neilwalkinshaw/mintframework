@@ -48,18 +48,6 @@ public class IfThenElseOperator extends NonTerminal<VariableAssignment<?>> {
 	}
 
 	@Override
-	public void simplify() {
-		for (Node<?> child : getChildren()) {
-			child.simplify();
-		}
-		if (getChild(0).toString().equals("true")) {
-			swapWith(getChild(1));
-		} else if (getChild(0).toString().equals("false")) {
-			swapWith(getChild(2));
-		}
-	}
-
-	@Override
 	public Terminal<VariableAssignment<?>> getTermFromVals() {
 		return null;
 	}

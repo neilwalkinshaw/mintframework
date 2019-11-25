@@ -12,8 +12,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import mint.inference.gp.fitness.Fitness;
 
@@ -120,21 +118,21 @@ public abstract class TournamentSelection implements Selection {
 		assert (!population.isEmpty());
 		double bestScore = Double.MAX_VALUE;
 		Chromosome best = null;
-		Map<Future<Double>, Chromosome> solMap = new HashMap<Future<Double>, Chromosome>();
-		Set<Future<Double>> set = new HashSet<Future<Double>>();
+		Map<Double, Chromosome> solMap = new HashMap<Double, Chromosome>();
+		Set<Double> set = new HashSet<Double>();
 		ExecutorService pool = Executors.newFixedThreadPool(4);
 		Fitness fitness = null;
 		try {
 			for (Chromosome node : population) {
 				fitness = getFitness(node);
-				Future<Double> future = pool.submit(fitness);
-				solMap.put(future, node);
-				set.add(future);
+				Double f = fitness.call();
+//				Future<Double> future = pool.submit(fitness);
+				solMap.put(f, node);
+				set.add(f);
 			}
-			for (Future<Double> sol : set) {
+			for (Double sol : set) {
 				double score = 0D;
 				try {
-					score = sol.get(5000000, TimeUnit.MILLISECONDS);
 					processResult(solMap, sol, score, fitness);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -146,7 +144,6 @@ public abstract class TournamentSelection implements Selection {
 					best = solMap.get(sol);
 				} else if (best == null)
 					best = solMap.get(sol);
-				sol.cancel(true);
 			}
 
 		} catch (Exception e) {
@@ -157,8 +154,7 @@ public abstract class TournamentSelection implements Selection {
 		return best.copy();
 	}
 
-	protected void processResult(Map<Future<Double>, Chromosome> solMap, Future<Double> sol, double score,
-			Fitness fitness) {
+	protected void processResult(Map<Double, Chromosome> solMap, Double sol, double score, Fitness fitness) {
 		fitnessCache.put(solMap.get(sol), score);
 	}
 

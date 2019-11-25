@@ -34,18 +34,6 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		}
 	}
 
-	@Override
-	public void simplify() {
-		if (vals.size() == 1) {
-			Terminal<T> term = getTermFromVals();
-			swapWith(term);
-		} else if (vals.size() > 1) {
-			for (Node<?> child : getChildren()) {
-				child.simplify();
-			}
-		}
-	}
-
 	/**
 	 * Get the first value from vals (there must be one) and return as a terminal.
 	 * Used only for simplification

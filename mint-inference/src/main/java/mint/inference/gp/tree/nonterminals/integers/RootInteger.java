@@ -36,13 +36,6 @@ public class RootInteger extends IntegerNonTerminal {
 	}
 
 	@Override
-	public void simplify() {
-		for (Node<?> child : getChildren()) {
-			child.simplify();
-		}
-	}
-
-	@Override
 	public String nodeString() {
 		return "R:" + childrenString();
 	}

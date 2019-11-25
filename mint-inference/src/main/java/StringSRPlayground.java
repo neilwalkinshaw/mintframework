@@ -44,7 +44,6 @@ public class StringSRPlayground {
 				new GPConfiguration(10, 0.9f, 0.01f, 7, 7));
 
 		Node<?> best = (Node<?>) gp.evolve(4);
-		best.simplify();
 
 		for (VariableTerminal<?> var : best.varsInTree()) {
 			System.out.println(var.getName() + "->" + var.getTerminal().typeString());

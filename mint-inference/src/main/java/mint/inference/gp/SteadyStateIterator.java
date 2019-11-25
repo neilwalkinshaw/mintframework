@@ -204,11 +204,11 @@ public class SteadyStateIterator extends AbstractIterator {
 	@Override
 	public List<Chromosome> iterate(AbstractEvo gp) {
 		List<Chromosome> newPopulation = new ArrayList<Chromosome>(population);
+		sel = gp.getSelection(population);
 
 		int numberCrossover = (int) ((population.size() - elite.size()) * crossOver);
 		int numberMutation = (int) ((population.size() - elite.size()) * mutation);
 		for (int crossOvers = 0; crossOvers < numberCrossover; crossOvers++) {
-			sel = gp.getSelection(population);
 			List<Chromosome> parents = sel.select(gp.getGPConf(), 2);
 			newPopulation.add(crossOver(parents.get(0), parents.get(1)));
 		}

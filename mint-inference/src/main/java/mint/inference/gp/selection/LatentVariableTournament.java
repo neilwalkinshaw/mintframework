@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.Future;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
 import mint.inference.evo.Chromosome;
-import mint.inference.gp.fitness.Fitness;
 import mint.inference.gp.fitness.latentVariable.BooleanFitness;
 import mint.inference.gp.fitness.latentVariable.IntegerFitness;
 import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
@@ -49,12 +47,6 @@ public class LatentVariableTournament extends IOTournamentSelection<VariableAssi
 	@Override
 	protected Comparator<Chromosome> getComparator() {
 		return new NodeComparator(this);
-	}
-
-	@Override
-	protected void processResult(Map<Future<Double>, Chromosome> solMap, Future<Double> sol, double score,
-			Fitness fitness) {
-		super.processResult(solMap, sol, score, fitness);
 	}
 
 	public Map<Node<?>, List<Double>> getDistances() {

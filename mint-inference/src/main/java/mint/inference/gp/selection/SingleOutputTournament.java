@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.Future;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
 import mint.inference.evo.Chromosome;
-import mint.inference.gp.fitness.Fitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputBooleanFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputDoubleFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputFitness;
@@ -59,15 +57,6 @@ public class SingleOutputTournament extends IOTournamentSelection<VariableAssign
 	@Override
 	protected Comparator<Chromosome> getComparator() {
 		return new NodeComparator(this);
-	}
-
-	@Override
-	protected void processResult(Map<Future<Double>, Chromosome> solMap, Future<Double> sol, double score,
-			Fitness fitness) {
-		super.processResult(solMap, sol, score, fitness);
-		SingleOutputFitness<?> sof = (SingleOutputFitness<?>) fitness;
-		if (mem_dist)
-			distances.put(sof.getIndividual(), sof.getDistances());
 	}
 
 	public Map<Node<?>, List<Double>> getDistances() {

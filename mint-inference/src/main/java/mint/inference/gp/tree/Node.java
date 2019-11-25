@@ -54,8 +54,6 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		this.def = def;
 	}
 
-	public abstract void simplify();
-
 	public void reset() {
 		for (Node<?> child : getChildren()) {
 			child.reset();

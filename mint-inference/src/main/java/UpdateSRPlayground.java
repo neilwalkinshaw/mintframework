@@ -27,7 +27,7 @@ public class UpdateSRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(0));
+		Generator gpGenerator = new Generator(new Random(3));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());
@@ -36,7 +36,7 @@ public class UpdateSRPlayground {
 
 		List<VariableTerminal<?>> intTerms = new ArrayList<VariableTerminal<?>>();
 		intTerms.add(new IntegerVariableAssignmentTerminal("i0", false));
-		intTerms.add(new IntegerVariableAssignmentTerminal("r2", true));
+		intTerms.add(new IntegerVariableAssignmentTerminal("r2", false));
 		intTerms.add(new IntegerVariableAssignmentTerminal(0));
 		intTerms.add(new IntegerVariableAssignmentTerminal(50));
 		intTerms.add(new IntegerVariableAssignmentTerminal(100));

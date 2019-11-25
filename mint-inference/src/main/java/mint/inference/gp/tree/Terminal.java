@@ -48,16 +48,6 @@ public abstract class Terminal<V extends VariableAssignment<?>> extends Node<V> 
 			return 1;
 	}
 
-	@Override
-	public void simplify() {
-		if (isConstant())
-			return;
-		if (vals.size() == 1) {
-			Terminal<V> term = getTermFromVals();
-			swapWith(term);
-		}
-	}
-
 	protected abstract Terminal<V> getTermFromVals();
 
 	@Override

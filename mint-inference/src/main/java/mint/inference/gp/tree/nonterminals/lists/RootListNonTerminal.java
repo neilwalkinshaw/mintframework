@@ -39,13 +39,6 @@ public class RootListNonTerminal extends NonTerminal<ListVariableAssignment> {
 	}
 
 	@Override
-	public void simplify() {
-		for (Node<?> child : getChildren()) {
-			child.simplify();
-		}
-	}
-
-	@Override
 	public NonTerminal<ListVariableAssignment> createInstance(Generator g, int depth) {
 		List<Node<?>> elements = new ArrayList<Node<?>>();
 		for (int i = 0; i < types.length(); i++) {
