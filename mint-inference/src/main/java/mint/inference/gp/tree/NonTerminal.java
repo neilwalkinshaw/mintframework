@@ -67,7 +67,6 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 			child = g.generateRandomStringExpression(depth - 1);
 		}
 		children.set(childPos, child);
-
 	}
 
 	public abstract NonTerminal<T> createInstance(Generator g, int depth);

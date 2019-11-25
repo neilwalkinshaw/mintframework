@@ -61,13 +61,14 @@ public class SRPlayground {
 		System.out.println("IntTerms: " + intTerms);
 		System.out.println("Int values: " + IntegerVariableAssignment.values());
 
-		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(9, 0.9f, 0.01f, 5, 2));
+		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet,
+				new GPConfiguration(20, 0.9f, 0.01f, 5, 2));
 
 //		AddIntegersOperator seed = new AddIntegersOperator(new IntegerVariableAssignmentTerminal("i0", false),
 //				new IntegerVariableAssignmentTerminal("r1", true));
 //		gp.addSeed(seed);
 
-		Node<?> best = (Node<?>) gp.evolve(10);
+		Node<?> best = (Node<?>) gp.evolve(100);
 		System.out.println(best + ": " + best.getFitness());
 		System.out.println("correct? " + gp.isCorrect(best));
 

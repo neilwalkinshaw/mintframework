@@ -109,51 +109,63 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		return popString.toString();
 	}
 
+	private LatentVariableFitness<?> getFitnessFunction(Chromosome c) {
+		Node<?> node = (Node<?>) c;
+		if (node.getType() == "string")
+			return new StringFitness(evals, (Node<VariableAssignment<String>>) c);
+		else if (node.getType() == "integer")
+			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c);
+		else {
+			assert (node.getType() == "boolean");
+			return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c);
+		}
+	}
+
+	private Node<?> chooseBest(List<Chromosome> pop) {
+		Node<?> best;
+		if (fittest == null)
+			best = (Node<?>) pop.get(0);
+		else
+			best = fittest;
+//		System.out.println("                 Best: " + best + " Best Fitness: " + best.getFitness());
+		for (Chromosome c : pop) {
+			Node<?> node = (Node<?>) c;
+			LatentVariableFitness<?> fit = getFitnessFunction(c);
+
+//			System.out.println("                     Challenger: " + c + " Fitness: " + node.getFitness());
+
+			if (node.getFitness() < best.getFitness())
+				best = node;
+			else if (node.getFitness().equals(best.getFitness()) && node != best) {
+//				System.out.println(" |Breaking ties|");
+				LatentVariableFitness<?> bestFit = getFitnessFunction(best);
+				List<Double> newTieBreak = fit.breakTies();
+				List<Double> bestTieBreak = bestFit.breakTies();
+
+				for (int i = 0; i < Math.min(newTieBreak.size(), bestTieBreak.size()); i++) {
+					if (newTieBreak.get(i) > bestTieBreak.get(i)) {
+						break;
+					}
+					if (newTieBreak.get(i) < bestTieBreak.get(i)) {
+						best = (Node<?>) c;
+						break;
+					}
+				}
+			}
+		}
+//		System.out.println(" Challenger: " + best + " Challenger Fitness: " + best.getFitness());
+		return best;
+	}
+
 	@Override
 	public void evaluatePopulation(List<Chromosome> pop) {
 		for (Chromosome c : pop) {
-			LatentVariableFitness<?> fit;
 			Node<?> node = (Node<?>) c;
 			if (node.getFitness() == null) {
-				if (node.getType() == "string")
-					fit = new StringFitness(evals, (Node<VariableAssignment<String>>) c);
-				else if (node.getType() == "integer")
-					fit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c);
-				else {
-					assert (node.getType() == "boolean");
-					fit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c);
-				}
 				try {
+					LatentVariableFitness<?> fit = getFitnessFunction(c);
 					double fitness = fit.call();
 					node.setFitness(fitness);
-
-					if (fittest == null || fitness < fittest.getFitness()) {
-						System.out.println("  New champion: " + node);
-						fittest = node;
-					} else if (fittest != null) {
-						LatentVariableFitness<?> bestFit;
-						if (fittest.getType() == "string")
-							bestFit = new StringFitness(evals, (Node<VariableAssignment<String>>) fittest);
-						else if (fittest.getType() == "integer")
-							bestFit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) fittest);
-						else {
-							assert (fittest.getType() == "boolean");
-							bestFit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) fittest);
-						}
-						List<Double> newTieBreak = fit.breakTies();
-						List<Double> bestTieBreak = bestFit.breakTies();
-
-						for (int i = 0; i < Math.min(newTieBreak.size(), bestTieBreak.size()); i++) {
-							if (newTieBreak.get(i) > bestTieBreak.get(i)) {
-								break;
-							}
-							if (newTieBreak.get(i) < bestTieBreak.get(i)) {
-								fittest = (Node<?>) c;
-								break;
-							}
-						}
-					}
-
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					System.exit(1);
@@ -167,16 +179,20 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		assert (lim > 0);
 		population = generatePopulation(getGPConf().getPopulationSize() - seeds.size());
 
+		System.out.println("Population: " + population);
 		population.addAll(seeds);
+		evaluatePopulation(population);
+		fittest = chooseBest(population);
 
-		LOGGER.debug("Population: " + population);
+		LOGGER.debug("GP iteration: 0" + " - best individual: " + fittest + " fitness: " + fittest.getFitness()
+				+ " New population: " + popInfo());
 
 		AbstractIterator it = getIterator(population);
-		for (int i = 0; i < lim; i++) {
-
+		for (int i = 1; i <= lim; i++) {
 			population = it.iterate(this);
 
 			evaluatePopulation(population);
+			fittest = chooseBest(population);
 
 			LOGGER.debug("GP iteration: " + i + " - best individual: " + fittest + " fitness: " + fittest.getFitness()
 					+ " New population: " + popInfo());

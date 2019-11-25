@@ -138,8 +138,8 @@ public class IntegerVariableAssignment extends NumberVariableAssignment<Integer>
 
 	@Override
 	protected Integer generateRandom() {
-//		if (!values.isEmpty())
-//			return values.get(rand.nextInt(values.size()));
+		if (!values.isEmpty())
+			return values.get(rand.nextInt(values.size()));
 		System.out.println("max:" + max + " min: " + min);
 		Integer retVal = min + rand.nextInt((max - min));
 		return retVal;
