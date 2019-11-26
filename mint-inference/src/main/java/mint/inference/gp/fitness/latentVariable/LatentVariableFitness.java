@@ -186,7 +186,6 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 
 		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
 			double minDistance = calculateDistance(current, undef);
-			System.out.println(individual + " " + current + " : " + minDistance);
 			if (minDistance > 0D) {
 				return false;
 			}
