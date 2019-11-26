@@ -179,9 +179,9 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 		assert (lim > 0);
 		population = generatePopulation(getGPConf().getPopulationSize() - seeds.size());
 
-		System.out.println("Population: " + population);
 		population.addAll(seeds);
 		evaluatePopulation(population);
+
 		fittest = chooseBest(population);
 
 		LOGGER.debug("GP iteration: 0" + " - best individual: " + fittest + " fitness: " + fittest.getFitness()

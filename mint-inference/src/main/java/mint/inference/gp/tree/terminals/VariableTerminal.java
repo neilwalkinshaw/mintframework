@@ -24,8 +24,7 @@ public abstract class VariableTerminal<T extends VariableAssignment<?>> extends 
 	public String toString() {
 		if (!terminal.isParameter() && isConstant())
 			return "" + terminal.getValue();
-		else
-			return terminal.getName();
+		return terminal.getName();
 	}
 
 	@Override

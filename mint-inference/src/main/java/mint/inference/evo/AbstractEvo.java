@@ -68,7 +68,6 @@ public abstract class AbstractEvo {
 				// LOGGER.debug("Best fitness: "+it.getLatestSelection().getBestFitness());
 				fittest = latestSelection.elite.get(0);
 				LOGGER.debug("GP iteration: " + i + " - best fitness: " + bestFitness);
-				System.out.println("New population: " + population);
 
 				if (bestFitness <= 0D)
 					break;

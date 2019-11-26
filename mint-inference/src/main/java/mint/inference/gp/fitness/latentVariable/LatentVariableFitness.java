@@ -48,7 +48,6 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 		try {
 			if (latent.isEmpty()) {
 				actual = executor.call();
-//				System.out.println("  Latent empty. Value = " + actual);
 				minDistance = distance(actual, current.getValue().getValue());
 				individual.reset();
 			}
@@ -70,15 +69,19 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 			}
 		} catch (ClassCastException e) {
 			e.printStackTrace();
-			System.exit(0);
+			System.exit(1);
 			return Double.POSITIVE_INFINITY;
 		} catch (InvalidDistanceException e) {
-			System.out.println("InvalidDistanceException");
-			System.exit(0);
+			e.printStackTrace();
+			System.exit(1);
 			return Double.POSITIVE_INFINITY;
 		} catch (NullPointerException e) {
-			System.out.println("NullPointerException");
-			System.exit(0);
+			e.printStackTrace();
+			System.out.println("Individual: " + individual);
+			System.out.println("Current: " + current);
+			System.out.println("Latent: " + latent);
+
+			System.exit(1);
 			return Double.POSITIVE_INFINITY;
 		}
 		return minDistance;
@@ -95,7 +98,7 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 
 		Set<VariableTerminal<?>> latent = latentVars(individual);
 
-//		System.out.println("Evaluating: " + individual + " Undef: " + undef);
+//		System.out.println("Evaluating: " + individual + " Latent: " + latent);
 
 		Set<String> totalVars = totalUsedVars();
 		Set<String> totalUsedVars = individual.varsInTree().stream().map(s -> s.getName()).collect(Collectors.toSet());

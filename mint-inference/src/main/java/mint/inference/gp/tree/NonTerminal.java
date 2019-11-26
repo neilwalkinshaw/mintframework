@@ -121,6 +121,9 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 	}
 
 	protected void mutateByRandomChangeOfFunction(Generator g) {
+		// Sometimes this will generate expressions which don't type check
+		// I guess that's OK because they'll get weeded out quietly
+		// Ideally I'd like to always make functions which type check
 		if (!g.boolNonTerms().isEmpty()) {
 			NonTerminal<?> newFun = (NonTerminal<?>) g.generateRandomNonTerminal(this.getType());
 			newFun.setChildren(this.children);

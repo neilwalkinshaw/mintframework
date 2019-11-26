@@ -165,7 +165,7 @@ public class NodeSimplifier {
 			String vname = exp.getFuncDecl().getName().toString().replace("latent", "");
 			// This sets all "r" variable names to be latent
 			return new StringVariableAssignmentTerminal(new StringVariableAssignment(vname), false,
-					vname.startsWith("latent"));
+					exp.getFuncDecl().getName().toString().startsWith("latent"));
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}

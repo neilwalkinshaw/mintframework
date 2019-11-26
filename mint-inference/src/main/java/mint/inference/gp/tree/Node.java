@@ -161,10 +161,16 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 	@SuppressWarnings("unchecked")
 	public Node<T> simp() {
 		Context ctx = new Context();
-		Expr z3Expr = this.toZ3(ctx).simplify();
-		Node<T> retVal = (Node<T>) NodeSimplifier.fromZ3(z3Expr);
-		ctx.close();
-		return retVal;
+		try {
+			Expr z3Expr = this.toZ3(ctx).simplify();
+			Node<T> retVal = (Node<T>) NodeSimplifier.fromZ3(z3Expr);
+			return retVal;
+		} catch (Exception e) {
+			return this;
+		} finally {
+			ctx.close();
+		}
+
 	}
 
 	@Override

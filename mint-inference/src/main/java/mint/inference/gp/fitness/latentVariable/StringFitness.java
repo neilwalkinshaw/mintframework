@@ -27,6 +27,9 @@ public class StringFitness extends LatentVariableFitness<String> {
 
 	@Override
 	protected double distance(String actual, Object exp) {
+		if (actual == null && exp != null) {
+			return Double.POSITIVE_INFINITY;
+		}
 		String expected = exp.toString();
 		String a = actual.toLowerCase();
 		String b = expected.toLowerCase();
