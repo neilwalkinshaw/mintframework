@@ -10,7 +10,6 @@ import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
 import mint.inference.gp.tree.nonterminals.booleans.LTBooleanIntegersOperator;
 import mint.inference.gp.tree.nonterminals.booleans.NotBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.OrBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
 import mint.inference.gp.tree.nonterminals.doubles.AddDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.CastDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.CosDoublesOperator;
@@ -20,7 +19,6 @@ import mint.inference.gp.tree.nonterminals.doubles.IfThenElseOperator;
 import mint.inference.gp.tree.nonterminals.doubles.LogDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.MultiplyDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.PwrDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
 import mint.inference.gp.tree.nonterminals.doubles.SubtractDoublesOperator;
 import mint.inference.gp.tree.nonterminals.integers.CastIntegersOperator;
 import mint.inference.gp.tree.nonterminals.integers.IfThenElseIntegerOperator;
@@ -105,10 +103,6 @@ public interface NodeVisitor {
 
 	boolean visitExit(PwrDoublesOperator pwrDoublesOperator);
 
-	boolean visitEnter(RootDouble rootDouble);
-
-	boolean visitExit(RootDouble rootDouble);
-
 	boolean visitEnter(ExpDoublesOperator expDoublesOperator);
 
 	boolean visitExit(ExpDoublesOperator expDoublesOperator);
@@ -128,10 +122,6 @@ public interface NodeVisitor {
 	void visitEnter(StringVariableAssignmentTerminal stringVariableAssignmentTerminal);
 
 	boolean visitExit(StringVariableAssignmentTerminal stringVariableAssignmentTerminal);
-
-	boolean visitEnter(RootBoolean rootBoolean);
-
-	boolean visitExit(RootBoolean rootBoolean);
 
 	void visitEnter(IntegerVariableAssignmentTerminal integerVariableAssignmentTerminal);
 

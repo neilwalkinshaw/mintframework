@@ -9,12 +9,8 @@ import com.microsoft.z3.Context;
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
-import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
-import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
-import mint.inference.gp.tree.nonterminals.integers.RootInteger;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
-import mint.inference.gp.tree.nonterminals.strings.RootString;
 import mint.inference.gp.tree.terminals.VariableTerminal;
 import mint.tracedata.types.BooleanVariableAssignment;
 import mint.tracedata.types.DoubleVariableAssignment;
@@ -128,8 +124,7 @@ public class Generator {
 	public List<Chromosome> generateBooleanPopulation(int size, int maxD) {
 		List<Chromosome> population = new ArrayList<Chromosome>();
 		for (int i = 0; i < size; i++) {
-			RootBoolean rb = new RootBoolean();
-			population.add(rb.createInstance(this, maxD));
+			population.add(generateRandomBooleanExpression(maxD + 1));
 		}
 		return population;
 	}
@@ -137,8 +132,7 @@ public class Generator {
 	public List<Chromosome> generateDoublePopulation(int size, int maxD) {
 		List<Chromosome> population = new ArrayList<Chromosome>();
 		for (int i = 0; i < size; i++) {
-			RootDouble rd = new RootDouble();
-			population.add(rd.createInstance(this, maxD));
+			population.add(generateRandomDoubleExpression(maxD + 1));
 		}
 		return population;
 	}
@@ -146,16 +140,16 @@ public class Generator {
 	public List<Chromosome> generateIntegerPopulation(int size, int maxD) {
 		List<Chromosome> population = new ArrayList<Chromosome>();
 		for (int i = 0; i < size; i++) {
-			RootInteger ri = new RootInteger();
 			Chromosome instance;
 			// We want to make sure the initial population is filled with unique individuals
 			// if we can. If there are no nonterminals then we can't do this.
 			if (!iFunctions.isEmpty()) {
 				do {
-					instance = ri.createInstance(this, maxD);
+					instance = generateRandomIntegerExpression(maxD + 1);
+
 				} while (populationContains(population, instance));
 			} else {
-				instance = ri.createInstance(this, maxD);
+				instance = generateRandomIntegerExpression(maxD + 1);
 			}
 			population.add(instance);
 		}
@@ -165,8 +159,7 @@ public class Generator {
 	public List<Chromosome> generateStringPopulation(int size, int maxD) {
 		List<Chromosome> population = new ArrayList<Chromosome>();
 		for (int i = 0; i < size; i++) {
-			RootString rs = new RootString();
-			population.add(rs.createInstance(this, maxD));
+			population.add(generateRandomStringExpression(maxD + 1));
 		}
 		return population;
 	}

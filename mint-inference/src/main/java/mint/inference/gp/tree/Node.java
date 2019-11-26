@@ -9,8 +9,6 @@ import com.microsoft.z3.Expr;
 
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.Generator;
-import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
-import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
 import mint.inference.gp.tree.terminals.VariableTerminal;
@@ -76,8 +74,6 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 	public abstract void mutate(Generator g, int depth);
 
 	public boolean swapWith(Node<?> alternative) {
-		assert (!(this instanceof RootDouble));
-		assert (!(this instanceof RootBoolean));
 		assert (!(this instanceof RootListNonTerminal));
 		if (parent == null) {
 			return false;

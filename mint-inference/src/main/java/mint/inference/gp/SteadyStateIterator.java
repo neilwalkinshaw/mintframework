@@ -14,10 +14,6 @@ import mint.inference.evo.AbstractEvo;
 import mint.inference.evo.AbstractIterator;
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.tree.Node;
-import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
-import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
-import mint.inference.gp.tree.nonterminals.integers.RootInteger;
-import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 
 /**
  * Responsible for creating the offspring in an iteration by applying mutation
@@ -81,10 +77,7 @@ public class SteadyStateIterator extends AbstractIterator {
 	protected void removeUnviableNodes(List<Node<?>> nt) {
 		Collection<Node<?>> toRemove = new HashSet<Node<?>>();
 		for (Node<?> n : nt) {
-			if (n instanceof RootDouble || n instanceof RootBoolean || n instanceof RootInteger
-					|| n instanceof RootListNonTerminal)
-				toRemove.add(n);
-			else if (n.depth() >= maxDepth)
+			if (n.depth() >= maxDepth)
 				toRemove.add(n);
 		}
 		nt.removeAll(toRemove);

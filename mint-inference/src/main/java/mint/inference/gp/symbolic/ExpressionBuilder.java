@@ -28,7 +28,6 @@ import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
 import mint.inference.gp.tree.nonterminals.booleans.LTBooleanIntegersOperator;
 import mint.inference.gp.tree.nonterminals.booleans.NotBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.OrBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
 import mint.inference.gp.tree.nonterminals.doubles.AddDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.CastDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.CosDoublesOperator;
@@ -38,7 +37,6 @@ import mint.inference.gp.tree.nonterminals.doubles.IfThenElseOperator;
 import mint.inference.gp.tree.nonterminals.doubles.LogDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.MultiplyDoublesOperator;
 import mint.inference.gp.tree.nonterminals.doubles.PwrDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
 import mint.inference.gp.tree.nonterminals.doubles.SubtractDoublesOperator;
 import mint.inference.gp.tree.nonterminals.integers.CastIntegersOperator;
 import mint.inference.gp.tree.nonterminals.integers.IfThenElseIntegerOperator;
@@ -581,16 +579,6 @@ public class ExpressionBuilder implements NodeVisitor {
 	}
 
 	@Override
-	public boolean visitEnter(RootDouble rootDouble) {
-		return true;
-	}
-
-	@Override
-	public boolean visitExit(RootDouble rootDouble) {
-		return true;
-	}
-
-	@Override
 	public boolean visitEnter(ExpDoublesOperator expDoublesOperator) {
 		return true;
 	}
@@ -684,16 +672,6 @@ public class ExpressionBuilder implements NodeVisitor {
 
 	@Override
 	public boolean visitExit(StringVariableAssignmentTerminal stringVariableAssignmentTerminal) {
-		return true;
-	}
-
-	@Override
-	public boolean visitEnter(RootBoolean rootBoolean) {
-		return true;
-	}
-
-	@Override
-	public boolean visitExit(RootBoolean rootBoolean) {
 		return true;
 	}
 
