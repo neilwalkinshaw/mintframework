@@ -72,6 +72,9 @@ public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanV
 		if (this.isConstant()) {
 			return ctx.mkBool(this.getTerminal().getValue());
 		}
+		if (this.isLatent())
+			return ctx.mkBoolConst("latent" + this.getName());
+
 		return ctx.mkBoolConst(this.getName());
 	}
 

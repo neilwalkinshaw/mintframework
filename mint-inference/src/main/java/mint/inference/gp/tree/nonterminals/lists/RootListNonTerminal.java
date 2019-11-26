@@ -114,5 +114,4 @@ public class RootListNonTerminal extends NonTerminal<ListVariableAssignment> {
 	protected NonTerminal<ListVariableAssignment> newInstance() {
 		return new RootListNonTerminal(types);
 	}
-
 }

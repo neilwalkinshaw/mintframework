@@ -54,4 +54,11 @@ public abstract class Terminal<V extends VariableAssignment<?>> extends Node<V> 
 	public int size() {
 		return 1;
 	}
+
+	@Override
+	protected List<Node<?>> getAllNodesAsList() {
+		List<Node<?>> nodes = new ArrayList<Node<?>>();
+		nodes.add(this);
+		return nodes;
+	}
 }

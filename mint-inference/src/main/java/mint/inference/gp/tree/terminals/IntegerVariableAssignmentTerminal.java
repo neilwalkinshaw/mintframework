@@ -97,6 +97,9 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 		if (this.isConstant()) {
 			return ctx.mkInt(this.getTerminal().getValue());
 		}
+		if (this.isLatent())
+			return ctx.mkIntConst("latent" + this.getName());
+
 		return ctx.mkIntConst(this.getName());
 	}
 

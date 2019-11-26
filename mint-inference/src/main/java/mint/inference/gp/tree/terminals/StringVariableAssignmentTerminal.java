@@ -73,6 +73,9 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 			String val = this.getTerminal().getValue();
 			return ctx.mkString(val);
 		}
+		if (this.isLatent())
+			return ctx.mkConst(ctx.mkFuncDecl("latent" + this.getName(), new Sort[] {}, ctx.mkStringSort()));
+
 		return ctx.mkConst(ctx.mkFuncDecl(this.getName(), new Sort[] {}, ctx.mkStringSort()));
 	}
 

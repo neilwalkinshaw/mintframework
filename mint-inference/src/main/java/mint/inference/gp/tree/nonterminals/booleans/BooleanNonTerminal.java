@@ -32,5 +32,4 @@ public abstract class BooleanNonTerminal extends NonTerminal<BooleanVariableAssi
 		BooleanVariableAssignmentTerminal term = new BooleanVariableAssignmentTerminal(bvar, true, false);
 		return term;
 	}
-
 }

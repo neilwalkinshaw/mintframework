@@ -16,13 +16,13 @@ import mint.tracedata.types.BooleanVariableAssignment;
 public class AndBooleanOperator extends BooleanNonTerminal {
 
 	public AndBooleanOperator(Node<?> a, Node<?> b) {
-		super(null);
+		super();
 		addChild(a);
 		addChild(b);
 	}
 
 	public AndBooleanOperator() {
-		super();
+		super(null);
 	}
 
 	@Override

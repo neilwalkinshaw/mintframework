@@ -88,6 +88,9 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 		if (this.isConstant()) {
 			return ctx.mkReal(this.getTerminal().getValue().longValue());
 		}
+		if (this.isLatent())
+			return ctx.mkRealConst("latent" + this.getName());
+
 		return ctx.mkRealConst(this.getName());
 	}
 

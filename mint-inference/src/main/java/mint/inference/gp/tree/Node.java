@@ -185,4 +185,7 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		Double fit = this.fitness;
 		return fit.compareTo(arg0.fitness);
 	}
+
+	protected abstract List<Node<?>> getAllNodesAsList();
+
 }

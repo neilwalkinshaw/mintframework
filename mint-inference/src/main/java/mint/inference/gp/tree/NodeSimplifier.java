@@ -63,9 +63,8 @@ public class NodeSimplifier {
 			return new IntegerVariableAssignmentTerminal(num, true, false);
 		}
 		if (exp.isConst()) {
-			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString());
-			// This sets all "r" variable names to be latent
-			return new IntegerVariableAssignmentTerminal(num, false, exp.toString().startsWith("r"));
+			IntegerVariableAssignment num = new IntegerVariableAssignment(exp.toString().replace("latent", ""));
+			return new IntegerVariableAssignmentTerminal(num, false, exp.toString().startsWith("latent"));
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}
@@ -84,9 +83,9 @@ public class NodeSimplifier {
 			return new SubtractDoublesOperator(new DoubleVariableAssignmentTerminal(zero, true, false), c2);
 		}
 		if (exp.isConst()) {
-			DoubleVariableAssignment num = new DoubleVariableAssignment(exp.toString());
+			DoubleVariableAssignment num = new DoubleVariableAssignment(exp.toString().replace("latent", ""));
 			// This sets all "r" variable names to be latent
-			return new DoubleVariableAssignmentTerminal(num, false, exp.toString().startsWith("r"));
+			return new DoubleVariableAssignmentTerminal(num, false, exp.toString().startsWith("latent"));
 		}
 		if (exp.isRatNum()) {
 			DoubleVariableAssignment num = new DoubleVariableAssignment(exp.toString(), Double.valueOf(exp.toString()));
@@ -163,10 +162,10 @@ public class NodeSimplifier {
 			return new StringVariableAssignmentTerminal(exp.getString());
 		}
 		if (exp.isConst()) {
-			String vname = exp.getFuncDecl().getName().toString();
+			String vname = exp.getFuncDecl().getName().toString().replace("latent", "");
 			// This sets all "r" variable names to be latent
 			return new StringVariableAssignmentTerminal(new StringVariableAssignment(vname), false,
-					vname.startsWith("r"));
+					vname.startsWith("latent"));
 		}
 		throw new IllegalArgumentException("Could not convert from Z3 expression " + exp);
 	}

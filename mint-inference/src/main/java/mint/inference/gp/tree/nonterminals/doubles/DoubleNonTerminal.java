@@ -37,5 +37,4 @@ public abstract class DoubleNonTerminal extends NonTerminal<DoubleVariableAssign
 		DoubleVariableAssignmentTerminal term = new DoubleVariableAssignmentTerminal(dvar, true, false);
 		return term;
 	}
-
 }

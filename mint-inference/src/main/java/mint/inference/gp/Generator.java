@@ -33,8 +33,8 @@ public class Generator {
 
 	protected Random rand;
 	protected List<NonTerminal<?>> dFunctions;
-	protected List<NonTerminal<?>> iFunctions;
 	protected List<VariableTerminal<?>> dTerminals;
+	protected List<NonTerminal<?>> iFunctions;
 	protected List<VariableTerminal<?>> iTerminals;
 	protected List<NonTerminal<?>> sFunctions;
 	protected List<VariableTerminal<?>> sTerminals;
@@ -227,5 +227,43 @@ public class Generator {
 			population.add(rs.createInstance(this, maxD));
 		}
 		return population;
+	}
+
+	public List<NonTerminal<?>> boolNonTerms() {
+		return this.bFunctions;
+	}
+
+	public List<NonTerminal<?>> intNonTerms() {
+		return this.iFunctions;
+	}
+
+	public List<NonTerminal<?>> doubleNonTerms() {
+		return this.dFunctions;
+	}
+
+	public Node<?> generateRandomTerminal(String type) {
+		if (type.equals("boolean"))
+			return selectRandomTerminal(bTerminals);
+		if (type.equals("string"))
+			return selectRandomTerminal(sTerminals);
+		if (type.equals("integer"))
+			return selectRandomTerminal(iTerminals);
+		else {
+			assert (type.equals("double"));
+			return selectRandomTerminal(dTerminals);
+		}
+	}
+
+	public Node<?> generateRandomNonTerminal(String type) {
+		if (type.equals("boolean"))
+			return bFunctions.get(rand.nextInt(bFunctions.size()));
+		if (type.equals("string"))
+			return sFunctions.get(rand.nextInt(sFunctions.size()));
+		if (type.equals("integer"))
+			return iFunctions.get(rand.nextInt(iFunctions.size()));
+		else {
+			assert (type.equals("double"));
+			return dFunctions.get(rand.nextInt(dFunctions.size()));
+		}
 	}
 }

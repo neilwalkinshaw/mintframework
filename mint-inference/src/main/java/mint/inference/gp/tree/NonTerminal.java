@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import mint.inference.evo.Chromosome;
 import mint.inference.gp.Generator;
 import mint.inference.gp.tree.terminals.VariableTerminal;
@@ -17,6 +18,10 @@ import mint.tracedata.types.VariableAssignment;
 public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<T> {
 
 	protected List<Node<?>> children;
+
+	public void setChildren(List<Node<?>> newChildren) {
+		this.children = newChildren;
+	}
 
 	public NonTerminal() {
 		super();
@@ -52,21 +57,101 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		child.setParent(this);
 	}
 
+//	@Override
+//	public void mutate(Generator g, int depth) {
+//		// subtree-mutation
+//		int childPos = g.getRandom().nextInt(children.size());
+//		Node<?> child = children.get(childPos);
+//		if (child.getType().equals("boolean")) {
+//			child = g.generateRandomBooleanExpression(depth - 1);
+//		} else if (child.getType().equals("double")) {
+//			child = g.generateRandomDoubleExpression(depth - 1);
+//		} else if (child.getType().equals("integer")) {
+//			child = g.generateRandomIntegerExpression(depth - 1);
+//		} else {
+//			child = g.generateRandomStringExpression(depth - 1);
+//		}
+//		children.set(childPos, child);
+//	}
+
+	@Override
+	protected List<Node<?>> getAllNodesAsList() {
+		List<Node<?>> nodes = new ArrayList<Node<?>>();
+		nodes.add(this);
+
+		for (Node<?> child : this.children) {
+			nodes.add(child);
+			nodes.addAll(child.getAllNodesAsList());
+		}
+		return nodes;
+	}
+
+	private Node<?> getRandomNode(Generator g) {
+		List<Node<?>> allNodesOfTree = this.getAllNodesAsList();
+		int allNodesOfTreeCount = allNodesOfTree.size();
+		int indx = g.getRandom().nextInt(allNodesOfTreeCount);
+		return allNodesOfTree.get(indx);
+	}
+
 	@Override
 	public void mutate(Generator g, int depth) {
-		// subtree-mutation
-		int childPos = g.getRandom().nextInt(children.size());
-		Node<?> child = children.get(childPos);
-		if (child.getType().equals("boolean")) {
-			child = g.generateRandomBooleanExpression(depth - 1);
-		} else if (child.getType().equals("double")) {
-			child = g.generateRandomDoubleExpression(depth - 1);
-		} else if (child.getType().equals("integer")) {
-			child = g.generateRandomIntegerExpression(depth - 1);
-		} else {
-			child = g.generateRandomStringExpression(depth - 1);
+		int type = g.getRandom().nextInt(6);
+		switch (type) {
+		case 0:
+			mutateByRandomChangeOfFunction(g);
+			break;
+		case 1:
+			mutateByRandomChangeOfChild(g);
+			break;
+		case 2:
+			mutateByRootGrowth(g);
+			break;
+		case 3:
+			// Reverse children, e.g. (x - y) -> (y - x)
+			Collections.reverse(this.children);
+			break;
+		case 4:
+			mutateByRandomChangeOfNodeToChild(g);
+			break;
+		case 6:
+			// mutate by replacing the entire tree with a subtree
+			swapWith(this.getRandomNode(g));
+			break;
 		}
-		children.set(childPos, child);
+	}
+
+	protected void mutateByRandomChangeOfFunction(Generator g) {
+		if (!g.boolNonTerms().isEmpty()) {
+			NonTerminal<?> newFun = (NonTerminal<?>) g.generateRandomNonTerminal(this.getType());
+			newFun.setChildren(this.children);
+			this.swapWith(newFun);
+		}
+	}
+
+	protected void mutateByRandomChangeOfChild(Generator g) {
+		if (!this.children.isEmpty()) {
+			Node<?> child = this.getChild(g.getRandom().nextInt(this.children.size()));
+			child.swapWith(g.generateRandomTerminal(this.getType()));
+		}
+	}
+
+	protected void mutateByRootGrowth(Generator g) {
+		if (!g.boolNonTerms().isEmpty()) {
+			NonTerminal<?> newRoot = (NonTerminal<?>) g.generateRandomNonTerminal(this.getType());
+			newRoot.addChild(this);
+			newRoot.addChild(g.generateRandomTerminal(this.getType()));
+			this.swapWith(newRoot);
+		}
+	}
+
+	private void mutateByRandomChangeOfNodeToChild(Generator g) {
+		Node<?> mutatingNode = this.getRandomNode(g);
+		if (!mutatingNode.getChildren().isEmpty()) {
+			int indx = g.getRandom().nextInt(mutatingNode.getChildren().size());
+			mutatingNode.swapWith(mutatingNode.getChildren().get(indx));
+		} else {
+			this.mutateByRandomChangeOfFunction(g);
+		}
 	}
 
 	public abstract NonTerminal<T> createInstance(Generator g, int depth);

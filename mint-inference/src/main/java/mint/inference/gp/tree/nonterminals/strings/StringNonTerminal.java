@@ -32,5 +32,4 @@ public abstract class StringNonTerminal extends NonTerminal<StringVariableAssign
 		StringVariableAssignmentTerminal term = new StringVariableAssignmentTerminal(svar, true, false);
 		return term;
 	}
-
 }

@@ -48,6 +48,7 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 		try {
 			if (latent.isEmpty()) {
 				actual = executor.call();
+//				System.out.println("  Latent empty. Value = " + actual);
 				minDistance = distance(actual, current.getValue().getValue());
 				individual.reset();
 			}
@@ -181,17 +182,11 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 	}
 
 	public boolean correct() throws InterruptedException {
-		Set<String> totalUsedVars = totalUsedVars();
-
 		Set<VariableTerminal<?>> undef = latentVars(individual);
-
-		Set<String> totalUnusedVars = totalUsedVars;
-		for (VariableTerminal<?> vName : individual.varsInTree()) {
-			totalUnusedVars.remove(vName.getName());
-		}
 
 		for (Entry<List<VariableAssignment<?>>, VariableAssignment<?>> current : evalSet.entries()) {
 			double minDistance = calculateDistance(current, undef);
+			System.out.println(individual + " " + current + " : " + minDistance);
 			if (minDistance > 0D) {
 				return false;
 			}

@@ -35,7 +35,7 @@ public class UpdateSRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(3));
+		Generator gpGenerator = new Generator(new Random(7));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());
@@ -77,12 +77,12 @@ public class UpdateSRPlayground {
 		System.out.println("IntTerms: " + intTerms);
 		System.out.println("Int values: " + IntegerVariableAssignment.values());
 
-		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(10, 0.9f, 0.5f, 5, 2));
+		LatentVariableGP gp = new LatentVariableGP(gpGenerator, trainingSet, new GPConfiguration(20, 0.9f, 1f, 5, 2));
 
 //		IntegerVariableAssignmentTerminal seed = new IntegerVariableAssignmentTerminal(50);
 //		gp.addSeed(seed);
 
-		Node<?> best = (Node<?>) gp.evolve(10);
+		Node<?> best = (Node<?>) gp.evolve(50);
 		System.out.println(best + ": " + best.getFitness());
 		System.out.println("correct? " + gp.isCorrect(best));
 	}
