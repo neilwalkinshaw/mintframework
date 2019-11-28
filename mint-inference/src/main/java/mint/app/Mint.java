@@ -9,27 +9,6 @@
  ******************************************************************************/
 package mint.app;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import mint.Configuration;
 import mint.inference.InferenceBuilder;
 import mint.inference.efsm.AbstractMerger;
@@ -40,43 +19,43 @@ import mint.tracedata.TraceSet;
 import mint.tracedata.readers.TraceReader;
 import mint.visualise.d3.Machine2JSONTransformer;
 import mint.visualise.dot.DotGraphWithLabels;
+import org.apache.commons.cli.*;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Mint {
 
 	private final static Logger LOGGER = Logger.getLogger(Mint.class.getName());
 
+	
 	@SuppressWarnings("static-access")
 	public void parseCommandLine(String[] args) {
 		Options options = new Options();
 
 		Option help = new Option("help", "print this message");
 		Option csv = OptionBuilder.withArgName("input").hasArg().withDescription("trace file").create("input");
-		Option algorithm = OptionBuilder.withArgName("algorithm").hasArg()
-				.withDescription("J48, JRIP, NaiveBayes, AdaBoost").create("algorithm");
-		Option data = OptionBuilder.withArgName("data").hasArg()
-				.withDescription("use variable data for inference or not").create("data");
-		Option k = OptionBuilder.withArgName("k").hasArg()
-				.withDescription("minimum length of overlapping outgoing paths for a merge").create("k");
-		Option prefixClosed = OptionBuilder.withArgName("prefixClosed")
-				.withDescription("Inferred model is an LTS (a state machine where all states are accept states).")
-				.create("prefixClosed");
-		Option wekaOptions = OptionBuilder.withArgName("wekaOptions").hasArgs()
-				.withDescription("WEKA options for specific learning algorithms (See WEKA documentation)")
-				.create("wekaOptions");
+		Option algorithm = OptionBuilder.withArgName("algorithm").hasArg().withDescription("J48, JRIP, NaiveBayes, AdaBoost").create("algorithm");
+		Option data = OptionBuilder.withArgName("data").hasArg().withDescription("use variable data for inference or not").create("data");
+		Option k = OptionBuilder.withArgName("k").hasArg().withDescription("minimum length of overlapping outgoing paths for a merge").create("k");
+		Option prefixClosed = OptionBuilder.withArgName("prefixClosed").withDescription("Inferred model is an LTS (a state machine where all states are accept states).").create("prefixClosed");
+		Option wekaOptions = OptionBuilder.withArgName("wekaOptions").hasArgs().withDescription("WEKA options for specific learning algorithms (See WEKA documentation)").create("wekaOptions");
 		wekaOptions.setArgs(6);
-		Option visualise = OptionBuilder.withArgName("visualise").hasArg()
-				.withDescription("How to output your EFSM - either `text' or `graphical'.").create("visualise");
-		Option visout = OptionBuilder.withArgName("visout").hasArg()
-				.withDescription("Write the dot representation of the graph to a file instead of standard output")
-				.create("visout");
-		Option daikon = OptionBuilder.withArgName("daikon")
-				.withDescription("Generate Daikon invariants for transitions").create("daikon");
-		Option strategy = OptionBuilder.withArgName("strategy").hasArg()
-				.withDescription("redblue,gktails,noloops,ktails").create("strategy");
-		Option gp = OptionBuilder.withArgName("gp").withDescription("Use GP to infer transition functions.")
-				.create("gp");
-		Option carefulDet = OptionBuilder.withArgName("carefulDet")
-				.withDescription("Determinize to prevent overgeneralisation.").create("carefulDet");
+		Option visualise = OptionBuilder.withArgName("visualise").hasArg().withDescription("How to output your EFSM - either `text' or `graphical'.").create("visualise");
+		Option visout = OptionBuilder.withArgName("visout").hasArg().withDescription("Write the dot representation of the graph to a file instead of standard output").create("visout");
+		Option daikon = OptionBuilder.withArgName("daikon").withDescription("Generate Daikon invariants for transitions").create("daikon");
+		Option strategy = OptionBuilder.withArgName("strategy").hasArg().withDescription("redblue,gktails,noloops,ktails").create("strategy");
+        Option gp = OptionBuilder.withArgName("gp").withDescription("Use GP to infer transition functions.").create("gp");
+        Option carefulDet = OptionBuilder.withArgName("carefulDet").withDescription("Determinize to prevent overgeneralisation.").create("carefulDet");
 
 		options.addOption(help);
 		options.addOption(csv);
@@ -89,8 +68,8 @@ public class Mint {
 		options.addOption(visualise);
 		options.addOption(visout);
 		options.addOption(strategy);
-		options.addOption(gp);
-		options.addOption(carefulDet);
+        options.addOption(gp);
+        options.addOption(carefulDet);
 		// create the parser
 		CommandLineParser parser = new GnuParser();
 		Configuration configuration = Configuration.getInstance();
@@ -116,22 +95,23 @@ public class Mint {
 				configuration.K = Integer.valueOf(line.getOptionValue("k"));
 			if (line.hasOption("daikon"))
 				configuration.DAIKON = true;
-			if (line.hasOption("gp"))
-				configuration.GP = true;
-			if (line.hasOption("carefulDet"))
-				configuration.CAREFUL_DETERMINIZATION = true;
-			if (line.hasOption("wekaOptions")) {
+            if (line.hasOption("gp"))
+                configuration.GP = true;
+            if (line.hasOption("carefulDet"))
+                configuration.CAREFUL_DETERMINIZATION = true;
+			if (line.hasOption("wekaOptions")){
 				String[] opt = line.getOptionValues("wekaOptions");
-				configuration.WEKA_OPTIONS = opt;
+				configuration.WEKA_OPTIONS =opt;
 			}
-			if (line.hasOption("visualise"))
+			if (line.hasOption("visualise")) 
 				configuration.VIS = Configuration.Visualise.valueOf(line.getOptionValue("visualise"));
 			if (line.hasOption("strategy"))
 				configuration.STRATEGY = Configuration.Strategy.valueOf(line.getOptionValue("strategy"));
 			try {
 				infer();
 			} catch (IOException e) {
-				System.err.println("Input file not found: " + configuration.INPUT);
+				System.err.println("Input file not found: "
+				        + configuration.INPUT);
 			}
 
 		} catch (ParseException exp) {
@@ -141,15 +121,16 @@ public class Mint {
 		}
 
 	}
-
-	protected void infer() throws IOException {
+	
+	
+	protected void  infer()throws IOException {
 		LOGGER.info("Parsing input file");
 		Configuration configuration = Configuration.getInstance();
 		TraceSet posSet = TraceReader.readTraceFile(configuration.INPUT, configuration.TOKENIZER);
 		InferenceBuilder ib = new InferenceBuilder(configuration);
 		AbstractMerger<?, ?> inference = ib.getInference(posSet);
 
-		Machine<?> output = inference.infer();
+        Machine output = inference.infer();
 		if (configuration.VIS.equals(Configuration.Visualise.text)) {
 			OutputStream outputStream = null;
 			if (configuration.VIS_OUTPUT != null && !"-".equals(configuration.VIS_OUTPUT)) {
@@ -177,66 +158,69 @@ public class Mint {
 			}
 			trans.buildMachine(output, new File(fileName));
 		}
-		if (output instanceof WekaGuardMachineDecorator && configuration.DATA) {
-			WekaGuardMachineDecorator wgm = (WekaGuardMachineDecorator) output;
-			System.out.println(wgm.modelStrings());
-		}
+        if(output instanceof WekaGuardMachineDecorator && configuration.DATA){
+            WekaGuardMachineDecorator wgm = (WekaGuardMachineDecorator) output;
+            System.out.println(wgm.modelStrings());
+        }
 
+		
 	}
 
-	public static void info(Collection<List<TraceElement>> traces) {
-		double numTraces = traces.size();
-		LOGGER.info("Number of traces: " + traces.size());
-		double total = 0D;
-		for (List<TraceElement> trace : traces) {
-			total += trace.size();
-		}
-		double averageLength = total / numTraces;
-		LOGGER.info("Average trace length: " + averageLength);
-		LOGGER.info("Alphabet: " + getAlphabet(traces));
-		LOGGER.info("Average Variables: " + getVariables(traces));
-	}
+    public static void info(Collection<List<TraceElement>> traces) {
+        double numTraces = traces.size();
+        LOGGER.info("Number of traces: "+traces.size());
+        double total = 0D;
+        for(List<TraceElement> trace : traces){
+            total+=trace.size();
+        }
+        double averageLength = total / numTraces;
+        LOGGER.info("Average trace length: "+averageLength);
+        LOGGER.info("Alphabet: "+getAlphabet(traces));
+        LOGGER.info("Average Variables: "+getVariables(traces));
+    }
 
-	private static double getVariables(Collection<List<TraceElement>> pos) {
-		Double total = 0D;
-		Double num = 0D;
-		for (List<TraceElement> trace : pos) {
-			for (TraceElement te : trace) {
-				total += te.getData().size();
-				num++;
-			}
-		}
-		return total / num;
-	}
+    private static double getVariables(Collection<List<TraceElement>> pos){
+        Double total = 0D;
+        Double num = 0D;
+        for(List<TraceElement> trace:pos){
+            for(TraceElement te:trace){
+                total+=te.getData().size();
+                num++;
+            }
+        }
+        return total/num;
+    }
+    private static int getAlphabet(Collection<List<TraceElement>> pos) {
+       Set<String> alphabet = new HashSet<String>();
+       for(List<TraceElement> trace:pos){
+           for(TraceElement te:trace){
+               alphabet.add(te.getName());
+           }
+       }
+        return alphabet.size();
+    }
 
-	private static int getAlphabet(Collection<List<TraceElement>> pos) {
-		Set<String> alphabet = new HashSet<String>();
-		for (List<TraceElement> trace : pos) {
-			for (TraceElement te : trace) {
-				alphabet.add(te.getName());
-			}
-		}
-		return alphabet.size();
-	}
-
-	public static Machine<?> infer(TraceSet posSet) {
+    public static Machine infer(TraceSet posSet) {
 		BasicConfigurator.resetConfiguration();
 		BasicConfigurator.configure();
 		InferenceBuilder ib = new InferenceBuilder(Configuration.getInstance());
 		AbstractMerger<?, ?> inference = ib.getInference(posSet);
-		Machine<?> output = inference.infer();
+		Machine output =  inference.infer();
 
 		return output;
 	}
+	
 
+	
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 
 		PropertyConfigurator.configure("log4j.properties");
-		// BasicConfigurator.resetConfiguration();
-		// BasicConfigurator.configure();
+		//BasicConfigurator.resetConfiguration();
+		//BasicConfigurator.configure();
 
 		Mint mint = new Mint();
 		mint.parseCommandLine(args);

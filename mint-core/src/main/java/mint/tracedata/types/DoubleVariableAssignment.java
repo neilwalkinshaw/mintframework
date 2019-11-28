@@ -10,16 +10,13 @@
 
 package mint.tracedata.types;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Collection;
+
 public class DoubleVariableAssignment extends NumberVariableAssignment<Double> {
-	private static List<Double> values = new ArrayList<Double>();
 
 	static double minDoub = Double.MIN_VALUE;
 	static double maxDoub = Double.MAX_VALUE;
@@ -30,6 +27,7 @@ public class DoubleVariableAssignment extends NumberVariableAssignment<Double> {
 		super(name, value, minDoub, maxDoub);
 	}
 
+	
 	public DoubleVariableAssignment(String name) {
 		super(name, minDoub, maxDoub);
 	}
@@ -38,35 +36,36 @@ public class DoubleVariableAssignment extends NumberVariableAssignment<Double> {
 		super(name, min, max);
 	}
 
-	public DoubleVariableAssignment(String name, Collection<Double> from) {
-		super(name, minDoub, maxDoub, from);
-	}
+    public DoubleVariableAssignment(String name, Collection<Double> from) {
+        super(name,minDoub, maxDoub, from);
+    }
 
 	@Override
 	public void setStringValue(String s) {
-		try {
-			if (s.equals("null"))
+		try{
+			if(s.equals("null"))
 				setNull(true);
 			else {
 				Double val = Double.valueOf(s);
 				setToValue(val);
 			}
 
-		} catch (NumberFormatException nfe) {
-			LOGGER.warn("Failed to parse string to Double: " + s);
+		}
+		catch (NumberFormatException nfe){
+			LOGGER.warn("Failed to parse string to Double: "+s);
 		}
 	}
 
-	@Override
-	public boolean withinLimits() {
-		if (!enforcing)
-			return true;
-		if (getValue() > max || getValue() < min)
-			return false;
-		return super.withinLimits();
-	}
+    @Override
+    public boolean withinLimits() {
+        if(!enforcing)
+            return true;
+        if(getValue() > max || getValue() < min)
+            return false;
+        return super.withinLimits();
+    }
 
-	@Override
+    @Override
 	public String printableStringOfValue() {
 		return Double.toString(value);
 	}
@@ -79,25 +78,25 @@ public class DoubleVariableAssignment extends NumberVariableAssignment<Double> {
 	@Override
 	public VariableAssignment<?> createNew(String name, String value) {
 		DoubleVariableAssignment dva = new DoubleVariableAssignment(name, min, max);
-		dva.setParameter(isParameter());
-		if (value == null)
-			setNull(true);
-		else if (value.trim().equals("*"))
-			setNull(true);
-		else if (value.trim().equals("E")) // special error value...
-			dva.setValue(Double.MIN_VALUE);
-		else
-			dva.setStringValue(value);
+        dva.setParameter(isParameter());
+        if(value == null)
+            setNull(true);
+        else if(value.trim().equals("*"))
+            setNull(true);
+        else if(value.trim().equals("E")) //special error value...
+            dva.setValue(Double.MIN_VALUE);
+        else
+            dva.setStringValue(value);
 		return dva;
 	}
-
+	
 	@Override
 	public VariableAssignment<Double> copy() {
-		DoubleVariableAssignment copied = new DoubleVariableAssignment(name, value);
-		copied.setParameter(isParameter());
+		DoubleVariableAssignment copied = new DoubleVariableAssignment(name,value);
+        copied.setParameter(isParameter());
 		copied.setMax(max);
 		copied.setMin(min);
-		return copied;
+        return copied;
 	}
 
 	@Override
@@ -105,39 +104,30 @@ public class DoubleVariableAssignment extends NumberVariableAssignment<Double> {
 		return min + (max - min) * rand.nextDouble();
 	}
 
+
+
 	@Override
-	protected void setToValue(Double value) {
-		super.setToValue(round(value, 3));
-		if (value.isInfinite() || value.isNaN())
+    protected void setToValue(Double value) {
+        super.setToValue(round(value,3));
+		if(value.isInfinite() || value.isNaN())
 			value = 0D;
-		if (enforcing) {
-			if (value > max)
-				this.value = max;
-			else if (value < min)
-				this.value = min;
-		}
-	}
+        if(enforcing) {
+            if (value > max)
+                this.value = max;
+            else if (value < min)
+                this.value = min;
+        }
+    }
 
 	public static double round(double value, int places) {
-		if (places < 0)
-			throw new IllegalArgumentException();
+		if (places < 0) throw new IllegalArgumentException();
 
-		if (Double.isNaN(value) || Double.isInfinite(value))
+		if(Double.isNaN(value) || Double.isInfinite(value))
 			return 0D;
 		BigDecimal bd = new BigDecimal(value);
 		bd = bd.setScale(places, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}
 
-	@Override
-	public List<Double> getValues() {
-		return values;
-	}
-
-	@Override
-	public void addValue(Double v) {
-		if (!values.contains(v))
-			values.add(v);
-	}
 
 }

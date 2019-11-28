@@ -1,66 +1,65 @@
 package mint.inference.gp.selection;
 
+import mint.inference.evo.Chromosome;
+import mint.inference.gp.fitness.*;
+import mint.inference.gp.tree.Node;
+import mint.inference.gp.tree.NodeComparator;
+import mint.tracedata.types.VariableAssignment;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
-import org.apache.commons.collections4.MultiValuedMap;
-
-import mint.inference.evo.Chromosome;
-import mint.inference.gp.fitness.singleOutput.SingleOutputBooleanFitness;
-import mint.inference.gp.fitness.singleOutput.SingleOutputDoubleFitness;
-import mint.inference.gp.fitness.singleOutput.SingleOutputFitness;
-import mint.inference.gp.fitness.singleOutput.SingleOutputIntegerFitness;
-import mint.inference.gp.fitness.singleOutput.SingleOutputListFitness;
-import mint.inference.gp.fitness.singleOutput.SingleOutputStringFitness;
-import mint.inference.gp.tree.Datatype;
-import mint.inference.gp.tree.Node;
-import mint.inference.gp.tree.NodeComparator;
-import mint.tracedata.types.VariableAssignment;
+import java.util.concurrent.Future;
 
 /**
  * Created by neilwalkinshaw on 25/06/15.
  */
 public class SingleOutputTournament extends IOTournamentSelection<VariableAssignment<?>> {
 
-	protected Map<Node<?>, List<Double>> distances = null;
-	boolean mem_dist = false;
+    protected Map<Node<?>,List<Double>> distances = null;
+    boolean mem_dist = false;
 
-	public SingleOutputTournament(MultiValuedMap<List<VariableAssignment<?>>, VariableAssignment<?>> evals,
-			List<Chromosome> totalPopulation, int maxDepth, boolean mem_dist, Random rand) {
-		super(evals, totalPopulation, maxDepth, rand);
-		distances = new HashMap<Node<?>, List<Double>>();
-		this.mem_dist = mem_dist;
-	}
+    public SingleOutputTournament(Map<List<VariableAssignment<?>>, VariableAssignment<?>> evals, List<Chromosome> totalPopulation, int maxDepth, boolean mem_dist) {
+        super(evals, totalPopulation, maxDepth);
+        distances = new HashMap<Node<?>,List<Double>>();
+        this.mem_dist = mem_dist;
+    }
 
-	@Override
-	@SuppressWarnings({ "unchecked" })
-	public SingleOutputFitness<?> getFitness(Chromosome toEvaluateC) {
-		{
-			Node<?> toEvaluate = (Node<?>) toEvaluateC;
-			if (toEvaluate.getReturnType() == Datatype.STRING)
-				return new SingleOutputStringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth);
-			if (toEvaluate.getReturnType() == Datatype.DOUBLE)
-				return new SingleOutputDoubleFitness(evals, (Node<VariableAssignment<Double>>) toEvaluate, maxDepth);
-			if (toEvaluate.getReturnType() == Datatype.INTEGER)
-				return new SingleOutputIntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth);
-			if (toEvaluate.getReturnType() == Datatype.LIST)
-				return new SingleOutputListFitness(evals, (Node<VariableAssignment<List>>) toEvaluate, maxDepth);
-			else {
-				assert (toEvaluate.getReturnType() == Datatype.BOOLEAN);
-				return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth);
-			}
-		}
-	}
+    @Override
+    public SingleOutputFitness getFitness(Chromosome toEvaluateC) {
+        {
+            Node<?> toEvaluate = (Node<?>)toEvaluateC;
+            if(toEvaluate.getType().equals("string"))
+                return new SingleOutputStringFitness(evals,(Node<VariableAssignment<String>>)toEvaluate, maxDepth);
+            else if(toEvaluate.getType().equals("double"))
+                return new SingleOutputDoubleFitness(evals,(Node<VariableAssignment<Double>>)toEvaluate, maxDepth);
+            else if(toEvaluate.getType().equals("integer"))
+                return new SingleOutputIntegerFitness(evals,(Node<VariableAssignment<Integer>>)toEvaluate, maxDepth);
+            else if(toEvaluate.getType().equals("List"))
+                return new SingleOutputListFitness(evals,(Node<VariableAssignment<List>>)toEvaluate, maxDepth);
+            else {
+                assert(toEvaluate.getType().equals("boolean"));
+                return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth);
+            }
+            //else return new IOIntegerFitness(evals);
+        }
+    }
 
-	@Override
-	protected Comparator<Chromosome> getComparator() {
-		return new NodeComparator(this);
-	}
+    @Override
+    protected Comparator<Chromosome> getComparator() {
+        return new NodeComparator(this);
+    }
 
-	public Map<Node<?>, List<Double>> getDistances() {
-		return distances;
-	}
+    @Override
+    protected void processResult(Map<Future, Chromosome> solMap, Future<Double> sol, double score, Fitness fitness) {
+        super.processResult(solMap, sol, score, fitness);
+        SingleOutputFitness sof = (SingleOutputFitness) fitness;
+        if(mem_dist)
+            distances.put(sof.getIndividual(),sof.getDistances());
+    }
+
+    public Map<Node<?>, List<Double>> getDistances() {
+        return distances;
+    }
 }

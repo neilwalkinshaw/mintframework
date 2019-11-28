@@ -10,26 +10,35 @@ import mint.tracedata.types.DoubleVariableAssignment;
  */
 public abstract class DoubleNonTerminal extends NonTerminal<DoubleVariableAssignment> {
 
-	protected DoubleVariableAssignment result = null;
 
-	public DoubleNonTerminal() {
-		this.result = new DoubleVariableAssignment("res");
-	}
+    protected DoubleVariableAssignment result = null;
 
-	public void setResVar(DoubleVariableAssignment res) {
-		this.result = res;
-	}
+    public DoubleNonTerminal(){
+        this.result = new DoubleVariableAssignment("res");
+    }
 
-	protected DoubleVariableAssignment copyResVar() {
-		DoubleVariableAssignment dvar = new DoubleVariableAssignment("result", result.getMin(), result.getMax());
-		dvar.setEnforcing(true);
-		return dvar;
-	}
+    public void setResVar(DoubleVariableAssignment res){
+        this.result = res;
+    }
 
-	@Override
-	public Terminal<DoubleVariableAssignment> getTermFromVals() {
-		DoubleVariableAssignment dvar = new DoubleVariableAssignment("res", (Double) vals.iterator().next());
-		DoubleVariableAssignmentTerminal term = new DoubleVariableAssignmentTerminal(dvar, true, false);
-		return term;
-	}
+    protected DoubleVariableAssignment copyResVar(){
+        DoubleVariableAssignment dvar = new DoubleVariableAssignment("result",result.getMin(),result.getMax());
+        dvar.setEnforcing(true);
+        return dvar;
+    }
+
+    @Override
+    public String getType() {
+        return "double";
+    }
+
+    @Override
+    public Terminal<DoubleVariableAssignment> getTermFromVals(){
+        DoubleVariableAssignment dvar = new DoubleVariableAssignment("res",(Double)vals.iterator().next());
+        DoubleVariableAssignmentTerminal term = new DoubleVariableAssignmentTerminal(dvar,true);
+        return term;
+    }
+
+
+
 }
