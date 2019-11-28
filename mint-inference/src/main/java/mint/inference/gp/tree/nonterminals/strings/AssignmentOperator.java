@@ -1,7 +1,10 @@
 package mint.inference.gp.tree.nonterminals.strings;
 
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
 import mint.inference.gp.Generator;
-import mint.inference.gp.tree.Node;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.NonTerminal;
 import mint.tracedata.types.StringVariableAssignment;
 
@@ -10,39 +13,56 @@ import mint.tracedata.types.StringVariableAssignment;
  */
 public class AssignmentOperator extends StringNonTerminal {
 
-    protected String identifier;
+	protected String identifier;
 
-    protected static int counter = 0;
+	protected static int counter = 0;
 
-    public AssignmentOperator(){}
+	public AssignmentOperator() {
+	}
 
-    protected AssignmentOperator(String identifier){
-        super();
-        this.identifier = identifier;
+	protected AssignmentOperator(String identifier) {
+		super();
+		this.identifier = identifier;
 
-    }
+	}
 
-    @Override
-    public StringVariableAssignment evaluate() throws InterruptedException {
-        checkInterrupted();
-        StringVariableAssignment svar = new StringVariableAssignment("result",identifier);
-        vals.add(svar);
-        return svar;
-    }
+	@Override
+	public StringVariableAssignment evaluate() throws InterruptedException {
+		checkInterrupted();
+		StringVariableAssignment svar = new StringVariableAssignment("result", identifier);
+		vals.add(svar);
+		return svar;
+	}
 
-    @Override
-    public NonTerminal<StringVariableAssignment> createInstance(Generator g, int depth){
-        counter++;
-        return  new AssignmentOperator("Assignment"+counter);
-    }
+	@Override
+	public NonTerminal<StringVariableAssignment> createInstance(Generator g, int depth) {
+		counter++;
+		return new AssignmentOperator("Assignment" + counter);
+	}
 
-    @Override
-    public Node<StringVariableAssignment> copy() {
-        return new AssignmentOperator(identifier);
-    }
+	@Override
+	public String nodeString() {
+		return "identifier = " + identifier;
+	}
 
-    @Override
-    public String nodeString(){
-        return "identifier = "+identifier;
-    }
+	@Override
+	public String opString() {
+		return ":=";
+	}
+
+	@Override
+	public Expr toZ3(Context ctx) {
+		throw new IllegalArgumentException("Cannot do Assignment to z3");
+	}
+
+	@Override
+	protected NonTerminal<StringVariableAssignment> newInstance() {
+		return new AssignmentOperator(identifier);
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.STRING };
+	}
+
 }

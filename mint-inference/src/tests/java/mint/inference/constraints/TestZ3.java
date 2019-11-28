@@ -1,25 +1,28 @@
 package mint.inference.constraints;
 
-import com.microsoft.z3.*;
+import java.util.HashMap;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-
-import static org.junit.Assert.*;
+import com.microsoft.z3.ArithExpr;
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Solver;
+import com.microsoft.z3.Z3Exception;
 
 public class TestZ3 {
-	
+
 	Context ctx;
 	BoolExpr current;
 
 	@Before
 	public void setUp() throws Exception {
 		HashMap<String, String> cfg = new HashMap<String, String>();
-        cfg.put("model", "true");
-        ctx = new Context(cfg);
-        
+		cfg.put("model", "true");
+		ctx = new Context(cfg);
+
 	}
 
 	@After
@@ -27,25 +30,25 @@ public class TestZ3 {
 	}
 
 	@Test
-	public void test() throws Z3Exception {
-		ArithExpr x = (ArithExpr) ctx.MkConst(ctx.MkSymbol("x"),ctx.MkRealSort());
-		ArithExpr y = (ArithExpr) ctx.MkConst(ctx.MkSymbol("y"),ctx.MkRealSort());	
-		addConstraint(ctx.MkGt(x, (ArithExpr)ctx.MkReal(0,1)));
-		addConstraint(ctx.MkLt(x, (ArithExpr)ctx.MkReal(20,1)));
-		addConstraint(ctx.MkGt(y, (ArithExpr)ctx.MkReal(15,1)));
-		addConstraint(ctx.MkLt(y, (ArithExpr)ctx.MkReal(5000,1)));
-		addConstraint(ctx.MkLt(y, x));
-		Solver s = ctx.MkSolver();
-		s.Assert(current);
-		System.out.println(s.Check());
-		System.out.println(s.Model());
-		System.out.println(s.Model().ConstInterp(x) + ", "+s.Model().ConstInterp(y));
+	public void test() {
+		ArithExpr x = (ArithExpr) ctx.mkConst(ctx.mkSymbol("x"), ctx.mkRealSort());
+		ArithExpr y = (ArithExpr) ctx.mkConst(ctx.mkSymbol("y"), ctx.mkRealSort());
+		addConstraint(ctx.mkGt(x, ctx.mkReal(0, 1)));
+		addConstraint(ctx.mkLt(x, ctx.mkReal(20, 1)));
+		addConstraint(ctx.mkGt(y, ctx.mkReal(15, 1)));
+		addConstraint(ctx.mkLt(y, ctx.mkReal(5000, 1)));
+		addConstraint(ctx.mkLt(y, x));
+		Solver s = ctx.mkSolver();
+		s.add(current);
+		System.out.println(s.check());
+		System.out.println(s.getModel());
+		System.out.println(s.getModel().getConstInterp(x) + ", " + s.getModel().getConstInterp(y));
 	}
-	
-	private void addConstraint(BoolExpr e) throws Z3Exception{
-		if(current == null)
+
+	private void addConstraint(BoolExpr e) {
+		if (current == null)
 			current = e;
 		else
-			current = ctx.MkAnd(new BoolExpr[]{current,e});
+			current = ctx.mkAnd(new BoolExpr[] { current, e });
 	}
 }
