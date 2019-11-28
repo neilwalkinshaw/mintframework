@@ -35,7 +35,7 @@ public class ConstraintSatisfactionTester {
 	 * @throws Z3Exception 
 	 */
 	@Test
-	public void testConstraintSatisfactionSatisfiable() {
+	public void testConstraintSatisfactionSatisfiable() throws Z3Exception {
 		List<Expression> expressions = new ArrayList<Expression>();
 		VariableAssignment<?> va1 = new DoubleVariableAssignment("x", 50D);
 		Atom a = new Atom(va1,Atom.Rel.LT);
@@ -61,7 +61,7 @@ public class ConstraintSatisfactionTester {
 	}
 	
 	@Test
-	public void testConstraintSatisfactionUnSatisfiable() {
+	public void testConstraintSatisfactionUnSatisfiable() throws Z3Exception {
 		List<Expression> expressions = new ArrayList<Expression>();
 		VariableAssignment<?> va1 = new DoubleVariableAssignment("x", 50D);
 		Atom a = new Atom(va1,Atom.Rel.LT);

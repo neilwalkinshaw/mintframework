@@ -5,13 +5,9 @@ package mint.inference.gp.fitness;
  */
 public class InvalidDistanceException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6605451340493370701L;
 
-	@Override
-	public String getMessage() {
-		return "Distance involved comparison to NaN or Infinite values.";
-	}
+    @Override
+    public String getMessage() {
+        return "Distance involved comparison to NaN or Infinite values.";
+    }
 }

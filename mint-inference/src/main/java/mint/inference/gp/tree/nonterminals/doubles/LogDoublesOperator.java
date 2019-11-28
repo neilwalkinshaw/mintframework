@@ -1,10 +1,6 @@
 package mint.inference.gp.tree.nonterminals.doubles;
 
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Expr;
-
 import mint.inference.gp.Generator;
-import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -15,60 +11,47 @@ import mint.tracedata.types.DoubleVariableAssignment;
  */
 public class LogDoublesOperator extends DoubleNonTerminal {
 
-	public LogDoublesOperator() {
-	}
 
-	protected LogDoublesOperator(Node<DoubleVariableAssignment> a) {
-		super();
-		addChild(a);
-	}
+    public LogDoublesOperator(){}
 
-	@Override
-	public DoubleVariableAssignment evaluate() throws InterruptedException {
-		checkInterrupted();
-		DoubleVariableAssignment res = copyResVar();
-		res.setValue(Math.log((Double) children.get(0).evaluate().getValue()));
-		vals.add(res.getValue());
-		return res;
-	}
+    protected LogDoublesOperator(Node<DoubleVariableAssignment> a){
+        super();
+        addChild(a);
+    }
 
-	@Override
-	public NonTerminal<DoubleVariableAssignment> createInstance(Generator g, int depth) {
-		LogDoublesOperator ldo = new LogDoublesOperator(g.generateRandomDoubleExpression(depth));
-		ldo.setResVar(copyResVar());
-		return ldo;
-	}
+    @Override
+    public DoubleVariableAssignment evaluate() throws InterruptedException {
+        checkInterrupted();
+        DoubleVariableAssignment res = copyResVar();
+        res.setValue(Math.log((Double)children.get(0).evaluate().getValue()));
+        vals.add(res.getValue());
+        return res;
+    }
 
-	@Override
-	public String nodeString() {
-		return "Log(" + childrenString() + ")";
-	}
+    @Override
+    public NonTerminal<DoubleVariableAssignment> createInstance(Generator g, int depth){
+        LogDoublesOperator ldo =  new LogDoublesOperator(g.generateRandomDoubleExpression(depth));
+        ldo.setResVar(copyResVar());
+        return ldo;
+    }
 
-	@Override
-	public boolean accept(NodeVisitor visitor) throws InterruptedException {
-		if (visitor.visitEnter(this)) {
-			visitChildren(visitor);
-		}
-		return visitor.visitExit(this);
-	}
+    @Override
+    public Node<DoubleVariableAssignment> copy() {
+        LogDoublesOperator ldo =  new LogDoublesOperator((Node<DoubleVariableAssignment>)children.get(0).copy());
+        ldo.setResVar(copyResVar());
+        return ldo;
+    }
 
-	@Override
-	public String opString() {
-		return "log";
-	}
+    @Override
+    public String nodeString(){
+        return "Log("+childrenString()+")";
+    }
 
-	@Override
-	public Expr toZ3(Context ctx) {
-		throw new IllegalArgumentException("Cannot do Log to z3");
-	}
-
-	@Override
-	protected NonTerminal<DoubleVariableAssignment> newInstance() {
-		return new LogDoublesOperator();
-	}
-
-	@Override
-	public Datatype[] typeSignature() {
-		return new Datatype[] { Datatype.DOUBLE, Datatype.DOUBLE };
-	}
+    @Override
+    public boolean accept(NodeVisitor visitor)throws InterruptedException {
+        if(visitor.visitEnter(this)) {
+            visitChildren(visitor);
+        }
+        return visitor.visitExit(this);
+    }
 }

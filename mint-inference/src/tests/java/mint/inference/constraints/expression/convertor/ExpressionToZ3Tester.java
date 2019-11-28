@@ -27,7 +27,7 @@ public class ExpressionToZ3Tester {
 	}
 
 	@Test
-	public void testCompoundDistancesSat() {
+	public void testCompoundDistancesSat() throws Z3Exception {
 		List<Expression> expressions = new ArrayList<Expression>();
 		VariableAssignment<?> va1 = new DoubleVariableAssignment("x",50D);
 		Atom a = new Atom(va1,Atom.Rel.LT);

@@ -1,149 +1,130 @@
 package mint.inference.gp.tree;
 
-import mint.inference.gp.tree.nonterminals.booleans.AndBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.EQStringOperator;
-import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
-import mint.inference.gp.tree.nonterminals.booleans.GTBooleanIntegersOperator;
-import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
-import mint.inference.gp.tree.nonterminals.booleans.LTBooleanIntegersOperator;
-import mint.inference.gp.tree.nonterminals.booleans.NotBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.OrBooleanOperator;
-import mint.inference.gp.tree.nonterminals.doubles.AddDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.CastDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.CosDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.DivideDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.ExpDoublesOperator;
+import mint.inference.gp.tree.nonterminals.booleans.*;
+import mint.inference.gp.tree.nonterminals.doubles.*;
 import mint.inference.gp.tree.nonterminals.doubles.IfThenElseOperator;
-import mint.inference.gp.tree.nonterminals.doubles.LogDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.MultiplyDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.PwrDoublesOperator;
-import mint.inference.gp.tree.nonterminals.doubles.SubtractDoublesOperator;
-import mint.inference.gp.tree.nonterminals.integers.CastIntegersOperator;
-import mint.inference.gp.tree.nonterminals.integers.IfThenElseIntegerOperator;
-import mint.inference.gp.tree.nonterminals.integers.IntegerNonTerminal;
+import mint.inference.gp.tree.nonterminals.integer.*;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
 import mint.inference.gp.tree.nonterminals.strings.StringNonTerminal;
-import mint.inference.gp.tree.terminals.BooleanVariableAssignmentTerminal;
-import mint.inference.gp.tree.terminals.DoubleVariableAssignmentTerminal;
-import mint.inference.gp.tree.terminals.IntegerVariableAssignmentTerminal;
-import mint.inference.gp.tree.terminals.StringVariableAssignmentTerminal;
+import mint.inference.gp.tree.terminals.*;
 
 /**
  * Created by neilwalkinshaw on 27/05/15.
  */
 public interface NodeVisitor {
 
-	boolean visitEnter(EQBooleanOperator eqBooleanOperator);
 
-	boolean visitExit(EQBooleanOperator eqBooleanOperator) throws InterruptedException;
+    boolean visitEnter(EQBooleanOperator eqBooleanOperator);
 
-	boolean visitEnter(AndBooleanOperator andBooleanOperator);
+    boolean visitExit(EQBooleanOperator eqBooleanOperator) throws InterruptedException;
 
-	boolean visitExit(AndBooleanOperator andBooleanOperator);
+    boolean visitEnter(EQArithOperator eqBooleanOperator);
 
-	boolean visitEnter(GTBooleanDoublesOperator gtBooleanDoublesOperator);
+    boolean visitExit(EQArithOperator eqBooleanOperator);
 
-	boolean visitExit(GTBooleanDoublesOperator gtBooleanDoublesOperator);
+    boolean visitEnter(AndBooleanOperator andBooleanOperator);
 
-	boolean visitEnter(LTBooleanDoublesOperator ltBooleanDoublesOperator);
+    boolean visitExit(AndBooleanOperator andBooleanOperator);
 
-	boolean visitExit(LTBooleanDoublesOperator ltBooleanDoublesOperator);
+    boolean visitEnter(GTBooleanDoublesOperator gtBooleanDoublesOperator);
 
-	boolean visitEnter(OrBooleanOperator orBooleanOperator);
+    boolean visitExit(GTBooleanDoublesOperator gtBooleanDoublesOperator);
 
-	boolean visitExit(OrBooleanOperator orBooleanOperator);
+    boolean visitEnter(LTBooleanDoublesOperator ltBooleanDoublesOperator);
 
-	boolean visitEnter(CastIntegersOperator integerNonTerminal);
+    boolean visitExit(LTBooleanDoublesOperator ltBooleanDoublesOperator);
 
-	boolean visitExit(CastIntegersOperator integerNonTerminal);
+    boolean visitEnter(OrBooleanOperator orBooleanOperator);
 
-	boolean visitEnter(IntegerNonTerminal integerNonTerminal);
+    boolean visitExit(OrBooleanOperator orBooleanOperator);
 
-	boolean visitExit(IntegerNonTerminal integerNonTerminal);
+    boolean visitEnter(CastIntegersOperator integerNonTerminal);
 
-	boolean visitEnter(StringNonTerminal stringNonTerminal);
+    boolean visitExit(CastIntegersOperator integerNonTerminal);
 
-	boolean visitExit(StringNonTerminal stringNonTerminal);
+    boolean visitEnter(IntegerNonTerminal integerNonTerminal);
 
-	boolean visitEnter(IfThenElseOperator ifThenElseOperator);
+    boolean visitExit(IntegerNonTerminal integerNonTerminal);
 
-	boolean visitExit(IfThenElseOperator ifThenElseOperator);
+    boolean visitEnter(StringNonTerminal stringNonTerminal);
 
-	boolean visitEnter(DivideDoublesOperator divideDoublesOperator);
+    boolean visitExit(StringNonTerminal stringNonTerminal);
 
-	boolean visitExit(DivideDoublesOperator divideDoublesOperator);
+    boolean visitEnter(IfThenElseOperator ifThenElseOperator);
 
-	boolean visitEnter(AddDoublesOperator addDoublesOperator);
+    boolean visitExit(IfThenElseOperator ifThenElseOperator);
 
-	boolean visitExit(AddDoublesOperator addDoublesOperator);
+    boolean visitEnter(DivideDoublesOperator divideDoublesOperator);
 
-	boolean visitEnter(CastDoublesOperator castDoublesOperator);
+    boolean visitExit(DivideDoublesOperator divideDoublesOperator);
 
-	boolean visitExit(CastDoublesOperator castDoublesOperator);
+    boolean visitEnter(AddDoublesOperator addDoublesOperator);
 
-	boolean visitEnter(CosDoublesOperator cosDoublesOperator);
+    boolean visitExit(AddDoublesOperator addDoublesOperator);
 
-	boolean visitExit(CosDoublesOperator cosDoublesOperator);
+    boolean visitEnter(CastDoublesOperator castDoublesOperator);
 
-	boolean visitEnter(LogDoublesOperator cosDoublesOperator);
+    boolean visitExit(CastDoublesOperator castDoublesOperator);
 
-	boolean visitExit(LogDoublesOperator cosDoublesOperator);
+    boolean visitEnter(CosDoublesOperator cosDoublesOperator);
 
-	boolean visitEnter(MultiplyDoublesOperator multiplyDoublesOperator);
+    boolean visitExit(CosDoublesOperator cosDoublesOperator);
 
-	boolean visitExit(MultiplyDoublesOperator multiplyDoublesOperator);
+    boolean visitEnter(LogDoublesOperator cosDoublesOperator);
 
-	boolean visitEnter(PwrDoublesOperator pwrDoublesOperator);
+    boolean visitExit(LogDoublesOperator cosDoublesOperator);
 
-	boolean visitExit(PwrDoublesOperator pwrDoublesOperator);
+    boolean visitEnter(MultiplyDoublesOperator multiplyDoublesOperator);
 
-	boolean visitEnter(ExpDoublesOperator expDoublesOperator);
+    boolean visitExit(MultiplyDoublesOperator multiplyDoublesOperator);
 
-	boolean visitExit(ExpDoublesOperator expDoublesOperator);
+    boolean visitEnter(PwrDoublesOperator pwrDoublesOperator);
 
-	boolean visitEnter(SubtractDoublesOperator subtractDoublesOperator);
+    boolean visitExit(PwrDoublesOperator pwrDoublesOperator);
 
-	boolean visitExit(SubtractDoublesOperator subtractDoublesOperator);
+    boolean visitEnter(RootDouble rootDouble);
 
-	boolean visitEnter(BooleanVariableAssignmentTerminal booleanVariableAssignmentTerminal);
+    boolean visitExit(RootDouble rootDouble);
 
-	boolean visitExit(BooleanVariableAssignmentTerminal booleanVariableAssignmentTerminal);
+    boolean visitEnter(ExpDoublesOperator expDoublesOperator);
 
-	void visitEnter(DoubleVariableAssignmentTerminal doubleVariableAssignmentTerminal);
+    boolean visitExit(ExpDoublesOperator expDoublesOperator);
 
-	boolean visitExit(DoubleVariableAssignmentTerminal doubleVariableAssignmentTerminal);
+    boolean visitEnter(SubtractDoublesOperator subtractDoublesOperator);
 
-	void visitEnter(StringVariableAssignmentTerminal stringVariableAssignmentTerminal);
+    boolean visitExit(SubtractDoublesOperator subtractDoublesOperator);
 
-	boolean visitExit(StringVariableAssignmentTerminal stringVariableAssignmentTerminal);
+    boolean visitEnter(BooleanVariableAssignmentTerminal booleanVariableAssignmentTerminal);
 
-	void visitEnter(IntegerVariableAssignmentTerminal integerVariableAssignmentTerminal);
+    boolean visitExit(BooleanVariableAssignmentTerminal booleanVariableAssignmentTerminal);
 
-	boolean visitExit(IntegerVariableAssignmentTerminal integerVariableAssignmentTerminal);
+    void visitEnter(DoubleVariableAssignmentTerminal doubleVariableAssignmentTerminal);
 
-	boolean visitEnter(EQStringOperator eqStringOperator);
+    boolean visitExit(DoubleVariableAssignmentTerminal doubleVariableAssignmentTerminal);
 
-	boolean visitExit(EQStringOperator eqStringOperator);
+    void visitEnter(StringVariableAssignmentTerminal stringVariableAssignmentTerminal);
 
-	boolean visitEnter(RootListNonTerminal rootListNonTerminal);
+    boolean visitExit(StringVariableAssignmentTerminal stringVariableAssignmentTerminal);
 
-	boolean visitExit(RootListNonTerminal rootListNonTerminal);
 
-	boolean visitEnter(IfThenElseIntegerOperator ifThenElseIntegerOperator);
+    boolean visitEnter(RootBoolean rootBoolean);
 
-	boolean visitExit(IfThenElseIntegerOperator ifThenElseIntegerOperator);
+    boolean visitExit(RootBoolean rootBoolean);
 
-	boolean visitEnter(GTBooleanIntegersOperator gtBooleanIntegersOperator);
+    void visitEnter(IntegerVariableAssignmentTerminal integerVariableAssignmentTerminal);
 
-	boolean visitExit(GTBooleanIntegersOperator gtBooleanIntegersOperator);
+    boolean visitExit(IntegerVariableAssignmentTerminal integerVariableAssignmentTerminal);
 
-	boolean visitEnter(LTBooleanIntegersOperator ltBooleanIntegersOperator);
+    boolean visitEnter(EQStringOperator eqStringOperator);
 
-	boolean visitExit(LTBooleanIntegersOperator ltBooleanIntegersOperator);
+    boolean visitExit(EQStringOperator eqStringOperator);
 
-	boolean visitEnter(NotBooleanOperator notBooleanOperator);
+    boolean visitEnter(RootListNonTerminal rootListNonTerminal);
 
-	boolean visitExit(NotBooleanOperator notBooleanOperator);
+    boolean visitExit(RootListNonTerminal rootListNonTerminal);
 
+
+    boolean visitEnter(IfThenElseIntegerOperator ifThenElseIntegerOperator);
+
+    boolean visitExit(IfThenElseIntegerOperator ifThenElseIntegerOperator);
 }

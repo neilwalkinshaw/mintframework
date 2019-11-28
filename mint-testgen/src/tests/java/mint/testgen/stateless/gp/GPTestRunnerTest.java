@@ -34,7 +34,7 @@ public class GPTestRunnerTest {
 	}
 
 	@Test
-	public void complexTest() {
+	public void complexTest() throws Z3Exception {
 		//GPTestRunner gpt = new GPTestRunner()
 	}
 	
