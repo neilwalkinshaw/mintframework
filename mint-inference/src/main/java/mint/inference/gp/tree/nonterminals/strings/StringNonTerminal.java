@@ -13,11 +13,6 @@ import mint.tracedata.types.StringVariableAssignment;
 public abstract class StringNonTerminal extends NonTerminal<StringVariableAssignment> {
 
 	@Override
-	public String getType() {
-		return "string";
-	}
-
-	@Override
 	public boolean accept(NodeVisitor visitor) throws InterruptedException {
 		visitor.visitEnter(this);
 		for (Node<?> child : children) {

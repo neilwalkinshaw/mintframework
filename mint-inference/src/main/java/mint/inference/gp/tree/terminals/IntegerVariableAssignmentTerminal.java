@@ -7,6 +7,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.Terminal;
 import mint.tracedata.types.IntegerVariableAssignment;
@@ -74,11 +75,6 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 	}
 
 	@Override
-	public String getType() {
-		return "integer";
-	}
-
-	@Override
 	public boolean accept(NodeVisitor visitor) {
 		visitor.visitEnter(this);
 		return visitor.visitExit(this);
@@ -108,5 +104,10 @@ public class IntegerVariableAssignmentTerminal extends VariableTerminal<IntegerV
 		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
 		v.add(this.copy());
 		return v;
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.INTEGER };
 	}
 }

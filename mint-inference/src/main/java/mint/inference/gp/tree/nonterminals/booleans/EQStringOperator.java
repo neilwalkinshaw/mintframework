@@ -4,6 +4,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -69,5 +70,10 @@ public class EQStringOperator extends BooleanNonTerminal {
 	@Override
 	protected NonTerminal<BooleanVariableAssignment> newInstance() {
 		return new EQStringOperator();
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.STRING, Datatype.STRING, Datatype.BOOLEAN };
 	}
 }

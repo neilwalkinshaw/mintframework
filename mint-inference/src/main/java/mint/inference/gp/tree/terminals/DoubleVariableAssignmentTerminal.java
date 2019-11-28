@@ -7,6 +7,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.Terminal;
 import mint.tracedata.types.DoubleVariableAssignment;
@@ -65,11 +66,6 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 	}
 
 	@Override
-	public String getType() {
-		return "double";
-	}
-
-	@Override
 	public boolean accept(NodeVisitor visitor) {
 		visitor.visitEnter(this);
 		return visitor.visitExit(this);
@@ -99,5 +95,10 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
 		v.add(this.copy());
 		return v;
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.DOUBLE };
 	}
 }

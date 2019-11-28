@@ -13,6 +13,7 @@ import mint.inference.gp.fitness.latentVariable.BooleanFitness;
 import mint.inference.gp.fitness.latentVariable.IntegerFitness;
 import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.fitness.latentVariable.StringFitness;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeComparator;
 import mint.tracedata.types.VariableAssignment;
@@ -34,12 +35,12 @@ public class LatentVariableTournament extends IOTournamentSelection<VariableAssi
 	@SuppressWarnings({ "unchecked" })
 	public LatentVariableFitness<?> getFitness(Chromosome toEvaluateC) {
 		Node<?> toEvaluate = (Node<?>) toEvaluateC;
-		if (toEvaluate.getType().equals("string"))
+		if (toEvaluate.getReturnType() == Datatype.STRING)
 			return new StringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate);
-		else if (toEvaluate.getType().equals("boolean"))
+		if (toEvaluate.getReturnType() == Datatype.BOOLEAN)
 			return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate);
 		else {
-			assert (toEvaluate.getType().equals("integer"));
+			assert (toEvaluate.getReturnType() == Datatype.INTEGER);
 			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate);
 		}
 	}

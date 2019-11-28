@@ -8,6 +8,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -75,5 +76,10 @@ public class MultiplyDoublesOperator extends DoubleNonTerminal {
 	@Override
 	protected NonTerminal<DoubleVariableAssignment> newInstance() {
 		return new MultiplyDoublesOperator();
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.DOUBLE, Datatype.DOUBLE, Datatype.DOUBLE };
 	}
 }

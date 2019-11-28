@@ -1,7 +1,6 @@
 package mint.inference.gp.tree;
 
 import mint.inference.gp.tree.nonterminals.booleans.AndBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.EQArithOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQStringOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
@@ -38,10 +37,6 @@ public interface NodeVisitor {
 	boolean visitEnter(EQBooleanOperator eqBooleanOperator);
 
 	boolean visitExit(EQBooleanOperator eqBooleanOperator) throws InterruptedException;
-
-	boolean visitEnter(EQArithOperator eqBooleanOperator);
-
-	boolean visitExit(EQArithOperator eqBooleanOperator);
 
 	boolean visitEnter(AndBooleanOperator andBooleanOperator);
 

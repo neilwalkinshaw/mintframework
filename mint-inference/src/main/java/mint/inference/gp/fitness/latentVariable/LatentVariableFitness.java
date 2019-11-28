@@ -69,19 +69,15 @@ public abstract class LatentVariableFitness<T> extends Fitness {
 			}
 		} catch (ClassCastException e) {
 			e.printStackTrace();
-			System.exit(1);
+//			System.exit(1);
 			return Double.POSITIVE_INFINITY;
 		} catch (InvalidDistanceException e) {
 			e.printStackTrace();
-			System.exit(1);
+//			System.exit(1);
 			return Double.POSITIVE_INFINITY;
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			System.out.println("Individual: " + individual);
-			System.out.println("Current: " + current);
-			System.out.println("Latent: " + latent);
-
-			System.exit(1);
+//			System.exit(1);
 			return Double.POSITIVE_INFINITY;
 		}
 		return minDistance;

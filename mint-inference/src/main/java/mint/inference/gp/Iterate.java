@@ -169,7 +169,7 @@ public class Iterate extends AbstractIterator {
 		for (Node<?> child : tree.getChildren()) {
 			worklist.push(child);
 			if (target != null) {
-				if (!target.getType().equals(child.getType()))
+				if (!target.getReturnType().equals(child.getReturnType()))
 					continue;
 			}
 			nt.add(child);
@@ -182,7 +182,7 @@ public class Iterate extends AbstractIterator {
 			for (Node<?> child : c.getChildren()) {
 				toAdd.add(child);
 				if (target != null) {
-					if (!target.getType().equals(child.getType()))
+					if (!target.getReturnType().equals(child.getReturnType()))
 						continue;
 				}
 				forThisDepth.add(child);

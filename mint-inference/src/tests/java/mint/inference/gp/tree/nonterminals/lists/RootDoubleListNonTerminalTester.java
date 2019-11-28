@@ -17,7 +17,6 @@ import mint.inference.gp.Generator;
 import mint.inference.gp.SingleOutputGP;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.booleans.AndBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.EQArithOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
 import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
@@ -81,7 +80,6 @@ public class RootDoubleListNonTerminalTester {
 		boolNonTerms.add(new LTBooleanDoublesOperator());
 		boolNonTerms.add(new GTBooleanDoublesOperator());
 		boolNonTerms.add(new EQBooleanOperator());
-		boolNonTerms.add(new EQArithOperator());
 		gpGenerator.setBooleanFunctions(boolNonTerms);
 
 		List<VariableTerminal<?>> boolTerms = new ArrayList<VariableTerminal<?>>();

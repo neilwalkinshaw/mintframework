@@ -7,6 +7,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -85,11 +86,6 @@ public class RootListNonTerminal extends NonTerminal<ListVariableAssignment> {
 		return 0;
 	}
 
-	@Override
-	public String getType() {
-		return "List";
-	}
-
 	/**
 	 * Not meaningful for a list.
 	 * 
@@ -113,5 +109,10 @@ public class RootListNonTerminal extends NonTerminal<ListVariableAssignment> {
 	@Override
 	protected NonTerminal<ListVariableAssignment> newInstance() {
 		return new RootListNonTerminal(types);
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.LIST };
 	}
 }

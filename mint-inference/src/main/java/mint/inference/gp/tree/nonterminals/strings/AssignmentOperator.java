@@ -4,6 +4,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.NonTerminal;
 import mint.tracedata.types.StringVariableAssignment;
 
@@ -57,6 +58,11 @@ public class AssignmentOperator extends StringNonTerminal {
 	@Override
 	protected NonTerminal<StringVariableAssignment> newInstance() {
 		return new AssignmentOperator(identifier);
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.STRING };
 	}
 
 }

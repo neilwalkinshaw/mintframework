@@ -9,7 +9,6 @@ import com.microsoft.z3.Expr;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.booleans.BooleanNonTerminal;
-import mint.inference.gp.tree.nonterminals.booleans.EQArithOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
 import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
@@ -34,7 +33,7 @@ public class ExpressionBuilderTester {
 	 */
 	@Test
 	public void testWikipediaSymbexExample() {
-		NonTerminal nt = new EQArithOperator(new MultiplyDoublesOperator(getConst(2D), getVar("y")), getConst(12D));
+		NonTerminal nt = new EQBooleanOperator(new MultiplyDoublesOperator(getConst(2D), getVar("y")), getConst(12D));
 		NonTerminal ifN = new IfThenElseOperator(nt, getConst(5D), getConst(6D));
 		ExpressionBuilder eb = new ExpressionBuilder(ifN, new Context());
 		for (Expr e : eb.getTargets()) {

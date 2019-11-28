@@ -124,8 +124,8 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		// Sometimes this will generate expressions which don't type check
 		// I guess that's OK because they'll get weeded out quietly
 		// Ideally I'd like to always make functions which type check
-		if (!g.boolNonTerms().isEmpty()) {
-			NonTerminal<?> newFun = (NonTerminal<?>) g.generateRandomNonTerminal(this.getType());
+		if (!g.nonTerms(this.getReturnType()).isEmpty()) {
+			NonTerminal<?> newFun = (NonTerminal<?>) g.generateRandomNonTerminal(this.typeSignature());
 			newFun.setChildren(this.children);
 			this.swapWith(newFun);
 		}
@@ -134,15 +134,15 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 	protected void mutateByRandomChangeOfChild(Generator g) {
 		if (!this.children.isEmpty()) {
 			Node<?> child = this.getChild(g.getRandom().nextInt(this.children.size()));
-			child.swapWith(g.generateRandomTerminal(this.getType()));
+			child.swapWith(g.generateRandomTerminal(this.getReturnType()));
 		}
 	}
 
 	protected void mutateByRootGrowth(Generator g) {
-		if (!g.boolNonTerms().isEmpty()) {
-			NonTerminal<?> newRoot = (NonTerminal<?>) g.generateRandomNonTerminal(this.getType());
+		if (!g.nonTerms(this.getReturnType()).isEmpty()) {
+			NonTerminal<?> newRoot = (NonTerminal<?>) g.generateRandomNonTerminal(this.typeSignature());
 			newRoot.addChild(this);
-			newRoot.addChild(g.generateRandomTerminal(this.getType()));
+			newRoot.addChild(g.generateRandomTerminal(this.getReturnType()));
 			this.swapWith(newRoot);
 		}
 	}
@@ -255,4 +255,5 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		}
 		return false;
 	}
+
 }

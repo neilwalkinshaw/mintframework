@@ -78,7 +78,7 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		if (parent == null) {
 			return false;
 		}
-		if (!alternative.getType().equals(getType()))
+		if (!alternative.getReturnType().equals(getReturnType()))
 			return false;
 		int thisIndex = parent.getChildren().indexOf(this);
 		parent.getChildren().set(thisIndex, alternative);
@@ -86,7 +86,9 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 		return true;
 	}
 
-	public abstract String getType();
+	public Datatype getReturnType() {
+		return this.typeSignature()[this.typeSignature().length - 1];
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -189,5 +191,7 @@ public abstract class Node<T extends VariableAssignment<?>> implements Chromosom
 	}
 
 	protected abstract List<Node<?>> getAllNodesAsList();
+
+	public abstract Datatype[] typeSignature();
 
 }

@@ -8,6 +8,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.Terminal;
 import mint.tracedata.types.StringVariableAssignment;
@@ -42,11 +43,6 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 	public StringVariableAssignmentTerminal copy() {
 		VariableAssignment<String> copied = terminal.copy();
 		return new StringVariableAssignmentTerminal(copied, constant, LATENT);
-	}
-
-	@Override
-	public String getType() {
-		return "string";
 	}
 
 	@Override
@@ -85,5 +81,10 @@ public class StringVariableAssignmentTerminal extends VariableTerminal<StringVar
 		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
 		v.add(this.copy());
 		return v;
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.STRING };
 	}
 }

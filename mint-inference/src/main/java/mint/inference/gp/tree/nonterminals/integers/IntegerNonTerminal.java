@@ -18,11 +18,6 @@ public abstract class IntegerNonTerminal extends NonTerminal<IntegerVariableAssi
 		this.result = new IntegerVariableAssignment("res", Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
-	@Override
-	public String getType() {
-		return "integer";
-	}
-
 	public void setResVar(IntegerVariableAssignment res) {
 		this.result = res;
 	}

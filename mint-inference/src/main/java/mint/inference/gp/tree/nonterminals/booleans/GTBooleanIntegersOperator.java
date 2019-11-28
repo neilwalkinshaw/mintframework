@@ -5,6 +5,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -70,5 +71,10 @@ public class GTBooleanIntegersOperator extends BooleanNonTerminal {
 	@Override
 	protected NonTerminal<BooleanVariableAssignment> newInstance() {
 		return new GTBooleanIntegersOperator();
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.INTEGER, Datatype.INTEGER, Datatype.BOOLEAN };
 	}
 }

@@ -7,6 +7,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.Terminal;
 import mint.tracedata.types.BooleanVariableAssignment;
@@ -34,11 +35,6 @@ public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanV
 	public BooleanVariableAssignmentTerminal copy() {
 		VariableAssignment<Boolean> copied = terminal.copy();
 		return new BooleanVariableAssignmentTerminal(copied, constant, LATENT);
-	}
-
-	@Override
-	public String getType() {
-		return "boolean";
 	}
 
 	@Override
@@ -83,6 +79,11 @@ public class BooleanVariableAssignmentTerminal extends VariableTerminal<BooleanV
 		Set<VariableTerminal<?>> v = new HashSet<VariableTerminal<?>>();
 		v.add(this.copy());
 		return v;
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.BOOLEAN };
 	}
 
 }

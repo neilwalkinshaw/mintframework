@@ -27,11 +27,6 @@ public abstract class DoubleNonTerminal extends NonTerminal<DoubleVariableAssign
 	}
 
 	@Override
-	public String getType() {
-		return "double";
-	}
-
-	@Override
 	public Terminal<DoubleVariableAssignment> getTermFromVals() {
 		DoubleVariableAssignment dvar = new DoubleVariableAssignment("res", (Double) vals.iterator().next());
 		DoubleVariableAssignmentTerminal term = new DoubleVariableAssignmentTerminal(dvar, true, false);

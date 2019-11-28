@@ -20,6 +20,7 @@ import mint.inference.gp.fitness.latentVariable.IntegerFitness;
 import mint.inference.gp.fitness.latentVariable.LatentVariableFitness;
 import mint.inference.gp.fitness.latentVariable.StringFitness;
 import mint.inference.gp.selection.LatentVariableTournament;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.BooleanVariableAssignment;
 import mint.tracedata.types.DoubleVariableAssignment;
@@ -81,16 +82,16 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 	@SuppressWarnings("unchecked")
 	public boolean isCorrect(Chromosome c) {
 		try {
-			if (((Node<?>) c).getType() == "string")
+			if (((Node<?>) c).getReturnType() == Datatype.STRING)
 				return new StringFitness(evals, (Node<VariableAssignment<String>>) c).correct();
-			else if (((Node<?>) c).getType() == "integer")
+			else if (((Node<?>) c).getReturnType() == Datatype.INTEGER)
 				return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c).correct();
-			else if (((Node<?>) c).getType() == "boolean") {
+			else if (((Node<?>) c).getReturnType() == Datatype.BOOLEAN) {
 				return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c).correct();
 			}
 			System.out.println(c.getClass());
 			throw new IllegalArgumentException(
-					"Could not calculate correctness for node of type " + ((Node<?>) c).getType());
+					"Could not calculate correctness for node of type " + ((Node<?>) c).getReturnType());
 		} catch (InterruptedException e) {
 			return false;
 		}
@@ -111,12 +112,12 @@ public class LatentVariableGP extends GP<VariableAssignment<?>> {
 
 	private LatentVariableFitness<?> getFitnessFunction(Chromosome c) {
 		Node<?> node = (Node<?>) c;
-		if (node.getType() == "string")
+		if (node.getReturnType() == Datatype.STRING)
 			return new StringFitness(evals, (Node<VariableAssignment<String>>) c);
-		else if (node.getType() == "integer")
+		else if (node.getReturnType() == Datatype.INTEGER)
 			return new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c);
 		else {
-			assert (node.getType() == "boolean");
+			assert (node.getReturnType() == Datatype.BOOLEAN);
 			return new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c);
 		}
 	}

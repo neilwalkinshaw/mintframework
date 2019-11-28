@@ -3,10 +3,12 @@ package mint.inference.gp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.microsoft.z3.Context;
 
 import mint.inference.evo.Chromosome;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
@@ -222,41 +224,63 @@ public class Generator {
 		return population;
 	}
 
-	public List<NonTerminal<?>> boolNonTerms() {
-		return this.bFunctions;
+	public List<NonTerminal<?>> nonTerms(Datatype s) {
+		switch (s) {
+		case INTEGER:
+			return this.iFunctions;
+		case DOUBLE:
+			return this.dFunctions;
+		case BOOLEAN:
+			return this.bFunctions;
+		case STRING:
+			return this.sFunctions;
+		default:
+			break;
+		}
+		throw new IllegalArgumentException("Invaild type " + s);
 	}
 
-	public List<NonTerminal<?>> intNonTerms() {
-		return this.iFunctions;
-	}
-
-	public List<NonTerminal<?>> doubleNonTerms() {
-		return this.dFunctions;
-	}
-
-	public Node<?> generateRandomTerminal(String type) {
-		if (type.equals("boolean"))
+	public Node<?> generateRandomTerminal(Datatype type) {
+		switch (type) {
+		case BOOLEAN:
 			return selectRandomTerminal(bTerminals);
-		if (type.equals("string"))
+		case STRING:
 			return selectRandomTerminal(sTerminals);
-		if (type.equals("integer"))
+		case INTEGER:
 			return selectRandomTerminal(iTerminals);
-		else {
-			assert (type.equals("double"));
+		case DOUBLE:
 			return selectRandomTerminal(dTerminals);
+		default:
+			break;
 		}
+
+		throw new IllegalArgumentException("Datatype must be one of BOOLEAN, STRING, INTEGER, or DOUBLE");
 	}
 
-	public Node<?> generateRandomNonTerminal(String type) {
-		if (type.equals("boolean"))
-			return bFunctions.get(rand.nextInt(bFunctions.size()));
-		if (type.equals("string"))
-			return sFunctions.get(rand.nextInt(sFunctions.size()));
-		if (type.equals("integer"))
-			return iFunctions.get(rand.nextInt(iFunctions.size()));
-		else {
-			assert (type.equals("double"));
-			return dFunctions.get(rand.nextInt(dFunctions.size()));
+	public Node<?> generateRandomNonTerminal(Datatype[] typeSignature) {
+		Datatype returnType = typeSignature[typeSignature.length - 1];
+		List<NonTerminal<?>> suitable;
+
+		switch (returnType) {
+		case BOOLEAN:
+			suitable = bFunctions.stream().filter(f -> Datatype.typeChecks(f.typeSignature(), typeSignature))
+					.collect(Collectors.toList());
+			return suitable.get(rand.nextInt(suitable.size()));
+		case STRING:
+			suitable = sFunctions.stream().filter(f -> Datatype.typeChecks(f.typeSignature(), typeSignature))
+					.collect(Collectors.toList());
+			return suitable.get(rand.nextInt(suitable.size()));
+		case INTEGER:
+			suitable = iFunctions.stream().filter(f -> Datatype.typeChecks(f.typeSignature(), typeSignature))
+					.collect(Collectors.toList());
+			return suitable.get(rand.nextInt(suitable.size()));
+		case DOUBLE:
+			suitable = dFunctions.stream().filter(f -> Datatype.typeChecks(f.typeSignature(), typeSignature))
+					.collect(Collectors.toList());
+			return suitable.get(rand.nextInt(suitable.size()));
+		default:
+			break;
 		}
+		throw new IllegalArgumentException("Datatype must be one of BOOLEAN, STRING, INTEGER, or DOUBLE");
 	}
 }

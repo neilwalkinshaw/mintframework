@@ -27,7 +27,7 @@ public class SRPlayground {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 
-		Generator gpGenerator = new Generator(new Random(0));
+		Generator gpGenerator = new Generator(new Random(1));
 
 		List<NonTerminal<?>> intNonTerms = new ArrayList<NonTerminal<?>>();
 		intNonTerms.add(new AddIntegersOperator());

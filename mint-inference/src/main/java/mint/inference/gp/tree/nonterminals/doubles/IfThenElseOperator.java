@@ -5,6 +5,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -68,11 +69,6 @@ public class IfThenElseOperator extends NonTerminal<VariableAssignment<?>> {
 	}
 
 	@Override
-	public String getType() {
-		return "double";
-	}
-
-	@Override
 	public String opString() {
 		return "ite";
 	}
@@ -86,5 +82,10 @@ public class IfThenElseOperator extends NonTerminal<VariableAssignment<?>> {
 	@Override
 	protected NonTerminal<VariableAssignment<?>> newInstance() {
 		return new IfThenElseOperator();
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.BOOLEAN, Datatype.DOUBLE, Datatype.DOUBLE };
 	}
 }

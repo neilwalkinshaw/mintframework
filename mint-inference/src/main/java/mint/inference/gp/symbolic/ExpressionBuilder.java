@@ -19,7 +19,6 @@ import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.booleans.AndBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.EQArithOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQStringOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
@@ -152,34 +151,6 @@ public class ExpressionBuilder implements NodeVisitor {
 		} catch (Z3Exception e) {
 			e.printStackTrace();
 			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean visitEnter(EQArithOperator eqBooleanOperator) {
-		return true;
-	}
-
-	@Override
-	public boolean visitExit(EQArithOperator eqBooleanOperator) {
-		try {
-			BoolExpr ex = null;
-			if (eqBooleanOperator.numVarsInTree() == 0) {
-				ex = ctx.mkBool(eqBooleanOperator.evaluate().getValue());
-			} else {
-				ArithExpr exp1 = findArithExpr(eqBooleanOperator.getChildren().get(0));
-				ArithExpr exp2 = findArithExpr(eqBooleanOperator.getChildren().get(1));
-
-				ex = ctx.mkEq(exp1, exp2);
-				ex = addAdditionalConstraints(ex, eqBooleanOperator);
-			}
-			additionalConstraints.put(eqBooleanOperator, ex);
-		} catch (Z3Exception e) {
-			e.printStackTrace();
-			return false;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		return true;
 	}

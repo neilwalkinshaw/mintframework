@@ -5,6 +5,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.RealExpr;
 
 import mint.inference.gp.Generator;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeVisitor;
 import mint.inference.gp.tree.NonTerminal;
@@ -71,6 +72,11 @@ public class CastIntegersOperator extends IntegerNonTerminal {
 	@Override
 	protected NonTerminal<IntegerVariableAssignment> newInstance() {
 		return new CastIntegersOperator();
+	}
+
+	@Override
+	public Datatype[] typeSignature() {
+		return new Datatype[] { Datatype.DOUBLE, Datatype.INTEGER };
 	}
 
 }

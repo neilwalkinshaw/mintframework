@@ -16,7 +16,6 @@ import mint.inference.gp.SingleOutputGP;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NonTerminal;
 import mint.inference.gp.tree.nonterminals.booleans.AndBooleanOperator;
-import mint.inference.gp.tree.nonterminals.booleans.EQArithOperator;
 import mint.inference.gp.tree.nonterminals.booleans.EQBooleanOperator;
 import mint.inference.gp.tree.nonterminals.booleans.GTBooleanDoublesOperator;
 import mint.inference.gp.tree.nonterminals.booleans.LTBooleanDoublesOperator;
@@ -171,7 +170,6 @@ public class GPTestRunner extends TestRunner {
 		boolNonTerms.add(new LTBooleanDoublesOperator());
 		boolNonTerms.add(new GTBooleanDoublesOperator());
 		boolNonTerms.add(new EQBooleanOperator());
-		boolNonTerms.add(new EQArithOperator());
 		// boolNonTerms.add(new EQStringOperator());
 		gpGenerator.setBooleanFunctions(boolNonTerms);
 

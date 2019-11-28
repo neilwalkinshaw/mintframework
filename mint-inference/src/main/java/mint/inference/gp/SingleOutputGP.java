@@ -23,6 +23,7 @@ import mint.inference.gp.fitness.singleOutput.SingleOutputIntegerFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputListFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputStringFitness;
 import mint.inference.gp.selection.SingleOutputTournament;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.tracedata.types.BooleanVariableAssignment;
 import mint.tracedata.types.DoubleVariableAssignment;
@@ -93,12 +94,12 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 			LatentVariableFitness<?> fit;
 			Node<?> node = (Node<?>) c;
 			if (node.getFitness() == null) {
-				if (node.getType() == "string")
+				if (node.getReturnType() == Datatype.STRING)
 					fit = new StringFitness(evals, (Node<VariableAssignment<String>>) c);
-				else if (node.getType() == "integer")
+				else if (node.getReturnType() == Datatype.INTEGER)
 					fit = new IntegerFitness(evals, (Node<VariableAssignment<Integer>>) c);
 				else {
-					assert (node.getType() == "boolean");
+					assert (node.getReturnType() == Datatype.BOOLEAN);
 					fit = new BooleanFitness(evals, (Node<VariableAssignment<Boolean>>) c);
 				}
 				try {
@@ -113,25 +114,24 @@ public class SingleOutputGP extends GP<VariableAssignment<?>> {
 	@Override
 	@SuppressWarnings({ "unchecked" })
 	public boolean isCorrect(Chromosome toEvaluateC) {
-		Node<?> toEvaluate = (Node<?>) toEvaluateC;
+		Node<?> node = (Node<?>) toEvaluateC;
 		int maxDepth = 0;
 		try {
 
-			if (toEvaluate.getType().equals("string"))
-				return new SingleOutputStringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth)
+			if (node.getReturnType() == Datatype.STRING)
+				return new SingleOutputStringFitness(evals, (Node<VariableAssignment<String>>) node, maxDepth)
 						.correct();
-			else if (toEvaluate.getType().equals("double"))
-				return new SingleOutputDoubleFitness(evals, (Node<VariableAssignment<Double>>) toEvaluate, maxDepth)
+			else if (node.getReturnType() == Datatype.DOUBLE)
+				return new SingleOutputDoubleFitness(evals, (Node<VariableAssignment<Double>>) node, maxDepth)
 						.correct();
-			else if (toEvaluate.getType().equals("integer"))
-				return new SingleOutputIntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth)
+			else if (node.getReturnType() == Datatype.INTEGER)
+				return new SingleOutputIntegerFitness(evals, (Node<VariableAssignment<Integer>>) node, maxDepth)
 						.correct();
-			else if (toEvaluate.getType().equals("List"))
-				return new SingleOutputListFitness(evals, (Node<VariableAssignment<List>>) toEvaluate, maxDepth)
-						.correct();
+			else if (node.getReturnType() == Datatype.LIST)
+				return new SingleOutputListFitness(evals, (Node<VariableAssignment<List>>) node, maxDepth).correct();
 			else {
-				assert (toEvaluate.getType().equals("boolean"));
-				return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth)
+				assert (node.getReturnType() == Datatype.BOOLEAN);
+				return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) node, maxDepth)
 						.correct();
 			}
 		} catch (InterruptedException e) {

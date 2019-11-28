@@ -15,6 +15,7 @@ import mint.inference.gp.fitness.singleOutput.SingleOutputFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputIntegerFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputListFitness;
 import mint.inference.gp.fitness.singleOutput.SingleOutputStringFitness;
+import mint.inference.gp.tree.Datatype;
 import mint.inference.gp.tree.Node;
 import mint.inference.gp.tree.NodeComparator;
 import mint.tracedata.types.VariableAssignment;
@@ -39,16 +40,16 @@ public class SingleOutputTournament extends IOTournamentSelection<VariableAssign
 	public SingleOutputFitness<?> getFitness(Chromosome toEvaluateC) {
 		{
 			Node<?> toEvaluate = (Node<?>) toEvaluateC;
-			if (toEvaluate.getType().equals("string"))
+			if (toEvaluate.getReturnType() == Datatype.STRING)
 				return new SingleOutputStringFitness(evals, (Node<VariableAssignment<String>>) toEvaluate, maxDepth);
-			else if (toEvaluate.getType().equals("double"))
+			if (toEvaluate.getReturnType() == Datatype.DOUBLE)
 				return new SingleOutputDoubleFitness(evals, (Node<VariableAssignment<Double>>) toEvaluate, maxDepth);
-			else if (toEvaluate.getType().equals("integer"))
+			if (toEvaluate.getReturnType() == Datatype.INTEGER)
 				return new SingleOutputIntegerFitness(evals, (Node<VariableAssignment<Integer>>) toEvaluate, maxDepth);
-			else if (toEvaluate.getType().equals("List"))
+			if (toEvaluate.getReturnType() == Datatype.LIST)
 				return new SingleOutputListFitness(evals, (Node<VariableAssignment<List>>) toEvaluate, maxDepth);
 			else {
-				assert (toEvaluate.getType().equals("boolean"));
+				assert (toEvaluate.getReturnType() == Datatype.BOOLEAN);
 				return new SingleOutputBooleanFitness(evals, (Node<VariableAssignment<Boolean>>) toEvaluate, maxDepth);
 			}
 		}
