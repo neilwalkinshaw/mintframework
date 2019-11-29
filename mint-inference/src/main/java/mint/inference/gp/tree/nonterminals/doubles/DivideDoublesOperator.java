@@ -29,6 +29,13 @@ public class DivideDoublesOperator extends DoubleNonTerminal {
 	@Override
 	public DoubleVariableAssignment evaluate() throws InterruptedException {
 		checkInterrupted();
+		try {
+			double top = (Double) getChild(0).evaluate().getValue();
+		} catch (ClassCastException e) {
+			System.out.println(this);
+			e.printStackTrace();
+			System.exit(1);
+		}
 		double top = (Double) getChild(0).evaluate().getValue();
 		double bottom = (Double) getChild(1).evaluate().getValue();
 		double result = top / bottom;

@@ -10,7 +10,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import junit.framework.Assert;
@@ -94,7 +93,7 @@ public class GPTester {
 		gpGenerator.setBooleanTerminals(boolTerms);
 
 		SingleOutputGP gp = new SingleOutputGP(gpGenerator, generateTrainingSet(60),
-				new GPConfiguration(60, 0.5, 0.4, 5, 7), false);
+				new GPConfiguration(60, 0.7, 1, 5, 7), false);
 
 		System.out.println(gp.evolve(100));
 
@@ -106,7 +105,7 @@ public class GPTester {
 		return dnt;
 	}
 
-	@Ignore
+	@Test
 	public void testLimitedAll() {
 		DoubleVariableAssignment constrained = new DoubleVariableAssignment("constrained", -1000D, 1000D);
 		constrained.setEnforcing(true);

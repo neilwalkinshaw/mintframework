@@ -93,6 +93,6 @@ public class IfThenElseOperator extends NonTerminal<VariableAssignment<?>> {
 
 	@Override
 	public Datatype[] typeSignature() {
-		return new Datatype[] { Datatype.DOUBLE };
+		return new Datatype[] { Datatype.BOOLEAN, Datatype.DOUBLE, Datatype.DOUBLE };
 	}
 }

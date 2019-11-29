@@ -144,7 +144,7 @@ public abstract class NonTerminal<T extends VariableAssignment<?>> extends Node<
 		if (!g.nonTerms(this.getReturnType()).isEmpty()) {
 			NonTerminal<?> newRoot = (NonTerminal<?>) g.generateRandomNonTerminal(this.typeSignature());
 			boolean thisAdded = false;
-			for (Datatype type : this.typeSignature()) {
+			for (Datatype type : newRoot.typeSignature()) {
 				if (type == this.getReturnType() && !thisAdded) {
 					newRoot.addChild(this.copy());
 					thisAdded = true;
