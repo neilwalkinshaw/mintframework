@@ -1,154 +1,197 @@
 package mint.inference.gp.tree;
 
-import mint.inference.evo.Chromosome;
-import mint.inference.gp.Generator;
-import mint.inference.gp.tree.nonterminals.booleans.RootBoolean;
-import mint.inference.gp.tree.nonterminals.doubles.RootDouble;
-import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
-import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
-import mint.tracedata.types.VariableAssignment;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
+import mint.inference.evo.Chromosome;
+import mint.inference.gp.Generator;
+import mint.inference.gp.tree.nonterminals.lists.RootListNonTerminal;
+import mint.inference.gp.tree.nonterminals.strings.AssignmentOperator;
+import mint.inference.gp.tree.terminals.VariableTerminal;
+import mint.tracedata.types.VariableAssignment;
+
 /**
  * Represents a node in a GP tree.
  *
- * If a GP tree is to be associated with a memory, the setMemory
- * method must only be called after the tree has been completed.
+ * If a GP tree is to be associated with a memory, the setMemory method must
+ * only be called after the tree has been completed.
  *
  * Created by neilwalkinshaw on 03/03/15.
  */
-public abstract class Node<T extends VariableAssignment<?>> implements Chromosome{
+public abstract class Node<T extends VariableAssignment<?>> implements Chromosome, Comparable<Node<?>> {
 
-    protected static int ids = 0;
+	private Double fitness = null;
 
-    protected int id;
+	protected static int ids = 0;
 
-    protected AssignmentOperator def;
+	protected int id;
 
-    protected NonTerminal<?> parent;
+	protected AssignmentOperator def;
 
-    protected Set vals = new HashSet();
+	protected NonTerminal<?> parent;
 
-    public Node(){
-        id = ids++;
+	protected Set<Object> vals = new HashSet<Object>();
 
-    }
+	public Node() {
+		id = ids++;
+	}
 
-    public NonTerminal<?> getParent() {
-        return parent;
-    }
+	public NonTerminal<?> getParent() {
+		return parent;
+	}
 
-    public AssignmentOperator getDef() {
-        return def;
-    }
+	public AssignmentOperator getDef() {
+		return def;
+	}
 
-    public void setDef(AssignmentOperator def) {
-        this.def = def;
-    }
+	public void setDef(AssignmentOperator def) {
+		this.def = def;
+	}
 
-    public abstract void simplify();
+	public void reset() {
+		for (Node<?> child : getChildren()) {
+			child.reset();
+		}
+	}
 
+	public abstract boolean accept(NodeVisitor visitor) throws InterruptedException;
 
-    public void reset(){
-        for(Node child : getChildren()){
-            child.reset();
-        }
-    }
+	protected void setParent(NonTerminal<?> parent) {
+		this.parent = parent;
+	}
 
-    public abstract boolean accept(NodeVisitor visitor) throws InterruptedException;
+	public abstract List<Node<?>> getChildren();
 
-    protected void setParent(NonTerminal<?> parent){
-        this.parent = parent;
-    }
+	public abstract T evaluate() throws InterruptedException;
 
-    public abstract List<Node<?>> getChildren();
+	@Override
+	public abstract Node<T> copy();
 
-    public abstract T evaluate() throws InterruptedException;
+	public abstract void mutate(Generator g, int depth);
 
+	public boolean swapWith(Node<?> alternative) {
+		assert (!(this instanceof RootListNonTerminal));
+		if (parent == null) {
+			return false;
+		}
+		if (!alternative.getReturnType().equals(getReturnType()))
+			return false;
+		int thisIndex = parent.getChildren().indexOf(this);
+		parent.getChildren().set(thisIndex, alternative);
+		alternative.setParent(parent);
+		return true;
+	}
 
-    public abstract Node<T> copy();
+	public Datatype getReturnType() {
+		return this.typeSignature()[this.typeSignature().length - 1];
+	}
 
-    public abstract void mutate(Generator g, int depth);
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Node))
+			return false;
 
-    public boolean swapWith(Node<?> alternative){
-        assert(!(this instanceof RootDouble));
-        assert(!(this instanceof RootBoolean));
-        assert(!(this instanceof RootListNonTerminal));
-        if(parent == null) {
-            return false;
-        }
-        if(!alternative.getType().equals(getType()))
-            return false;
-        int thisIndex = parent.getChildren().indexOf(this);
-        parent.getChildren().set(thisIndex,alternative);
-        alternative.setParent(parent);
-        return true;
-    }
+		Node<?> node = (Node<?>) o;
 
-    public abstract String getType();
+		if (id != node.id)
+			return false;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Node)) return false;
+		return true;
+	}
 
-        Node node = (Node) o;
+	@Override
+	public int hashCode() {
+		return id;
+	}
 
-        if (id != node.id) return false;
+	public abstract int numVarsInTree();
 
-        return true;
-    }
+	public abstract int size();
 
-    @Override
-    public int hashCode() {
-        return id;
-    }
+	/**
+	 * Returns the depth of this specific node within the tree.
+	 * 
+	 * @return
+	 */
+	public int depth() {
+		if (parent == null)
+			return 0;
+		else
+			return 1 + parent.depth();
+	}
 
-    public abstract int numVarsInTree();
+	protected void checkInterrupted() throws InterruptedException {
+		if (Thread.interrupted()) {
+			throw new InterruptedException();
+		}
 
-    public abstract int size();
+	}
 
-    /**
-     * Returns the depth of this specific node within the tree.
-     * @return
-     */
-    public int depth(){
-        if(parent == null)
-            return 0;
-        else
-            return 1+parent.depth();
-    }
+	/**
+	 * Returns the maximum depth of the subtree of which this node is the root.
+	 * 
+	 * @return
+	 */
+	public int subTreeMaxdepth() {
+		int maxDepth = 0;
+		if (getChildren().isEmpty())
+			maxDepth = depth();
+		else {
 
-    protected void checkInterrupted() throws InterruptedException {
-        if (Thread.interrupted()){
-            throw new InterruptedException();
-        }
+			for (Node<?> child : getChildren()) {
+				int childMaxDepth = child.subTreeMaxdepth();
+				if (childMaxDepth > maxDepth) {
+					maxDepth = childMaxDepth;
+				}
+			}
 
-    }
+		}
+		return maxDepth;
+	}
 
-    /**
-     * Returns the maximum depth of the subtree of which this node is the
-     * root.
-     * @return
-     */
-    public int subTreeMaxdepth(){
-        int maxDepth = 0;
-        if(getChildren().isEmpty())
-            maxDepth = depth();
-        else{
+	public abstract Set<VariableTerminal<?>> varsInTree();
 
-            for(Node<?> child: getChildren()){
-                int childMaxDepth = child.subTreeMaxdepth();
-                if(childMaxDepth > maxDepth){
-                    maxDepth = childMaxDepth;
-                }
-            }
+	public abstract Expr toZ3(Context ctx);
 
-        }
-         return maxDepth;
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public Node<T> simp() {
+		Context ctx = new Context();
+		try {
+			Expr z3Expr = this.toZ3(ctx).simplify();
+			Node<T> retVal = (Node<T>) NodeSimplifier.fromZ3(z3Expr);
+			return retVal;
+		} catch (Exception e) {
+			return this;
+		} finally {
+			ctx.close();
+		}
+
+	}
+
+	@Override
+	public Double getFitness() {
+		return fitness;
+	}
+
+	public void setFitness(double f) {
+		this.fitness = f;
+	}
+
+	@Override
+	public int compareTo(Node<?> arg0) {
+		Double fit = this.fitness;
+		return fit.compareTo(arg0.fitness);
+	}
+
+	protected abstract List<Node<?>> getAllNodesAsList();
+
+	public abstract Datatype[] typeSignature();
 
 }

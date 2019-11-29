@@ -1,6 +1,5 @@
 package mint.inference.evo;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -8,8 +7,8 @@ import java.util.List;
  */
 public interface Selection {
 
-    public double getBestFitness();
+	public double getBestFitness();
 
-    public List<Chromosome> select(GPConfiguration config, int number);
+	public List<Chromosome> select(GPConfiguration config, int number);
 
 }

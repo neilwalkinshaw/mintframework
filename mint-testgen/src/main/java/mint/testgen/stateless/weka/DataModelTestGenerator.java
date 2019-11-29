@@ -10,8 +10,15 @@
 
 package mint.testgen.stateless.weka;
 
-import com.microsoft.z3.Z3Exception;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+
 import mint.Configuration;
 import mint.inference.constraints.WekaConstraintParser;
 import mint.inference.constraints.expression.Expression;
@@ -20,125 +27,108 @@ import mint.tracedata.TestIO;
 import mint.tracedata.types.VariableAssignment;
 import weka.classifiers.Classifier;
 
-import java.util.*;
-
-
 public class DataModelTestGenerator extends WekaModelTestGenerator {
-	
+
 	protected final Collection<Expression> outcomeExpressions;
-	protected Map<Expression,ExpressionToZ3> contextMap;
-	
-	
+	protected Map<Expression, ExpressionToZ3> contextMap;
+
 	private final static Logger LOGGER = Logger.getLogger(DataModelTestGenerator.class.getName());
 
-	public DataModelTestGenerator(String name, Classifier model, Collection<VariableAssignment<?>> types, Configuration.Data algo){
-		super(name,types,model);
-		if(algo.equals(Configuration.Data.J48))
+	public DataModelTestGenerator(String name, Classifier model, Collection<VariableAssignment<?>> types,
+			Configuration.Data algo) {
+		super(name, types, model);
+		if (algo.equals(Configuration.Data.J48))
 			outcomeExpressions = WekaConstraintParser.parseJ48ExpressionForAllOutcomes(model.toString(), types);
-		else if(algo.equals(Configuration.Data.JRIP))
+		else if (algo.equals(Configuration.Data.JRIP))
 			outcomeExpressions = WekaConstraintParser.parseJRIPExpressionForAllOutcomes(model.toString(), types);
-		else if(algo.equals(Configuration.Data.M5))
+		else if (algo.equals(Configuration.Data.M5))
 			outcomeExpressions = WekaConstraintParser.parseM5ExpressionForAllOutcomes(model.toString(), types);
-		else{
+		else {
 			outcomeExpressions = new HashSet<Expression>();
 			LOGGER.warn("No suitable model inference engine selected.");
 		}
-		contextMap = new HashMap<Expression,ExpressionToZ3>();
+		contextMap = new HashMap<Expression, ExpressionToZ3>();
 
 	}
-	
-	public DataModelTestGenerator(String name, String model, Collection<VariableAssignment<?>> types, Configuration.Data algo){
-		super(name,types,null);
-		if(algo.equals(Configuration.Data.J48))
+
+	public DataModelTestGenerator(String name, String model, Collection<VariableAssignment<?>> types,
+			Configuration.Data algo) {
+		super(name, types, null);
+		if (algo.equals(Configuration.Data.J48))
 			outcomeExpressions = WekaConstraintParser.parseJ48ExpressionForAllOutcomes(model, types);
-		else if(algo.equals(Configuration.Data.JRIP))
+		else if (algo.equals(Configuration.Data.JRIP))
 			outcomeExpressions = WekaConstraintParser.parseJRIPExpressionForAllOutcomes(model, types);
-		else if(algo.equals(Configuration.Data.M5))
+		else if (algo.equals(Configuration.Data.M5))
 			outcomeExpressions = WekaConstraintParser.parseM5ExpressionForAllOutcomes(model, types);
-		else{
+		else {
 			outcomeExpressions = new HashSet<Expression>();
 			LOGGER.warn("No suitable model inference engine selected.");
 		}
-		contextMap = new HashMap<Expression,ExpressionToZ3>();
+		contextMap = new HashMap<Expression, ExpressionToZ3>();
 
 	}
-	
-	public List<TestIO> generateTestCases(int howMany){
+
+	@Override
+	public List<TestIO> generateTestCases(int howMany) {
 		List<TestIO> tests = new ArrayList<TestIO>();
 		List<Expression> expList = new ArrayList<Expression>();
 		expList.addAll(outcomeExpressions);
 		int size = outcomeExpressions.size();
 		int i = 0;
-		for(int j = 0; j < expList.size(); j++){
-			assert(outcomeExpressions.size()==size);
-			if(j == expList.size()-1)
+		for (int j = 0; j < expList.size(); j++) {
+			assert (outcomeExpressions.size() == size);
+			if (j == expList.size() - 1)
 				j = 0;
-			
+
 			Expression target = expList.get(j);
 			ExpressionToZ3 convertor;
-			try {
-				convertor = getConvertor(target);
-				boolean solved = convertor.solve(true);
-				//target.setNegated(!target.isNegated());
-				if(!solved){
-					continue;
-				}
-				i++;
-				if(i == howMany)
-					break;
-				Collection<VariableAssignment<?>> sol = convertor.getVars();
-				tests.add(generateTestIO(sol));
-			} catch (Z3Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			convertor = getConvertor(target);
+			boolean solved = convertor.solve(true);
+			// target.setNegated(!target.isNegated());
+			if (!solved) {
+				continue;
 			}
-			
+			i++;
+			if (i == howMany)
+				break;
+			Collection<VariableAssignment<?>> sol = convertor.getVars();
+			tests.add(generateTestIO(sol));
 		}
-	
+
 		return tests;
 	}
-	
-	public List<TestIO> generateTestCases(){
+
+	@Override
+	public List<TestIO> generateTestCases() {
 		List<TestIO> tests = new ArrayList<TestIO>();
 		List<Expression> expList = new ArrayList<Expression>();
 		expList.addAll(outcomeExpressions);
-		for(int j = 0; j < expList.size(); j++){
+		for (int j = 0; j < expList.size(); j++) {
 			Expression target = expList.get(j);
 			ExpressionToZ3 convertor;
-			try {
-				convertor = getConvertor(target);
-				boolean solved = convertor.solve(true);
-				//target.setNegated(!target.isNegated());
-				if(!solved){
-					continue;
-				}			
-				Collection<VariableAssignment<?>> sol = convertor.getVars();
-				tests.add(generateTestIO(sol));
-			} catch (Z3Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			convertor = getConvertor(target);
+			boolean solved = convertor.solve(true);
+			// target.setNegated(!target.isNegated());
+			if (!solved) {
+				continue;
 			}
-			
+			Collection<VariableAssignment<?>> sol = convertor.getVars();
+			tests.add(generateTestIO(sol));
 		}
-	
+
 		return tests;
 	}
 
-	
-
-	private ExpressionToZ3 getConvertor(Expression target) throws Z3Exception {
-		if(contextMap.containsKey(target))
+	private ExpressionToZ3 getConvertor(Expression target) {
+		if (contextMap.containsKey(target))
 			return contextMap.get(target);
-		else
-		{
+		else {
 			Configuration configuration = Configuration.getInstance();
 
-			ExpressionToZ3 context = new ExpressionToZ3(target,configuration.RESPECT_LIMITS);
+			ExpressionToZ3 context = new ExpressionToZ3(target, configuration.RESPECT_LIMITS);
 			contextMap.put(target, context);
 			return context;
 		}
 	}
-	
-	
-	
+
 }
