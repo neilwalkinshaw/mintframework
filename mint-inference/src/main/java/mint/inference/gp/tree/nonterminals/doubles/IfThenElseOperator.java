@@ -56,6 +56,13 @@ public class IfThenElseOperator extends NonTerminal<VariableAssignment<?>> {
 	@Override
 	public VariableAssignment<?> evaluate() throws InterruptedException {
 		checkInterrupted();
+		try {
+			boolean condition = (Boolean) getChild(0).evaluate().getValue();
+		} catch (ClassCastException e) {
+			System.out.println(this);
+			e.printStackTrace();
+			System.exit(0);
+		}
 		boolean condition = (Boolean) getChild(0).evaluate().getValue();
 		if (condition) {
 			VariableAssignment<?> val = getChild(1).evaluate();
@@ -86,6 +93,6 @@ public class IfThenElseOperator extends NonTerminal<VariableAssignment<?>> {
 
 	@Override
 	public Datatype[] typeSignature() {
-		return new Datatype[] { Datatype.BOOLEAN, Datatype.DOUBLE, Datatype.DOUBLE };
+		return new Datatype[] { Datatype.DOUBLE };
 	}
 }

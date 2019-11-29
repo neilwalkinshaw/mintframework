@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.microsoft.z3.Context;
 
@@ -116,26 +117,18 @@ public class Generator {
 	}
 
 	public boolean populationContains(List<Chromosome> population, Chromosome c1) {
-		for (Chromosome c2 : population) {
-			if (c1.sameSyntax(c2))
-				return true;
-		}
-		return false;
+		return population.stream().anyMatch(c2 -> c1.sameSyntax(c2));
 	}
 
 	public List<Chromosome> generateBooleanPopulation(int size, int maxD) {
-		List<Chromosome> population = new ArrayList<Chromosome>();
-		for (int i = 0; i < size; i++) {
-			population.add(generateRandomBooleanExpression(maxD + 1));
-		}
+		List<Chromosome> population = IntStream.range(0, size).mapToObj(i -> generateRandomBooleanExpression(maxD + 1))
+				.collect(Collectors.toList());
 		return population;
 	}
 
 	public List<Chromosome> generateDoublePopulation(int size, int maxD) {
-		List<Chromosome> population = new ArrayList<Chromosome>();
-		for (int i = 0; i < size; i++) {
-			population.add(generateRandomDoubleExpression(maxD + 1));
-		}
+		List<Chromosome> population = IntStream.range(0, size).mapToObj(i -> generateRandomDoubleExpression(maxD + 1))
+				.collect(Collectors.toList());
 		return population;
 	}
 
