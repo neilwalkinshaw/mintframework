@@ -78,7 +78,7 @@ public abstract class TestRunner {
 
         ngramMerger = new NgramMerger();
 
-        if(Configuration.getInstance().JAVA_SUT !=null){
+        if(!Configuration.getInstance().JAVA_SUT.isEmpty()){
             setJUD();
         }
 

@@ -173,14 +173,14 @@ public class GPTestRunner extends TestRunner {
         //SingleOutputGP gp = new SingleOutputGP(gpGenerator, evals,new GPConfiguration(300,0.9,0.1,8,4));
         //SingleOutputGP gp = new SingleOutputGP(gpGenerator, evals,new GPConfiguration(600,0.9,0.1,5,10)); //DEFAULT
         //MultiOutputGP gp = new MultiOutputGP(gpGenerator, evals,new GPConfiguration(600,0.8,0.2,15,6));
-        SingleOutputGP gp = new SingleOutputGP(gpGenerator, evals,new GPConfiguration(150,0.6,0.4,6,7),true); //gauss
+        SingleOutputGP gp = new SingleOutputGP(gpGenerator, evals,new GPConfiguration(70,0.9,0.2,4,5),true); //gauss
 
         /*if(lastRun!=null) {
             Collection<Chromosome> seed = new HashSet<Chromosome>();
             seed.add(lastRun);
             gp.setSeeds(seed);
         }*/
-        Node<?> evolved = (Node<?>)gp.evolve(60);
+        Node<?> evolved = (Node<?>)gp.evolve(25);
         lastRun = evolved;
         latestGP = gp;
         return evolved;
