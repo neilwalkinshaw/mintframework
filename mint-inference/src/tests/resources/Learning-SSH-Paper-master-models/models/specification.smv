@@ -1,0 +1,87 @@
+DEFINE isSilent := (out=NO_CONN | out=CH_MAX | out=CH_NONE);
+DEFINE hasReqAuth := (inp=SR_AUTH & out=SR_ACCEPT);
+DEFINE hasOpenedChannel := (out=CH_OPEN_SUCCESS);
+DEFINE hasAuth := (out=UA_PK_OK | out=UA_PW_OK);
+DEFINE authReq := (inp=UA_PK_OK | inp=UA_PW_OK | inp=UA_PK_NOK | inp=UA_PW_NOK | inp=UA_NONE);
+DEFINE validAuthReq := (inp=UA_PK_OK | inp=UA_PW_OK);
+DEFINE invalidAuthReq := (inp=UA_PK_NOK | inp=UA_PW_NOK | inp=UA_NONE);
+DEFINE receivedNewKeys := (out=NEWKEYS | out=KEX31_NEWKEYS);
+DEFINE kexStarted := (out=KEXINIT);
+DEFINE connLost:= out=NO_CONN | out=DISCONNECT;
+
+
+-- General Properties
+-- Once a connection is lost, it is lost for good
+LTLSPEC NAME gen_one_conn := G (out=NO_CONN ->
+    G isSilent)
+    
+-- Cyclic behavior induced by CH_OPEN and CH_CLOSE
+LTLSPEC NAME gen_cyclic := (G (inp=CH_OPEN) ->
+   X ( (inp=CH_OPEN -> out=CH_MAX)  U (inp=CH_CLOSE & out!=CH_NONE) | G (inp=CH_OPEN -> out=CH_MAX) ) ) &
+   (G (inp=CH_CLOSE) ->
+   X ( (inp=CH_CLOSE -> out=CH_NONE)  U (inp=CH_OPEN & out!=CH_MAX) | G (inp=CH_CLOSE -> out=CH_NONE) ) )
+
+    
+-- Security Properties
+-- Transport Layer Security
+LTLSPEC NAME trans_sec := G ( hasReqAuth -> 
+    O ( (inp=NEWKEYS & out=NO_RESP) & 
+        O ( (inp=KEX30 & out=KEX31_NEWKEYS) & 
+            O kexStarted ) ) )
+            
+-- Authentication Layer Security
+LTLSPEC NAME auth_sec := G ( hasOpenedChannel -> 
+    ( out!=UA_FAILURE S out=UA_SUCCESS) )
+    
+-- Rekey properties
+-- Pre-auth rekey is possible
+LTLSPEC NAME pre-auth_rekey_pos := G ( hasReqAuth -> 
+         X (inp=KEXINIT -> out=KEXINIT & X ( inp=KEX30 -> out=KEX31_NEWKEYS & X (inp=NEWKEYS -> out=NO_RESP) ) ) U 
+         (connLost | hasAuth | kexStarted) | G X (inp=KEXINIT -> out=KEXINIT & X ( inp=KEX30 -> out=KEX31_NEWKEYS & X (inp=NEWKEYS -> out=NO_RESP) ) ) ) 
+
+-- Authenticated rekey is possible
+LTLSPEC NAME auth_rekey_pos := G ( hasOpenedChannel  -> 
+        X (inp=KEXINIT -> out=KEXINIT & X (inp=KEX30 -> out=KEX31_NEWKEYS & X (inp=NEWKEYS -> out=NO_RESP) ) ) U (connLost | kexStarted) |
+        G X (inp=KEXINIT -> out=KEXINIT & X (inp=KEX30 -> out=KEX31_NEWKEYS & X (inp=NEWKEYS -> out=NO_RESP) ) ) )
+
+-- Functional Properties
+--   Server sends DISCONNECT:    
+--   The sender MUST NOT send or receive any data after this message, and
+--   the recipient MUST NOT accept any data after receiving this message.
+LTLSPEC NAME trans_disc := G (out=DISCONNECT -> 
+    X G (isSilent) )
+
+---- After sending a KEXINIT, the other side should not send another KEXINIT or SR_ACCEPT until it has sent NEWKEYS        
+LTLSPEC NAME trans_kexinit := G ( kexStarted -> 
+	X ( ( (out!=SR_ACCEPT & !kexStarted) U receivedNewKeys |
+	G (out!=SR_ACCEPT & !kexStarted) ) ) )
+    
+-- If the server rejects the service request, it SHOULD send an
+-- appropriate SSH_MSG_DISCONNECT message and MUST disconnect. 
+LTLSPEC NAME trans_sr := G ( (inp=SR_AUTH & out!=NO_CONN & state!=s0) -> 
+    (out=SR_ACCEPT | out=DISCONNECT ) )
+    
+-- If the server rejects the authentication request, it MUST respond
+-- with the following: SSH_MSG_USERAUTH_FAILURE. *It may also disconnect on failed unauth attempts
+LTLSPEC NAME auth_ua_pre := G ( (hasReqAuth & !O out=UA_SUCCESS) ->
+    ( (invalidAuthReq -> (out=UA_FAILURE) ) U (out=UA_SUCCESS | connLost| kexStarted ) ) | G (invalidAuthReq -> (out=UA_FAILURE | out=DISCONNECT) ) )
+
+-- SSH_MSG_USERAUTH_SUCCESS MUST be sent only once. 
+LTLSPEC NAME auth_ua_post := G ( (out=UA_SUCCESS) ->
+    X G (out!=UA_SUCCESS) )
+
+-- When SSH_MSG_USERAUTH_SUCCESS has been sent, any further authentication
+-- requests received after that SHOULD be silently ignored. *openssh sends UNIMPL, is that bad?    
+LTLSPEC NAME auth_ua_post_strong := G (out=UA_SUCCESS ->
+     X ( ( authReq -> out=NO_RESP) U (!authReq & (kexStarted | connLost) ) | G (authReq -> out=NO_RESP) ) ) 
+
+    
+-- Upon receiving this message, a party MUST
+--   send back an SSH_MSG_CHANNEL_CLOSE unless it has already sent this
+--   message for the channel.  The channel is considered closed for a
+--   party when it has both sent and received SSH_MSG_CHANNEL_CLOSE, and
+--   the party may then reuse the channel number. 
+-- Had to add NEWKEYS and KEXINIT ins, strangely KEXINIT closes 
+LTLSPEC NAME conn_close := G ( hasOpenedChannel -> 
+	( ( ( (inp=CH_CLOSE) -> (out=CH_CLOSE) ) U ( ( connLost | kexStarted ) | out=CH_CLOSE) ) ) |
+        ( G ( (inp=CH_CLOSE) -> (out=CH_CLOSE)) ) ) )
