@@ -9,6 +9,7 @@
  ******************************************************************************/
 package mint.evaluation.kfolds;
 
+import mint.inference.InferenceBuilder;
 import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.Configuration.Data;
@@ -276,8 +277,14 @@ public class Experiment implements Callable<List<Result>> {
 		}
 		return folded;
 	}
-	
-	public AbstractMerger<?, ?> getInference(TraceSet posSet) { 
+
+	public AbstractMerger<?, ?> getInference(TraceSet posSet) {
+		InferenceBuilder ib = new InferenceBuilder(Configuration.getInstance());
+		return ib.getInference(posSet);
+	}
+
+
+		/*public AbstractMerger<?, ?> getInference(TraceSet posSet) {
 		AbstractMerger<?,?> inference = null;
 		
 		if(this.data){
@@ -303,7 +310,7 @@ public class Experiment implements Callable<List<Result>> {
 			
 		
 		return inference;
-	}
+	}*/
 	
 
 	

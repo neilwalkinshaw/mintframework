@@ -23,8 +23,6 @@ public class ProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machine<
 
     protected ProbabilityMatrix matrix;
 
-    private final static Logger LOGGER = Logger.getLogger(ProbabilityMatrix.class.getName());
-
 
     public ProbabilisticMachineAnalysis(ProbabilisticMachine m) {
         super(m);
@@ -33,7 +31,7 @@ public class ProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machine<
 
 
 
-    public List<Double> getDistribution(List<List<String>> ngrams){
+    public List<Double> getNGramDistribution(List<List<String>> ngrams){
         ArrayList<Double> dist = new ArrayList<Double>();
         dist.ensureCapacity(ngrams.size());
         for(int i = 0; i<ngrams.size(); i++){

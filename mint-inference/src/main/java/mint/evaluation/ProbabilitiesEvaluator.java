@@ -40,7 +40,7 @@ public class ProbabilitiesEvaluator {
 			for(int k = 1; k<15; k++) {
 				Set<List<TraceElement>> sizeP = new HashSet<List<TraceElement>>();
 				sizeP.addAll(pos);
-				KFoldsEvaluator kfolds = new KFoldsEvaluator(args[0], sizeP, neg, 0, k, eval);
+				KFoldsEvaluator kfolds = new KFoldsEvaluator(args[0], sizeP, neg, 0, k);
 				kfolds.kfolds(folds,false);
 			}
 

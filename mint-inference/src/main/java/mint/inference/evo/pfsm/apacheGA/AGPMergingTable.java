@@ -130,7 +130,7 @@ public class AGPMergingTable extends AbstractListChromosome<StatePair> implement
             }
             else {
                 ProbabilisticMachineAnalysis pma = new ProbabilisticMachineAnalysis(sm);
-                List<Double> dist = pma.getDistribution(nGram.getNgrams());
+                List<Double> dist = pma.getNGramDistribution(nGram.getNgrams());
                 normalise(dist);
                 double divergence = KLDivergencee(targetDist, dist);
                 fitness = -divergence;

@@ -97,7 +97,7 @@ public class ProbabilisticExperiment extends Experiment {
         NGram<String> ngramGenerator = new NGram<String>(model.getAutomaton().getAlphabet(),3);
         List<List<String>> ngrams = ngramGenerator.getNgrams();
 
-        List<Double> machineCoords =  getMachineDistribution(model, ngrams);
+        List<Double> machineCoords =  getMachineNGramDistribution(model, ngrams);
         List<Double> testCoords = getTestCoords(pos.getPos(),ngrams);
 
         normalise(machineCoords);
@@ -117,7 +117,7 @@ public class ProbabilisticExperiment extends Experiment {
         return Math.abs(sum);
     }
 
-    private void normalise(List<Double> machineCoords) {
+    protected void normalise(List<Double> machineCoords) {
         double total = 0D;
         for(int i = 0; i< machineCoords.size(); i++){
             total+=machineCoords.get(i);
@@ -149,16 +149,18 @@ public class ProbabilisticExperiment extends Experiment {
         return dist;
     }
 
-    private List<Double> getMachineDistribution(Machine model, List<List<String>> ngrams) {
+    private List<Double> getMachineNGramDistribution(Machine model, List<List<String>> ngrams) {
         ProbabilisticMachineAnalysis pma = new ProbabilisticMachineAnalysis(buildProbabilisticMachine(model));
-        List<Double> dist = pma.getDistribution(ngrams);
+        List<Double> dist = pma.getNGramDistribution(ngrams);
         return dist;
     }
 
-    private ProbabilisticMachine buildProbabilisticMachine(Machine<?> m) {
+    protected ProbabilisticMachine buildProbabilisticMachine(Machine<?> m) {
         ProbabilisticMachine pm = new ProbabilisticMachine();
         TraceDFA<?> automaton = m.getAutomaton();
         for(DefaultEdge de : automaton.getTransitions()){
+            pm.getAutomaton().addState(automaton.getTransitionSource(de));
+            pm.getAutomaton().addState(automaton.getTransitionTarget(de));
             pm.getAutomaton().addTransition(automaton.getTransitionSource(de),automaton.getTransitionTarget(de),
                     new TransitionData<Double>(automaton.getTransitionData(de).getLabel(),m.getProbability(de)));
 

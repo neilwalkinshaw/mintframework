@@ -23,19 +23,18 @@ public class KFoldsEvaluator {
 	private final static Logger LOGGER = Logger.getLogger(KFoldsEvaluator.class.getName());
 
 	
-	protected final Collection<List<TraceElement>> trace, negTrace,eval;
+	protected final Collection<List<TraceElement>> trace, negTrace;
 	protected int seed,tail;
 	protected final String name;
 
 	
-	public KFoldsEvaluator(String name, Collection<List<TraceElement>> trace, Collection<List<TraceElement>> negTrace, int seed, int tail, Collection<List<TraceElement>> eval){
+	public KFoldsEvaluator(String name, Collection<List<TraceElement>> trace, Collection<List<TraceElement>> negTrace, int seed, int tail){
 		this.trace = new HashSet<List<TraceElement>>();
 		this.trace.addAll(trace);
 		this.seed = seed;
 		this.name = name;
 		this.tail = tail;
 		this.negTrace = negTrace;
-		this.eval = eval;
 	}
 	
 	
@@ -59,13 +58,13 @@ public class KFoldsEvaluator {
             }
         }
 		else{
-            for(Configuration.Strategy s: Configuration.Strategy.values()) {
-				if(!s.equals(Configuration.Strategy.redblue)) // skip exhaustive :-)
+			for(Configuration.Strategy s: Configuration.Strategy.values()) {
+				if(s.equals(Configuration.Strategy.exhaustive) | s.equals(Configuration.Strategy.gktails) | s.equals(Configuration.Strategy.noloops)) // skip exhaustive :-)
 					continue;
-                Experiment a = generateExperiment(folds, algos, 0, false,s);
-                results.add(a.call());
-            }
-        }
+				Experiment a = generateExperiment(folds, algos, 0, false,s);
+				results.add(a.call());
+			}
+		}
 		//Experiment nodata = generateExperiment(folds, algos, 0, false);
 		//results.add(nodata.call());
 
@@ -79,10 +78,12 @@ public class KFoldsEvaluator {
 
 	protected Experiment generateExperiment(int folds,
 			Configuration.Data[] algos, int i, boolean data, Configuration.Strategy strategy) {
-        return new ProbabilisticExperiment(name, new Random(seed),trace,folds,algos[i],seed, tail, data,strategy);
+        //return new ProbabilisticExperiment(name, new Random(seed),trace,folds,algos[i],seed, tail, data,strategy);
+		return new ProbabilisticExperiment(name, new Random(seed),trace,folds,algos[i],seed, tail, data,strategy);
+
 	}
 	
-	private void output(List res) {
+	protected void output(List res) {
 		FileWriter fWriter = null;
 	    BufferedWriter writer = null;
 	    try {

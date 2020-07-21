@@ -64,7 +64,7 @@ public class EDSMMutatingDataEvaluator {
             Mint.info(pos);
             for(int j = 0;j<5;j++){
                 LOGGER.info("k="+j);
-                KFoldsEvaluator kfolds = new KFoldsEvaluator(args[0],pos,neg, 0,j,eval);
+                KFoldsEvaluator kfolds = new KFoldsEvaluator(args[0],pos,neg, 0,j);
                 kfolds.kfolds(folds,true);
             }
         } catch (FileNotFoundException e) {

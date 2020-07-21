@@ -44,7 +44,7 @@ public class ScalabilityEvaluator {
                     Set<List<TraceElement>> sizeP = new HashSet<List<TraceElement>>();
                     sizeP.addAll(pos);
                     EDSMSimpleDataEvaluator.reduceToSize(sizeP, size);
-                    KFoldsEvaluator kfolds = new KFoldsEvaluator(args[0] + "scale", sizeP, neg, 0, k, eval);
+                    KFoldsEvaluator kfolds = new KFoldsEvaluator(args[0] + "scale", sizeP, neg, 0, k);
                     kfolds.kfolds(folds,true);
                 }
 			}

@@ -109,14 +109,13 @@ public class EDSMDataDaikonEvaluator extends EDSMMutatingDataEvaluator {
             negs.addAll(readNegs(negFile,pos));
             Collections.shuffle(negs);
             Configuration configuration = Configuration.getInstance();
-            List<List<TraceElement>> eval = pos;
             configuration.PREFIX_CLOSED = true;
 
             if(neglength>0)
                 reduceToSize(negs,neglength);
             Mint.info(pos);
             for(int j = 0;j<5;j++){
-                KFoldsEvaluator kfolds = new KFoldsEvaluator(daikonFiles[0],pos,negs, 0,j,eval);
+                KFoldsEvaluator kfolds = new KFoldsEvaluator(daikonFiles[0],pos,negs, 0,j);
                 kfolds.kfolds(folds,true);
             }
 
