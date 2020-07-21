@@ -218,9 +218,9 @@ public class Mint {
 	 */
 	public static void main(String[] args) {
 
-		PropertyConfigurator.configure("log4j.properties");
-		//BasicConfigurator.resetConfiguration();
-		//BasicConfigurator.configure();
+		//PropertyConfigurator.configure("log4j.properties");
+		BasicConfigurator.resetConfiguration();
+		BasicConfigurator.configure();
 
 		Mint mint = new Mint();
 		mint.parseCommandLine(args);
