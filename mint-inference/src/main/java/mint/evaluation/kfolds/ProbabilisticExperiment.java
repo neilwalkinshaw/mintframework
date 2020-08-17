@@ -1,5 +1,6 @@
 package mint.evaluation.kfolds;
 
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.model.Machine;
@@ -25,7 +26,9 @@ public class ProbabilisticExperiment extends Experiment {
         super(name, r, trace, null, folds, algo, seed, tail, data, strategy);
     }
 
-    private void setConfiguration() {
+
+
+    protected void setConfiguration() {
         Configuration config = Configuration.getInstance();
         config.ALGORITHM = algo;
         config.SEED = seed;
@@ -37,7 +40,7 @@ public class ProbabilisticExperiment extends Experiment {
 
     @Override
     public List<Result> call() {
-        LOGGER.info("Running experiment for:"+name+","+algo.toString()+","+seed+","+data);
+        LOGGER.info("Running experiment for:"+name+","+algo.toString()+","+seed+","+data+","+strategy);
         setConfiguration();
         List<Set<List<TraceElement>>> f = computeFolds(folds);
         List<Double> scores = new ArrayList<Double>();
@@ -77,7 +80,7 @@ public class ProbabilisticExperiment extends Experiment {
         double meanScore = calculateMean(scores);
         double meanStates = calculateMean(states);
         double meanTransitions = calculateMean(transitions);
-        final Object res = new SimpleResult(name,algo.toString(),seed,tail,data,meanStates,meanTransitions,strategy,meanScore);
+        final SimpleResult res = new SimpleResult(name,algo.toString(),seed,tail,data,meanStates,meanTransitions,strategy,meanScore);
         results.add(res);
         LOGGER.info("Results for:"+name+","+algo.toString()+","+seed+","+data+"\n"+res);
 
@@ -115,6 +118,21 @@ public class ProbabilisticExperiment extends Experiment {
             sum += p.get(j) * Math.log(p.get(j) / q.get(j));
         }
         return Math.abs(sum);
+    }
+
+    public static double KSStatistic(List<Double> p, List<Double> q) {
+        double[] pArray = new double[p.size()];
+        double[] qArray = new double[q.size()];
+        for(int i = 0; i< p.size(); i++){
+            pArray[i] = p.get(i);
+        }
+        for(int i = 0; i< q.size(); i++){
+            qArray[i] = q.get(i);
+        }
+        KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+
+        double stat = ksTest.kolmogorovSmirnovStatistic(pArray,qArray);
+        return stat;
     }
 
     protected void normalise(List<Double> machineCoords) {
@@ -165,6 +183,7 @@ public class ProbabilisticExperiment extends Experiment {
                     new TransitionData<Double>(automaton.getTransitionData(de).getLabel(),m.getProbability(de)));
 
         }
+        pm.getAutomaton().setInitialState(automaton.getInitialState());
         return pm;
     }
 

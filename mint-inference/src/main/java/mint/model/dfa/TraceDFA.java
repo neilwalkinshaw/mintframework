@@ -11,12 +11,13 @@
 package mint.model.dfa;
 
 import org.apache.log4j.Logger;
-import org.jgrapht.DirectedGraph;
+//import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DirectedPseudograph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DirectedPseudograph;
 import org.jgrapht.graph.EdgeReversedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
@@ -126,7 +127,7 @@ public class TraceDFA<T> implements Cloneable {
         return reachableFrom(structure,a);
     }
 
-    private Collection<Integer> reachableFrom(DirectedGraph<Integer,DefaultEdge> graph, Integer a) {
+    private Collection<Integer> reachableFrom(Graph<Integer,DefaultEdge> graph, Integer a) {
         Collection<Integer> set = new HashSet<Integer>();
         BreadthFirstIterator<Integer,DefaultEdge> it = new BreadthFirstIterator<Integer, DefaultEdge>(graph,a);
         while(it.hasNext()){
@@ -144,8 +145,8 @@ public class TraceDFA<T> implements Cloneable {
         EdgeReversedGraph<Integer,DefaultEdge> reversed = new EdgeReversedGraph<Integer,DefaultEdge>(structure);
         return reachableFrom(reversed,a);
     }
-	
-	public List<DefaultEdge> shortestPath(Integer a, Integer b){
+
+	public GraphPath<Integer,DefaultEdge> shortestPath(Integer a, Integer b){
 		return DijkstraShortestPath.findPathBetween(structure, a, b);
 	}
 	

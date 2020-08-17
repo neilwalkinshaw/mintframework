@@ -26,7 +26,6 @@ public class KFoldsEvaluator {
 	protected final Collection<List<TraceElement>> trace, negTrace;
 	protected int seed,tail;
 	protected final String name;
-
 	
 	public KFoldsEvaluator(String name, Collection<List<TraceElement>> trace, Collection<List<TraceElement>> negTrace, int seed, int tail){
 		this.trace = new HashSet<List<TraceElement>>();
@@ -35,6 +34,7 @@ public class KFoldsEvaluator {
 		this.name = name;
 		this.tail = tail;
 		this.negTrace = negTrace;
+
 	}
 	
 	

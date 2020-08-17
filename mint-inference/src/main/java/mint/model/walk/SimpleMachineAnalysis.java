@@ -106,19 +106,19 @@ public class SimpleMachineAnalysis<T extends Machine> extends MachineAnalysis<T>
         List<TraceElement> s = new ArrayList<TraceElement>();
         s.addAll(in);
 		if(s.isEmpty()) {
-            return new WalkResult(initialState, soFar);
+            return new WalkResult(initialState, soFar,automaton.getAccept(initialState));
         }
 		if(automaton.getAccept(initialState).equals(TraceDFA.Accept.REJECT) && Configuration.getInstance().PREFIX_CLOSED){
-			return new WalkResult(initialState,soFar);
+			return new WalkResult(initialState,soFar,TraceDFA.Accept.REJECT);
 		}
 		TraceElement current = s.get(0);
 		Set<DefaultEdge> transitions = automaton.getOutgoingTransitions(initialState, current.getName());
 		if(transitions.size()==0) {
-            return new WalkResult(initialState, null);
+            return new WalkResult(initialState, soFar, TraceDFA.Accept.UNDEFINED);
         }
 		DefaultEdge next = chooseTransition(transitions,current,s.size()==1);
 		if(next == null) {
-            return new WalkResult(initialState, null);
+            return new WalkResult(initialState, soFar, TraceDFA.Accept.UNDEFINED);
         }
 		s.remove(0);
 		Integer dest = automaton.getTransitionTarget(next);

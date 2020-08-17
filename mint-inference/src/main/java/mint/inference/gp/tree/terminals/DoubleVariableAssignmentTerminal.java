@@ -22,6 +22,8 @@ public class DoubleVariableAssignmentTerminal extends VariableTerminal<DoubleVar
 
     @Override
     public void setValue(Object val) {
+        if(constant)
+            return;
         if(val instanceof Double)
             terminal.setValue((Double)val);
         else if(val instanceof Integer){

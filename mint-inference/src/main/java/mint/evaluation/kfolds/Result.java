@@ -12,7 +12,7 @@ package mint.evaluation.kfolds;
 
 import mint.Configuration;
 
-public class Result {
+public class Result extends SimpleResult{
 	
 	protected final String name,algo, strategy;
 	protected final double sensitivity,specificity,bcr, states, transitions;
@@ -22,7 +22,7 @@ public class Result {
 	
 	public Result(String name, String algo, int numTraces, double sensitivity,
 				  double specificity, double bcr, long duration, int seed, int tail, boolean data, double states, double transitions, Configuration.Strategy strategy) {
-		super();
+		super(name,algo,seed,tail,data,states,transitions,strategy, bcr);
 		this.numObs = numTraces;
 		this.name = name;
 		this.algo = algo;

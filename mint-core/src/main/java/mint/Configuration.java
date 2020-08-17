@@ -73,7 +73,11 @@ public class Configuration {
 	 * start with an output, and that an output has to be preceded immediately by
 	 * an input.
 	 */
-	public boolean CONSISTENT_RETURNS = false; 
+	public boolean CONSISTENT_RETURNS = false;
+
+	public boolean SUBJECTIVE_OPINIONS=false;
+
+	public double CONFIDENCE_THRESHOLD=Double.MAX_VALUE;
 		
 	public enum Visualise{text,graphical}
 
@@ -162,5 +166,7 @@ public class Configuration {
 	 */
 
 	public String JAVA_SUT="";
+
+
 
 }

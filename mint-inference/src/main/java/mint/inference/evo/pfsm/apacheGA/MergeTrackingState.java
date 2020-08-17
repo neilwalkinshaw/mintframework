@@ -3,8 +3,8 @@ package mint.inference.evo.pfsm.apacheGA;
 import mint.inference.efsm.mergingstate.SimpleMergingState;
 import mint.model.Machine;
 import mint.model.statepair.StatePair;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
+import org.jgrapht.graph.DirectedPseudograph;
+//import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Collection;
@@ -14,11 +14,11 @@ import java.util.Collection;
  */
 public class MergeTrackingState<T extends Machine> extends SimpleMergingState<T> {
 
-    DirectedGraph<Integer,DefaultEdge> mergeGraph;
+    DirectedPseudograph<Integer,DefaultEdge> mergeGraph;
 
     public MergeTrackingState(T current) {
         super(current);
-        mergeGraph = new DirectedAcyclicGraph<Integer, DefaultEdge>(DefaultEdge.class);
+        mergeGraph = new DirectedPseudograph<Integer, DefaultEdge>(DefaultEdge.class);
     }
 
 

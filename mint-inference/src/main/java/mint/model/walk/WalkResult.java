@@ -9,6 +9,7 @@ public class WalkResult{
 	
 	protected Integer target;
 	protected List<DefaultEdge> walk;
+	protected TraceDFA.Accept accept = TraceDFA.Accept.UNDEFINED;
 
 	/**
 	 * Get the destination state of the walk.
@@ -23,17 +24,15 @@ public class WalkResult{
 	}
 	
 	public TraceDFA.Accept isAccept(TraceDFA automaton){
-		if(walk == null)
-			return TraceDFA.Accept.UNDEFINED;
-		else
-			return automaton.getAccept(target);
+		return accept;
 	}
 	
 	public WalkResult(Integer target,
-			List<DefaultEdge> walk) {
+			List<DefaultEdge> walk, TraceDFA.Accept accept) {
 		super();
 		this.target = target;
 		this.walk = walk;
+		this.accept=accept;
 	}
 	
 	

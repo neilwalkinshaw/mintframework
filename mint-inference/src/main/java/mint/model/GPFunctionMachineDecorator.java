@@ -94,16 +94,20 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
             Generator gpGenerator = makeGenerator(traceData.getPayLoad());
             Filter removeIdentical = new RemoveConstantsFilter();
             Map<String,Map<List<VariableAssignment<?>>, VariableAssignment<?>>> trainingData = getTrainingData(traceData);// removeIdentical.filter(getTrainingData(traceData));
-            removeIdentical.filter(getTrainingData(traceData));
+            removeIdentical.filter(trainingData);
             for(String outputVar : trainingData.keySet()){
                 LOGGER.debug("Variable: "+outputVar+", Training set size: "+trainingData.get(outputVar).size());
                 Map<List<VariableAssignment<?>>, VariableAssignment<?>> train = trainingData.get(outputVar);
                 if(train.size()<this.minElements)
                     continue;
-                SingleOutputGP gp = new SingleOutputGP(gpGenerator, train,conf);
-
-                Node<?> evolved = (Node<?>)gp.evolve(iterations);
-                simplify(evolved,train);
+                Node<?> evolved = null;
+                evolved = checkForConstant(outputVar,trainingData);
+                if(evolved == null) {
+                    SingleOutputGP gp = new SingleOutputGP(gpGenerator, train, conf);
+                    evolved = (Node<?>) gp.evolve(iterations);
+                }
+                if(evolved.getChildren().size()>0) // if non-terminal
+                    simplify(evolved,train);
                 LOGGER.debug("Simplified: "+evolved.toString());
                 expressionsToVarNames.put(evolved,outputVar);
                 functions.add(evolved);
@@ -112,6 +116,36 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
         }
 
     }
+
+    private Node<?> checkForConstant(String outputVar, Map<String, Map<List<VariableAssignment<?>>, VariableAssignment<?>>> trainingData) {
+        Node<?> ret = null;
+        Map<List<VariableAssignment<?>>, VariableAssignment<?>> t = trainingData.get(outputVar);
+
+        VariableAssignment outputVal = null;
+        for(List<VariableAssignment<?>> inputs: t.keySet()){
+            VariableAssignment<?> output = t.get(inputs);
+            if(outputVal == null){
+                outputVal = output;
+            }
+            else if(!output.getValue().equals(outputVal.getValue())){
+                return null;
+            }
+        }
+        //if we get here, we have a non-changing output.
+
+        if(outputVal instanceof StringVariableAssignment)
+            ret = new StringVariableAssignmentTerminal(outputVal.copy(),true);
+        else if(outputVal instanceof DoubleVariableAssignment)
+            ret = new DoubleVariableAssignmentTerminal(outputVal.copy(),true);
+        else if(outputVal instanceof IntegerVariableAssignment)
+            ret = new IntegerVariableAssignmentTerminal(outputVal.copy(),true);
+        else if(outputVal instanceof BooleanVariableAssignment)
+            ret = new BooleanVariableAssignmentTerminal(outputVal.copy(),true);
+
+        return ret;
+
+    }
+
 
     private void simplify(Node<?> evolved, Map<List<VariableAssignment<?>>, VariableAssignment<?>> train) {
         evolved.reset();
@@ -140,15 +174,15 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
         doubleNonTerms.add(new AddDoublesOperator());
         doubleNonTerms.add(new SubtractDoublesOperator());
         doubleNonTerms.add(new MultiplyDoublesOperator());
-        doubleNonTerms.add(new CastDoublesOperator());
+        //doubleNonTerms.add(new CastDoublesOperator());
         doubleNonTerms.add(new DivideDoublesOperator());
         doubleNonTerms.add(new PwrDoublesOperator());
         //doubleNonTerms.add(new ForWhileOperator());
-        doubleNonTerms.add(new IfThenElseOperator());
+        //doubleNonTerms.add(new IfThenElseOperator());
         //doubleNonTerms.add(new WriteAuxOperator());
-        doubleNonTerms.add(new CosDoublesOperator());
-        doubleNonTerms.add(new ExpDoublesOperator());
-        doubleNonTerms.add(new LogDoublesOperator());
+        //doubleNonTerms.add(new CosDoublesOperator());
+        //doubleNonTerms.add(new ExpDoublesOperator());
+        //doubleNonTerms.add(new LogDoublesOperator());
         gpGenerator.setDoubleFunctions(doubleNonTerms);
 
         List<VariableTerminal<?>> doubleTerms = generateTerms(payload.iterator().next());
@@ -214,12 +248,13 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
         dvar.setMin(-2000);
         IntegerVariableAssignment dvar2 = new IntegerVariableAssignment("randB",0);
         dvar2.setParameter(false);
-        dvar2.setMax(2000);
+        dvar2.setMax(200);
         dvar2.setMin(-200);
         IntegerVariableAssignment dvar3 = new IntegerVariableAssignment("randC",200);
         dvar3.setParameter(false);
-        dvar3.setMax(2000);
-        dvar3.setMin(-2000);
+        dvar3.setMax(20);
+        dvar3.setMin(-20);
+
         //doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0.1",0.1D), true));
         intTerms.add(new IntegerVariableAssignmentTerminal(dvar, true));
         intTerms.add(new IntegerVariableAssignmentTerminal(dvar2, true));
@@ -277,14 +312,19 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
                 }
             }
         }
-        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0.5",0.5D), true));
-        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("0",0D), true));
-        //doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("2",2D), true));
-        DoubleVariableAssignment dvar = new DoubleVariableAssignment("randA",-1D);
+        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("1D",1D), true));
+        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("20",20D), true));
+        doubleTerms.add(new DoubleVariableAssignmentTerminal(new DoubleVariableAssignment("30",30D), true));
+        DoubleVariableAssignment dvar = new DoubleVariableAssignment("randA",0D);
         dvar.setParameter(false);
-        dvar.setMax(2000D);
-        dvar.setMin(-2000D);
-        doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, true));
+        dvar.setMin(-1D);
+        dvar.setMax(1D);
+        DoubleVariableAssignment dvar2 = new DoubleVariableAssignment("randB",1000D);
+        dvar2.setParameter(false);
+        dvar2.setMax(1000D);
+        dvar2.setMin(0D);
+        doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar, false));
+        doubleTerms.add(new DoubleVariableAssignmentTerminal(dvar2, false));
         return doubleTerms;
     }
 
@@ -292,7 +332,6 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
         Map<String,Map<List<VariableAssignment<?>>, VariableAssignment<?>>> outputsToTrainingSet =
                 new HashMap<String,Map<List<VariableAssignment<?>>, VariableAssignment<?>>>();
         for(TraceElement current : traceData.getPayLoad()) {
-           
             TraceElement next = current.getNext();
             if(next == null)
                 continue;
@@ -309,6 +348,8 @@ public class GPFunctionMachineDecorator extends MachineDecorator {
         }
         return outputsToTrainingSet;
     }
+
+
 
     private boolean allNull(Set<VariableAssignment<?>> data) {
         for(VariableAssignment<?> va : data){

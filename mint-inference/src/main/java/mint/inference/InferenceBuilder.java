@@ -17,6 +17,7 @@ import mint.model.*;
 import mint.model.prefixtree.EFSMPrefixTreeFactory;
 import mint.model.prefixtree.FSMPrefixTreeFactory;
 import mint.model.prefixtree.PrefixTreeFactory;
+import mint.model.soa.ProbabilisticMachineDecorator;
 import mint.tracedata.TraceSet;
 
 /**
@@ -40,7 +41,9 @@ public class InferenceBuilder {
                 EFSMPrefixTreeFactory tptg;
                 Machine kernel = new PayloadMachine();
                 if(configuration.GP)
-                    kernel = new GPFunctionMachineDecorator(kernel,1, new GPConfiguration(800,0.9,0.1,10,6),50);
+                    kernel = new GPFunctionMachineDecorator(kernel,1, new GPConfiguration(60,0.95,0.2,4,8),50);
+                if(configuration.SUBJECTIVE_OPINIONS)
+                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
                 tptg = new EFSMPrefixTreeFactory(kernel,bci.getClassifiers(),bci.getElementsToInstances());
 
                 SimpleMergingState<WekaGuardMachineDecorator> ms = new SimpleMergingState<WekaGuardMachineDecorator>(tptg.createPrefixTree(posSet));
@@ -54,7 +57,9 @@ public class InferenceBuilder {
                 EFSMPrefixTreeFactory tptg;
                 Machine kernel = new PayloadMachine();
                 if(configuration.GP)
-                    kernel = new GPFunctionMachineDecorator(kernel,1, new GPConfiguration(600,0.9,0.1,10,6),30);
+                    kernel = new GPFunctionMachineDecorator(kernel,1, new GPConfiguration(200,0.8,0.1,4,7),40);
+                if(configuration.SUBJECTIVE_OPINIONS)
+                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
                 //tptg = new EFSMPrefixTreeFactory(new DaikonMachineDecorator(kernel,configuration.MINDAIKON,true),bci.getClassifiers(),bci.getElementsToInstances());
                 //else
                 //  tptg = new EFSMPrefixTreeFactory(kernel,bci.getClassifiers(),bci.getElementsToInstances());
@@ -83,17 +88,28 @@ public class InferenceBuilder {
             }
         }
         else{
+
             PrefixTreeFactory<SimpleMachine> tptg = new FSMPrefixTreeFactory(new PayloadMachine());
             if(configuration.STRATEGY == Configuration.Strategy.exhaustive){
+                Machine kernel = tptg.createPrefixTree(posSet);
+                if(configuration.SUBJECTIVE_OPINIONS)
+                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
 
+                SimpleMergingState<Machine> ms = new SimpleMergingState<Machine>(kernel);
 
-                SimpleMergingState<Machine> ms = new SimpleMergingState<Machine>(tptg.createPrefixTree(posSet));
 
                 BasicScorer<SimpleMergingState<Machine>,ComputeScore> scorer = new BasicScorer<SimpleMergingState<Machine>,ComputeScore>(configuration.K, new ComputeScore());
                 inference = new EDSMMerger<Machine,SimpleMergingState<Machine>>(scorer,ms);
             }
             else{
-                RedBlueMergingState<Machine> ms = new RedBlueMergingState<Machine>(tptg.createPrefixTree(posSet));
+
+                Machine kernel = tptg.createPrefixTree(posSet);
+                if(configuration.SUBJECTIVE_OPINIONS)
+                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
+
+                RedBlueMergingState<Machine> ms = new RedBlueMergingState<Machine>(kernel);
+
+
                 Scorer scorer = null;
 
                 if(configuration.STRATEGY == Configuration.Strategy.ktails){

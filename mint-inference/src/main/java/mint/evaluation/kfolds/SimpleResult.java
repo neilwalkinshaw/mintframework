@@ -7,11 +7,11 @@ import mint.Configuration;
  */
 public class SimpleResult {
 
-    String name, algo;
-    int seed, tail;
-    boolean data;
-    double states, transitions, result;
-    Configuration.Strategy strategy;
+    protected String name, algo;
+    protected int seed, tail;
+    protected boolean data;
+    protected double states, transitions, result;
+    protected Configuration.Strategy strategy;
 
     public SimpleResult(String name, String algo, int seed, int tail, boolean data, double states, double transitions, Configuration.Strategy strategy, double result) {
         this.name = name;

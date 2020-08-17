@@ -229,7 +229,11 @@ public class ComputeTransitionWalk {
             for(VariableAssignment v : assignments){
                 if(v.isNull())
                     continue;
+                //if(!v.isParameter())
+                //    continue;
                 for(Terminal t : terminals){
+                    if(t.isConstant())
+                        continue;
                     if(v.getName().equals(t.getTerminal().getName())){
                         t.getTerminal().setStringValue(v.getValue().toString());
                     }

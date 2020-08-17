@@ -6,12 +6,11 @@ import mint.model.ProbabilisticMachine;
 import mint.tracedata.TraceElement;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-public class RefModelKFoldsEvaluator extends KFoldsEvaluator {
+public class RefModelKFoldsEvaluator extends StrategicKFoldsEvaluator {
 
     public ProbabilisticMachine refModel;
     private final static Logger LOGGER = Logger.getLogger(RefModelKFoldsEvaluator.class.getName());

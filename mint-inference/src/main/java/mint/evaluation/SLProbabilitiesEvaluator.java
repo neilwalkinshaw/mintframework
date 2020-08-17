@@ -53,8 +53,8 @@ public class SLProbabilitiesEvaluator {
 				outgoing.addAll(pdfa.getAutomaton().getOutgoingTransitions(currentState));
 				if(outgoing.isEmpty())
 					break;
-				//DefaultEdge selected = selectRandomAccordingToDistribution(pdfa,outgoing,rand);
-				DefaultEdge selected = selectRandom(outgoing,rand);
+				DefaultEdge selected = selectRandomAccordingToDistribution(pdfa,outgoing,rand);
+				//DefaultEdge selected = selectRandom(outgoing,rand);
 				assert(selected!=null);
 				String label = pdfa.getAutomaton().getTransitionData(selected).getLabel();
 				trace.add(new SimpleTraceElement(label,new VariableAssignment[]{}));
@@ -89,7 +89,7 @@ public class SLProbabilitiesEvaluator {
 		Integer depth = 0;
 		Integer startState = pdfa.getAutomaton().getInitialState();
 		for(Integer state : pdfa.getAutomaton().getStates()){
-			Integer stateDepth = pdfa.getAutomaton().shortestPath(startState,state).size();
+			Integer stateDepth = pdfa.getAutomaton().shortestPath(startState,state).getLength();
 			if(stateDepth > depth)
 				depth = stateDepth;
 		}
@@ -150,6 +150,8 @@ public class SLProbabilitiesEvaluator {
 		Collection<List<TraceElement>> pos = posSet.getPos();
 		Collection<List<TraceElement>> neg = new HashSet<List<TraceElement>>();
 		configuration.PREFIX_CLOSED = true;
+		configuration.SUBJECTIVE_OPINIONS=true;
+		//configuration.CONFIDENCE_THRESHOLD=60;
 		configuration.LOGGING = Level.ALL;
 		for(int k = 1; k<10; k++) {
 			Set<List<TraceElement>> sizeP = new HashSet<List<TraceElement>>();

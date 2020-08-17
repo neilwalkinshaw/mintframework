@@ -80,7 +80,7 @@ public class ComputeTransitionWalkTests {
         //SET UP WALK
         List<DefaultEdge> walk = new ArrayList<DefaultEdge>();
         walk.add(e);
-        WalkResult wr = new WalkResult(first,walk);
+        WalkResult wr = new WalkResult(first,walk, TraceDFA.Accept.UNDEFINED);
 
         //EXECUTE
         ComputeTransitionWalk compWalk = new ComputeTransitionWalk(gpMachine,wr, null);
@@ -144,7 +144,7 @@ public class ComputeTransitionWalkTests {
         List<DefaultEdge> walk = new ArrayList<DefaultEdge>();
         walk.add(e);
         walk.add(e);
-        WalkResult wr = new WalkResult(initState,walk);
+        WalkResult wr = new WalkResult(initState,walk, TraceDFA.Accept.ACCEPT);
 
         //EXECUTE
         ComputeTransitionWalk compWalk = new ComputeTransitionWalk(gpMachine,wr, null);
