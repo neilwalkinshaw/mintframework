@@ -33,6 +33,8 @@ public class ProbabilityMatrix {
         initialise(machine);
     }
 
+
+
     private void initialise(ProbabilisticMachine machine) {
         double[][] fundamental = new double[machine.getStates().size()][machine.getStates().size()];
         generateAbsoluteCounts(fundamental, machine);
@@ -91,6 +93,8 @@ public class ProbabilityMatrix {
             }
         }
     }
+
+
 
     /**
      * Initialises array with zero probabilities.

@@ -22,8 +22,8 @@ public class ProbabilisticExperiment extends Experiment {
     private final static Logger LOGGER = Logger.getLogger(ProbabilisticExperiment.class.getName());
 
 
-    public ProbabilisticExperiment(String name, Random r, Collection<List<TraceElement>> trace, int folds, Configuration.Data algo, int seed, int tail, boolean data, Configuration.Strategy strategy) {
-        super(name, r, trace, null, folds, algo, seed, tail, data, strategy);
+    public ProbabilisticExperiment(String name, Random r, Collection<List<TraceElement>> trace,Collection<List<TraceElement>> negtrace, int folds, Configuration.Data algo, int seed, int tail, boolean data, Configuration.Strategy strategy) {
+        super(name, r, trace, negtrace, folds, algo, seed, tail, data, strategy);
     }
 
 
@@ -42,17 +42,18 @@ public class ProbabilisticExperiment extends Experiment {
     public List<Result> call() {
         LOGGER.info("Running experiment for:"+name+","+algo.toString()+","+seed+","+data+","+strategy);
         setConfiguration();
-        List<Set<List<TraceElement>>> f = computeFolds(folds);
+        List<TraceSet> f = computeFolds(folds);
         List<Double> scores = new ArrayList<Double>();
         List<Double> states = new ArrayList<Double>();
         List<Double> transitions = new ArrayList<Double>();
         for(int i = 0; i< folds; i++){
-            TraceSet testing = new TraceSet(f.get(i));
+            TraceSet testing = f.get(i);
             TraceSet training = new TraceSet();
             for(int j = 0; j<folds;j++){
                 if(j==i)
                     continue;
-                training.getPos().addAll(f.get(j));
+                training.getPos().addAll(f.get(j).getPos());
+                training.getNeg().addAll(f.get(j).getNeg());
             }
 
 

@@ -2,12 +2,6 @@ package mint.model.soa;
 
 
 import mint.model.Machine;
-import mint.model.MachineDecorator;
-import mint.model.PayloadMachine;
-import mint.model.dfa.TraceDFA;
-import mint.model.dfa.TransitionData;
-import mint.model.walk.MachineAnalysis;
-import mint.model.walk.SimpleMachineAnalysis;
 import mint.model.walk.WalkResult;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
@@ -17,27 +11,32 @@ import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
 
-public class ProbabilisticMachineDecorator extends MachineDecorator {
+public class BinomialOpinionMachineDecorator extends SOAMachineDecorator {
 
-    protected Map<DefaultEdge,SubjectiveOpinion> soaMap;
-    protected TraceSet traces;
-    protected MachineAnalysis ma;
-    protected double confidenceThreshold = Double.MAX_VALUE;
+    protected Map<DefaultEdge, BinomialOpinion> soaMap;
 
-    private final static Logger LOGGER = Logger.getLogger(ProbabilisticMachineDecorator.class.getName());
+    /**
+     * Count a path that is not in the machine as impossible, as opposed to simply unknown?
+     */
+    protected boolean strict = true;
 
 
-    public ProbabilisticMachineDecorator(Machine decorated, TraceSet traces, double confidenceThreshold) {
-        super(decorated);
+    private final static Logger LOGGER = Logger.getLogger(BinomialOpinionMachineDecorator.class.getName());
+
+
+    public void setStrict(boolean strict){
+        this.strict = strict;
+    }
+
+    public BinomialOpinionMachineDecorator(Machine decorated, TraceSet traces, double confidenceThreshold) {
+        super(decorated, traces, confidenceThreshold);
         soaMap=new HashMap<>();
-        ma = new SimpleMachineAnalysis(decorated);
-        this.traces=traces;
-        this.confidenceThreshold=confidenceThreshold;
+
     }
 
-    public WalkResult walk(List<TraceElement> elements){
-        return ma.walk(elements,getInitialState(),new ArrayList<>(),getAutomaton());
-    }
+
+
+
 
     @Override
     public void postProcess() {
@@ -50,23 +49,37 @@ public class ProbabilisticMachineDecorator extends MachineDecorator {
             soaMap.put(added,soa);
         }*/
         Iterator<DefaultEdge> edgeIt = component.getAutomaton().getTransitions().iterator();
+        double apriori = 1D/(double)component.getAutomaton().getTransitions().size();
+
         while(edgeIt.hasNext()){
             DefaultEdge current = edgeIt.next();
             double initialBelief = calculateBelief(current);
             double traceCount = 0;
+            int processed = 0;
             for(List<TraceElement> trace: traces.getPos()){
                 WalkResult result= ma.walk(trace,getInitialState(),new ArrayList<>(),getAutomaton());
-                if(result.getWalk().contains(current))
-                    traceCount++;
+                //if(result.getWalk().contains(current))
+                 //   traceCount++;
+                for(DefaultEdge de : result.getWalk()){
+                    if(de.equals(current))
+                        traceCount++;
+                }
+                processed += trace.size();
             }
             for(List<TraceElement> trace: traces.getNeg()){
                 WalkResult result= ma.walk(trace,getInitialState(),new ArrayList<>(),getAutomaton());
-                if(result.getWalk().contains(current))
-                    traceCount++;
+                //if(result.getWalk().contains(current))
+                //    traceCount++;
+                for(DefaultEdge de : result.getWalk()){
+                    if(de.equals(current))
+                        traceCount++;
+                }
+                processed += trace.size();
             }
+
             double uncertainty = 0D;
             if(confidenceThreshold>0D) {
-                uncertainty = traceCount / Math.min(((double) traces.getPos().size() + (double) traces.getNeg().size()), confidenceThreshold);
+                uncertainty = traceCount / Math.min(((double) processed), confidenceThreshold);
                 uncertainty = Math.max(0,1-uncertainty);
             }
                 else
@@ -74,7 +87,7 @@ public class ProbabilisticMachineDecorator extends MachineDecorator {
             double remainingBeliefMass = 1-uncertainty;
             double belief = initialBelief *remainingBeliefMass;
             double disbelief = remainingBeliefMass-belief;
-            SubjectiveOpinion soa = new SubjectiveOpinion(belief,disbelief,uncertainty);
+            BinomialOpinion soa = new BinomialOpinion(belief,disbelief,uncertainty,apriori);
             soaMap.put(current,soa);
         }
         /*
@@ -95,27 +108,15 @@ public class ProbabilisticMachineDecorator extends MachineDecorator {
 
     }
 
-    private double calculateBelief(DefaultEdge current) {
-        TraceDFA<Set<TraceElement>> automaton = getAutomaton();
-        Integer source = automaton.getTransitionSource(current);
-        double total = 0D;
-        for(DefaultEdge outgoing : automaton.getOutgoingTransitions(source)){
-            TransitionData<Set<TraceElement>> td =automaton.getTransitionData(outgoing);
-            total = total + td.getPayLoad().size();
-        }
-        TransitionData<Set<TraceElement>> td =automaton.getTransitionData(current);
-        double trans=td.getPayLoad().size();
-        if(total == 0D)
-            return 0D;
-        else
-        return trans / total;
-    }
 
-    public SubjectiveOpinion walkOpinion(WalkResult walk){
-        SubjectiveOpinion so = null;
+
+    public BinomialOpinion walkOpinion(WalkResult walk){
+        BinomialOpinion so = null;
         if(walk.getWalk()==null){ //trace rejected by inferred machine
-            so = new SubjectiveOpinion(0,0.5,0.5,0.5);
+            so = getRejectionOpinion();
         }
+        else if(walk.getWalk().size() == 0)
+            so = new BinomialOpinion(0,0.5,0.5,0.5);
         for(DefaultEdge de : walk.getWalk()){
             if(so==null) {
                 so = soaMap.get(de).clone();
@@ -125,6 +126,13 @@ public class ProbabilisticMachineDecorator extends MachineDecorator {
             }
         }
         return so;
+    }
+
+    private BinomialOpinion getRejectionOpinion() {
+        if(strict)
+            return new BinomialOpinion(0,1,0,0.5);
+        else
+            return new BinomialOpinion(0,0,1,0.5);
     }
 
 }

@@ -2,14 +2,16 @@ package mint.model.soa;
 
 import mint.model.dfa.TraceDFA;
 
-public class SOResult{
-    SubjectiveOpinion so;
-    double  probability;
+public class SOMResult extends SOResult{
+
+    double  probability, uncertainty, belief;
     int states,transitions;
     TraceDFA.Accept predictedAccept, accept;
 
-    public SOResult(SubjectiveOpinion so, TraceDFA.Accept predictedAccept, double probability, TraceDFA.Accept accept, int states, int transitions) {
-        this.so = so;
+    public SOMResult(double belief, double uncertainty, TraceDFA.Accept predictedAccept, double probability, TraceDFA.Accept accept, int states, int transitions) {
+        super(null,predictedAccept,probability,accept,states,transitions);
+        this.belief = belief;
+        this.uncertainty = uncertainty;
         this.accept = accept;
         this.predictedAccept = predictedAccept;
         this.probability = probability;
@@ -35,6 +37,6 @@ public class SOResult{
     }
 
     public String toString(){
-        return so +","+probability+","+predictedAccept+","+accept+","+states+","+transitions;
+        return belief+","+uncertainty +","+probability+","+predictedAccept+","+accept+","+states+","+transitions;
     }
 }

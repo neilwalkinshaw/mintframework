@@ -73,6 +73,8 @@ public class SimpleMachineAnalysis<T extends Machine> extends MachineAnalysis<T>
 		WalkResult walk = walk(s);
 		if(walk.getWalk()!=null)
 			transitionsCovered.addAll(walk.getWalk());
+		if(walk.getWalk().size()<s.size())
+			return false;
 		return walk.isAccept(automaton) == TraceDFA.Accept.ACCEPT;
 	}
 

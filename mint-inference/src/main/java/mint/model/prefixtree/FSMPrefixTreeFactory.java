@@ -18,6 +18,7 @@ import mint.model.walk.SimpleMachineAnalysis;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,6 +42,10 @@ public class FSMPrefixTreeFactory extends PrefixTreeFactory<SimpleMachine>{
 		buildMachine(traces.getPos(), true);
 		machine.getAutomaton().setAccept(machine.getInitialState(), TraceDFA.Accept.ACCEPT);
 		return machine;
+	}
+
+	public  void addSequence(List<TraceElement> seq, boolean accept){
+		addSequence(machine,machine.getInitialState(),seq,accept);
 	}
 
 	@Override

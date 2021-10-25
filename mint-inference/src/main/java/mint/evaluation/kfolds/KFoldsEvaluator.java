@@ -79,7 +79,7 @@ public class KFoldsEvaluator {
 	protected Experiment generateExperiment(int folds,
 			Configuration.Data[] algos, int i, boolean data, Configuration.Strategy strategy) {
         //return new ProbabilisticExperiment(name, new Random(seed),trace,folds,algos[i],seed, tail, data,strategy);
-		return new ProbabilisticExperiment(name, new Random(seed),trace,folds,algos[i],seed, tail, data,strategy);
+		return new ProbabilisticExperiment(name, new Random(seed),trace,negTrace,folds,algos[i],seed, tail, data,strategy);
 
 	}
 	

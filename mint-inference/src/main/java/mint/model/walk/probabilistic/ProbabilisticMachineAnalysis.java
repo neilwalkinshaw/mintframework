@@ -1,5 +1,6 @@
 package mint.model.walk.probabilistic;
 
+import mint.model.dfa.TraceDFA;
 import org.apache.log4j.Logger;
 import mint.model.Machine;
 import mint.model.ProbabilisticMachine;
@@ -44,6 +45,10 @@ public class ProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machine<
     public double getProbabilityOfWalk(List<TraceElement> walk){
         WalkResult wr = walk(walk);
         if(wr.getWalk() == null)
+            return 0D;
+        if(wr.isAccept(machine.getAutomaton())== TraceDFA.Accept.REJECT)
+            return 0D;
+        if(wr.getWalk().size()<walk.size())
             return 0D;
         Double probability = 1D;
         for(DefaultEdge step : wr.getWalk()){

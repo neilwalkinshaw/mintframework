@@ -34,12 +34,18 @@ public class TransitionCoverageSMTester implements TestGenerator {
 
 
     public List<List<TraceElement>> generateTests(Machine m){
-        return generateTests(20,m);
+        List<List<TraceElement>> tests = new ArrayList<List<TraceElement>>();
+        transitionCover(m, tests);
+        return tests;
     }
 
     public List<List<TraceElement>> generateTests(int t, Machine m) {
-        List<List<TraceElement>> tests = new ArrayList<List<TraceElement>>();
-        Collection<GraphPath<Integer,DefaultEdge>> paths = m.getAutomaton().allPaths();
+        List<List<TraceElement>> tests = generateTests(m);
+        return tests.subList(0,t);
+    }
+
+    protected void transitionCover(Machine m, List<List<TraceElement>> tests) {
+        Collection<GraphPath<Integer, DefaultEdge>> paths = m.getAutomaton().allPaths();
         PrefixTreeFactory<SimpleMachine> ptF = new FSMPrefixTreeFactory(new PayloadMachine());
         Machine prefixTree = ptF.createPrefixTree(traces);
         SimpleMachineAnalysis analysis = new SimpleMachineAnalysis(prefixTree);
@@ -59,8 +65,6 @@ public class TransitionCoverageSMTester implements TestGenerator {
         }
 
         order(tests, analysis, prefixTree.getAutomaton());
-
-        return tests.subList(0,t);
     }
 
     protected void order(List<List<TraceElement>> tests, SimpleMachineAnalysis analysis, TraceDFA automaton) {

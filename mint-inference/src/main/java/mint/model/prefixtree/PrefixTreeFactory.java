@@ -14,8 +14,10 @@ import mint.model.Machine;
 import mint.model.dfa.TraceDFA;
 import mint.model.dfa.TransitionData;
 import mint.model.walk.SimpleMachineAnalysis;
+import mint.tracedata.SimpleTraceElement;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
+import mint.tracedata.types.VariableAssignment;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
@@ -55,7 +57,7 @@ public abstract class PrefixTreeFactory<T extends Machine> extends Observable {
 	
 	protected abstract T initMachine(Machine kernel);
 
-	protected  void addSequence(Machine<Set<TraceElement>> m, Integer currentState, List<TraceElement> seq, boolean accept){
+	public  void addSequence(Machine<Set<TraceElement>> m, Integer currentState, List<TraceElement> seq, boolean accept){
 		assert(m.getAutomaton().getStates().contains(currentState));
 		if(seq.isEmpty())
 			return;
@@ -128,6 +130,53 @@ public abstract class PrefixTreeFactory<T extends Machine> extends Observable {
 	}
 	
 	protected abstract SimpleMachineAnalysis<?> getAnalysis();
-	
-	
+
+	public int numSequences(boolean accept){
+		Collection<Integer> states = machine.getStates();
+		int counter = 0;
+		for(Integer state : states){
+			if(machine.getAutomaton().getOutgoingTransitions(state).isEmpty()){
+				if(machine.getAutomaton().getAccept(state) == TraceDFA.Accept.ACCEPT && accept)
+					counter ++;
+				else if(machine.getAutomaton().getAccept(state) == TraceDFA.Accept.REJECT && !accept)
+					counter++;
+			}
+		}
+		return counter;
+	}
+
+	public TraceSet getTraces(){
+		TraceSet ts = new TraceSet();
+
+		Collection<Integer> states = machine.getStates();
+
+		for(Integer state : states){
+			if(machine.getAutomaton().getOutgoingTransitions(state).isEmpty()){
+				List<TraceElement> trace = traceBack(state);
+				if(machine.getAutomaton().getAccept(state) == TraceDFA.Accept.ACCEPT){
+					ts.addPos(trace);
+				}
+				else if(machine.getAutomaton().getAccept(state) == TraceDFA.Accept.REJECT){
+					ts.addNeg(trace);
+				}
+			}
+		}
+		return ts;
+	}
+
+	private List<TraceElement> traceBack(Integer state) {
+		ArrayList<TraceElement> trace = new ArrayList<>();
+		while(state != machine.getInitialState()){
+			List<DefaultEdge> incoming = new ArrayList<>();
+			incoming.addAll(machine.getAutomaton().getIncomingTransitions(state));
+			//should always be one and only one if it's a valid prefix tree...
+			DefaultEdge inc = incoming.get(0);
+			TransitionData payload = machine.getAutomaton().getTransitionData(inc);
+			trace.add(0,new SimpleTraceElement(payload.getLabel(), new VariableAssignment[]{}));
+			state = machine.getAutomaton().getTransitionSource(inc);
+		}
+		return trace;
+	}
+
+
 }

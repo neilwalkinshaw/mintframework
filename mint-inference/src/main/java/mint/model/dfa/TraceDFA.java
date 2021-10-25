@@ -10,6 +10,7 @@
 
 package mint.model.dfa;
 
+import mint.model.Machine;
 import org.apache.log4j.Logger;
 //import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
@@ -19,6 +20,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.EdgeReversedGraph;
+import org.jgrapht.graph.GraphWalk;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.*;
@@ -283,15 +285,126 @@ public class TraceDFA<T> implements Cloneable {
 	}
 
 	public List<GraphPath<Integer,DefaultEdge>> allPaths(){
+		return allPaths(getInitialState(),20);
+	}
+
+	public List<GraphPath<Integer,DefaultEdge>> allPaths(Integer source, int maxDepth){
 		AllDirectedPaths<Integer,DefaultEdge> paths = new AllDirectedPaths<Integer,DefaultEdge>(structure);
 		Set<Integer> sourceVertex = new HashSet<Integer>();
 		Set<Integer> destinationVertices = new HashSet<Integer>();
 		destinationVertices.addAll(getStates());
-		sourceVertex.add(initialState);
-		return paths.getAllPaths(sourceVertex,destinationVertices,true,20);
+		sourceVertex.add(source);
+		return paths.getAllPaths(sourceVertex,destinationVertices,false,maxDepth);
 	}
 
+	public List<GraphPath<Integer,DefaultEdge>> allPathsTo(Integer source, Integer target, int maxDepth){
+		AllDirectedPaths<Integer,DefaultEdge> paths = new AllDirectedPaths<Integer,DefaultEdge>(structure);
+		Set<Integer> sourceVertex = new HashSet<Integer>();
+		Set<Integer> destinationVertices = new HashSet<Integer>();
+		destinationVertices.add(target);
+		sourceVertex.add(source);
+		return paths.getAllPaths(sourceVertex,destinationVertices,false,maxDepth);
+	}
 
+	public List<DefaultEdge> randomAcceptingWalk(int maxDepth, Random random) {
+		List<DefaultEdge> path = new ArrayList<>();
+		int source = getInitialState();
+		boolean finished = false;
+		if(getOutgoingTransitions(source).isEmpty())
+			finished = true;
+		while (!finished){
+			List<DefaultEdge> outgoing = new ArrayList<>();
+			outgoing.addAll(getOutgoingTransitions(source));
+			int choice = random.nextInt(outgoing.size());
+			DefaultEdge currentEdge = outgoing.get(choice);
+			if(getAccept(getTransitionTarget(currentEdge)) != Accept.ACCEPT){
+				if(outgoing.size() <= 1){
+					finished = true;
+					continue;
+				}
+				continue;
+			}
+
+			path.add(currentEdge);
+			source = getTransitionTarget(currentEdge);
+			if(getOutgoingTransitions(source).isEmpty())
+				finished = true;
+			if(path.size() == maxDepth)
+				finished = true;
+		}
+    	return path;
+
+	}
+
+	public List<DefaultEdge> randomRejectingWalk(int targetLength, Random random) {
+		List<DefaultEdge> path = new ArrayList<>();
+		int source = getInitialState();
+		boolean finished = false;
+		if(getOutgoingTransitions(source).isEmpty())
+			finished = true;
+		while (!finished){
+			List<DefaultEdge> outgoing = new ArrayList<>();
+			outgoing.addAll(getOutgoingTransitions(source));
+			int choice = random.nextInt(outgoing.size());
+			DefaultEdge currentEdge = outgoing.get(choice);
+			if(getAccept(getTransitionTarget(currentEdge)) != Accept.ACCEPT){
+				if(path.size()>=targetLength/2){
+					finished = true;
+				}
+				else if(outgoing.size() <= 1){
+					continue;
+				}
+				else{continue;}
+			}
+
+			path.add(currentEdge);
+			source = getTransitionTarget(currentEdge);
+
+			if(getAccept(source) != Accept.ACCEPT){
+				return path;
+			}
+			if(getOutgoingTransitions(source).isEmpty())
+				return null;
+		}
+		return path;
+
+	}
+
+	public  int getDepth() {
+		Integer depth = 0;
+		Integer startState = getInitialState();
+		for(Object state : getStates()){
+			GraphPath shortestPath = shortestPath(startState,(Integer)state);
+			if(shortestPath == null)
+				continue;
+			Integer stateDepth = shortestPath.getLength();
+			if(stateDepth > depth)
+				depth = stateDepth;
+		}
+		return depth;
+	}
+
+	/**
+	 * For the current machine, add a reject-state, where all
+	 * unused alphabet elements go to.
+	 */
+	public void completeWithRejects(){
+		Integer state = addState();
+		setAccept(state,Accept.REJECT);
+
+		for(Integer current : getStates()){
+			if(current == state)
+				continue;
+			Collection<String> alphabet = getAlphabet();
+			for(String element : alphabet){
+				if(getOutgoingTransitions(current,element).isEmpty()){
+					TransitionData rejection = new TransitionData(element,new HashSet());
+					addTransition(current,state,rejection);
+				}
+			}
+		}
+
+	}
 
 	
 	public String toString(){

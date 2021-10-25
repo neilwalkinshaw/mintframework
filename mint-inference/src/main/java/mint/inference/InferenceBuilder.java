@@ -17,7 +17,8 @@ import mint.model.*;
 import mint.model.prefixtree.EFSMPrefixTreeFactory;
 import mint.model.prefixtree.FSMPrefixTreeFactory;
 import mint.model.prefixtree.PrefixTreeFactory;
-import mint.model.soa.ProbabilisticMachineDecorator;
+import mint.model.soa.BinomialOpinionMachineDecorator;
+import mint.model.soa.MultinomialOpinionMachineDecorator;
 import mint.tracedata.TraceSet;
 
 /**
@@ -43,7 +44,7 @@ public class InferenceBuilder {
                 if(configuration.GP)
                     kernel = new GPFunctionMachineDecorator(kernel,1, new GPConfiguration(60,0.95,0.2,4,8),50);
                 if(configuration.SUBJECTIVE_OPINIONS)
-                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
+                    kernel = new BinomialOpinionMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
                 tptg = new EFSMPrefixTreeFactory(kernel,bci.getClassifiers(),bci.getElementsToInstances());
 
                 SimpleMergingState<WekaGuardMachineDecorator> ms = new SimpleMergingState<WekaGuardMachineDecorator>(tptg.createPrefixTree(posSet));
@@ -59,7 +60,7 @@ public class InferenceBuilder {
                 if(configuration.GP)
                     kernel = new GPFunctionMachineDecorator(kernel,1, new GPConfiguration(200,0.8,0.1,4,7),40);
                 if(configuration.SUBJECTIVE_OPINIONS)
-                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
+                    kernel = new BinomialOpinionMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
                 //tptg = new EFSMPrefixTreeFactory(new DaikonMachineDecorator(kernel,configuration.MINDAIKON,true),bci.getClassifiers(),bci.getElementsToInstances());
                 //else
                 //  tptg = new EFSMPrefixTreeFactory(kernel,bci.getClassifiers(),bci.getElementsToInstances());
@@ -93,7 +94,7 @@ public class InferenceBuilder {
             if(configuration.STRATEGY == Configuration.Strategy.exhaustive){
                 Machine kernel = tptg.createPrefixTree(posSet);
                 if(configuration.SUBJECTIVE_OPINIONS)
-                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
+                    kernel = new BinomialOpinionMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
 
                 SimpleMergingState<Machine> ms = new SimpleMergingState<Machine>(kernel);
 
@@ -105,7 +106,7 @@ public class InferenceBuilder {
 
                 Machine kernel = tptg.createPrefixTree(posSet);
                 if(configuration.SUBJECTIVE_OPINIONS)
-                    kernel = new ProbabilisticMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
+                    kernel = new MultinomialOpinionMachineDecorator(kernel,posSet,configuration.CONFIDENCE_THRESHOLD);
 
                 RedBlueMergingState<Machine> ms = new RedBlueMergingState<Machine>(kernel);
 

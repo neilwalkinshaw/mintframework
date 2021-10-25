@@ -10,6 +10,8 @@
 package mint.evaluation.kfolds;
 
 import mint.inference.InferenceBuilder;
+import mint.model.dfa.TraceDFA;
+import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
 import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.Configuration.Data;
@@ -93,18 +95,19 @@ public class Experiment implements Callable<List<Result>> {
 	public List<Result> call() {
 		LOGGER.info("Running experiment for:"+name+","+algo.toString()+","+seed+","+data);
 		setConfiguration();
-		List<Set<List<TraceElement>>> f = computeFolds(folds);
+		List<TraceSet> f = computeFolds(folds);
 		//Collections.shuffle(f, rand);
 		List<Score> scores = new ArrayList<Score>();
 		List<Double> states = new ArrayList<Double>();
 		List<Double> transitions = new ArrayList<Double>();
 		for(int i = 0; i< folds; i++){
-			TraceSet testing = new TraceSet(f.get(i));
+			TraceSet testing = f.get(i);
 			TraceSet training = new TraceSet();
 			for(int j = 0; j<folds;j++){
 				if(j==i)
 					continue;
-				training.getPos().addAll(f.get(j));
+				training.getPos().addAll(f.get(j).getPos());
+				training.getNeg().addAll(f.get(j).getNeg());
 			}
 			
 			final long startTime = System.currentTimeMillis();
@@ -260,7 +263,7 @@ public class Experiment implements Callable<List<Result>> {
 
 	}
 
-
+	/*
 	protected List<Set<List<TraceElement>>> computeFolds(int folds) {
 		List<Set<List<TraceElement>>> folded = new ArrayList<Set<List<TraceElement>>>();
 		for(int i = 0; i< folds; i++){
@@ -276,6 +279,38 @@ public class Experiment implements Callable<List<Result>> {
 			traces.add(traceIt.next());
 		}
 		return folded;
+	}*/
+
+	/**
+	 * Creates a list of trace-sets, one set for each fold.
+	 * @param folds
+	 * @return
+	 */
+	protected List<TraceSet> computeFolds(int folds) {
+
+		List<TraceSet> folded = new ArrayList<TraceSet>();
+		for(int i = 0; i< folds; i++){
+			TraceSet traceSet = new TraceSet();
+			folded.add(i,traceSet);
+		}
+		int counter = 0;
+		//split up positive traces
+		Iterator<List<TraceElement>> traceIt = this.trace.getPos().iterator();
+		while(traceIt.hasNext()){
+			if(counter==folds)
+				counter = 0;
+			TraceSet traces = folded.get(counter++);
+			traces.addPos(traceIt.next());
+		}
+		traceIt = this.negTrace.getPos().iterator();
+		counter = 0;
+		while(traceIt.hasNext()){
+			if(counter==folds)
+				counter = 0;
+			TraceSet traces = folded.get(counter++);
+			traces.addNeg(traceIt.next());
+		}
+		return folded;
 	}
 
 	public AbstractMerger<?, ?> getInference(TraceSet posSet) {
@@ -283,34 +318,6 @@ public class Experiment implements Callable<List<Result>> {
 		return ib.getInference(posSet);
 	}
 
-
-		/*public AbstractMerger<?, ?> getInference(TraceSet posSet) {
-		AbstractMerger<?,?> inference = null;
-		
-		if(this.data){
-			BaseClassifierInference bci = new BaseClassifierInference(posSet,eval, algo);
-			
-			PrefixTreeFactory<WekaGuardMachineDecorator> tptg = new EFSMPrefixTreeFactory(new PayloadMachine(),bci.getClassifiers(),bci.getElementsToInstances());
-
-			RedBlueMergingState<WekaGuardMachineDecorator> ms = new RedBlueMergingState<WekaGuardMachineDecorator>(tptg.createPrefixTree(posSet));
-			Scorer<RedBlueMergingState<WekaGuardMachineDecorator>> scorer  = new RedBlueScorer<RedBlueMergingState<WekaGuardMachineDecorator>>(tail, new ComputeScore());
-			
-
-			inference = new EDSMDataMerger<RedBlueMergingState<WekaGuardMachineDecorator>>(scorer,ms);				
-				
-			
-		}
-		else{
-			PrefixTreeFactory<SimpleMachine> tptg = new FSMPrefixTreeFactory(new PayloadMachine());
-			RedBlueMergingState<Machine> ms = new RedBlueMergingState<Machine>(tptg.createPrefixTree(posSet));
-			Scorer<RedBlueMergingState<Machine>> scorer  = new RedBlueScorer<RedBlueMergingState<Machine>>(tail, new ComputeScore());
-			inference = new EDSMMerger<Machine,RedBlueMergingState<Machine>>(scorer,ms);	
-			
-		}		
-			
-		
-		return inference;
-	}*/
 	
 
 	

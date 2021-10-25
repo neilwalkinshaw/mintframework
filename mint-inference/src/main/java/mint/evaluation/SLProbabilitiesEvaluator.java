@@ -10,91 +10,187 @@
 package mint.evaluation;
 
 import mint.Configuration;
-import mint.evaluation.kfolds.KFoldsEvaluator;
 import mint.evaluation.kfolds.RefModelKFoldsEvaluator;
+import mint.evaluation.mutation.MutationOperator;
+import mint.evaluation.mutation.StateMachineMutator;
 import mint.model.Machine;
+import mint.model.PayloadMachine;
 import mint.model.ProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
-import mint.model.dfa.TransitionData;
+import mint.model.dfa.reader.DotReader;
+import mint.model.prefixtree.FSMPrefixTreeFactory;
+import mint.model.soa.SubjectiveOpinionResult;
+import mint.model.walk.SimpleMachineAnalysis;
+import mint.model.walk.WalkResult;
+import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
 import mint.tracedata.SimpleTraceElement;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
 import mint.tracedata.types.VariableAssignment;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultEdge;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.FileSystems;
 import java.util.*;
 
 public class SLProbabilitiesEvaluator {
+
+	private final static Logger LOGGER = Logger.getLogger(SLProbabilitiesEvaluator.class.getName());
+
+
+	enum FileType {SMV,DOT};
 	
 	public static void main(String[] args){
+		String state = args[4].replaceAll("\'","");
+		Configuration.getInstance().CONFIDENCE_THRESHOLD = Double.parseDouble(args[5]);
+		for(int i = 0; i<30; i++) {
+			Configuration.getInstance().SEED = i;
+			run(args[0], args[1], args[2], args[3], FileType.DOT, state);
+		}
+	}
+
+	private static void run(String label, String folds, String referenceMachine, String numtraces, FileType type,String initial){
 		BasicConfigurator.configure();
 		Configuration configuration = Configuration.getInstance();
-		Machine dfa = getMachineFromSMVFile(args[2]);
+		Machine dfa = null;
+
+		if(type == FileType.SMV)
+			dfa = getMachineFromSMVFile(referenceMachine);
+		else{
+			DotReader dr = new DotReader(FileSystems.getDefault().getPath(referenceMachine),initial);
+			dr.setRemoveOutput(false);
+			dfa = dr.getImported();
+		}
+		dfa.getAutomaton().completeWithRejects();
 		ProbabilisticMachine pdfa = createProbabilisticMachine(dfa);
-		TraceSet traces = createTraces(pdfa,Integer.parseInt(args[3]));
-		runExperiment(args[0],Integer.parseInt(args[1]), configuration, traces, pdfa);
 
-		
+		int targetSize = Integer.parseInt(numtraces);
+		//int targetSize = pdfa.getAutomaton().getStates().size() * pdfa.getAutomaton().getAlphabet().size();
+		int numNeg = targetSize;
+		TraceSet traces = createTraces2(pdfa,targetSize,numNeg);
+		Collections.shuffle(traces.getPos());
+		Collections.shuffle(traces.getNeg());
+		while(traces.getPos().size()>targetSize){
+			traces.getPos().remove(0);
+		}
+		while(traces.getNeg().size()>numNeg){
+			traces.getNeg().remove(0);
+		}
+		runExperiment(label,Integer.parseInt(folds), configuration, traces, pdfa);
 	}
 
-	private static TraceSet createTraces(ProbabilisticMachine pdfa, int numTraces) {
-		int targetDepth = getDepth(pdfa)+5; //This is taken from the STAMINA random walk algorithm
+	public static void checkTransitions(ProbabilisticMachine m){
+		for(DefaultEdge transition : m.getAutomaton().getTransitions()){
+			assert(m.getAutomaton().getTransitionData(transition).getPayLoad() instanceof Double);
+		}
+	}
+
+
+	public static TraceSet createTraces2(Machine pdfa, int posNum, int negNum) {
+
+
+		FSMPrefixTreeFactory prefixTreeFactory = new FSMPrefixTreeFactory(new PayloadMachine());
+
+		int targetDepth = pdfa.getAutomaton().getDepth()+2;
+		int posTraces = 0;
 		Random rand = new Random(Configuration.getInstance().SEED);
-		TraceSet posSet = new TraceSet();
-		for(int i = 0; i< numTraces; i++){
-			Integer currentState = pdfa.getInitialState();
-			int currentDepth = 0;
+		while(posTraces < posNum){
+			List<DefaultEdge> walk = pdfa.getAutomaton().randomAcceptingWalk(targetDepth,rand);
 			List<TraceElement> trace = new ArrayList<>();
-			while(currentDepth < targetDepth){
-				ArrayList<DefaultEdge> outgoing = new ArrayList<>();
-				outgoing.addAll(pdfa.getAutomaton().getOutgoingTransitions(currentState));
-				if(outgoing.isEmpty())
-					break;
-				DefaultEdge selected = selectRandomAccordingToDistribution(pdfa,outgoing,rand);
-				//DefaultEdge selected = selectRandom(outgoing,rand);
-				assert(selected!=null);
-				String label = pdfa.getAutomaton().getTransitionData(selected).getLabel();
-				trace.add(new SimpleTraceElement(label,new VariableAssignment[]{}));
-				currentDepth++;
+			for (int i = 0; i < walk.size(); i++) {
+				DefaultEdge de = walk.get(i);
+
+				String label = pdfa.getAutomaton().getTransitionData(de).getLabel();
+				trace.add(new SimpleTraceElement(label, new VariableAssignment[]{}));
 			}
-			posSet.addPos(trace);
+			prefixTreeFactory.addSequence(trace,true);
+			posTraces = prefixTreeFactory.numSequences(true);
 		}
-		return posSet;
+
+
+		int negTraces = 0;
+
+		while(negTraces<negNum){
+
+			List<DefaultEdge> walk = null;
+			while(walk == null){
+				walk = pdfa.getAutomaton().randomRejectingWalk(targetDepth,rand);
+			}
+			List<TraceElement> trace = new ArrayList<>();
+			for (int i = 0; i < walk.size(); i++) {
+				DefaultEdge de = walk.get(i);
+
+				String label = pdfa.getAutomaton().getTransitionData(de).getLabel();
+				trace.add(new SimpleTraceElement(label, new VariableAssignment[]{}));
+			}
+			prefixTreeFactory.addSequence(trace,false);
+			negTraces = prefixTreeFactory.numSequences(false);
+		}
+
+		return prefixTreeFactory.getTraces();
+
+
 	}
 
-	private static DefaultEdge selectRandomAccordingToDistribution(ProbabilisticMachine pdfa, ArrayList<DefaultEdge> outgoing, Random rand) {
-		Collections.shuffle(outgoing);
-		double target = rand.nextDouble();
-		double sumProb = 0;
-		DefaultEdge toReturn = null;
-		for(int i = 0; i<outgoing.size(); i++){
-			Double currentProb = pdfa.getAutomaton().getTransitionData(outgoing.get(i)).getPayLoad();
-			sumProb+=currentProb;
-			if(target < sumProb){
-				toReturn = outgoing.get(i);
+
+		private static TraceSet createTracesD(ProbabilisticMachine pdfa, int posNum, int negNum) {
+		Integer rejectState = 0;
+
+		for(Integer s : pdfa.getStates()){
+			if(pdfa.getAutomaton().getAccept(s) == TraceDFA.Accept.REJECT){
+				rejectState = s;
+			}
+		}
+
+		FSMPrefixTreeFactory prefixTreeFactory = new FSMPrefixTreeFactory(new PayloadMachine());
+
+
+		List<GraphPath<Integer,DefaultEdge>> paths = pdfa.getAutomaton().allPaths(pdfa.getInitialState(),pdfa.getAutomaton().getDepth()+2);
+
+		Collections.shuffle(paths);
+
+		int posTraces = 0;
+		int negTraces = 0;
+
+		for(GraphPath<Integer,DefaultEdge> p : paths){
+			int negInd = p.getVertexList().indexOf(rejectState);
+			List<TraceElement> trace = new ArrayList<>();
+
+			if(negInd >=0 && negTraces < negNum) {
+
+				for (int i = 0; i < negInd; i++) {
+					DefaultEdge de = p.getEdgeList().get(i);
+
+					String label = pdfa.getAutomaton().getTransitionData(de).getLabel();
+					trace.add(new SimpleTraceElement(label, new VariableAssignment[]{}));
+				}
+				prefixTreeFactory.addSequence(trace,false);
+			}
+			else if (posTraces<posNum && negInd < 0){
+				for (int i = 0; i < p.getLength(); i++) {
+					DefaultEdge de = p.getEdgeList().get(i);
+
+					String label = pdfa.getAutomaton().getTransitionData(de).getLabel();
+					trace.add(new SimpleTraceElement(label, new VariableAssignment[]{}));
+				}
+				prefixTreeFactory.addSequence(trace,true);
+			}
+			posTraces = prefixTreeFactory.numSequences(true);
+			negTraces = prefixTreeFactory.numSequences(false);
+			if(posTraces>=posNum && negTraces >= negNum)
 				break;
-			}
+
 		}
-		return toReturn;
+		return prefixTreeFactory.getTraces();
 	}
 
-	private static DefaultEdge selectRandom(ArrayList<DefaultEdge> outgoing, Random rand) {
-		return outgoing.get(rand.nextInt(outgoing.size()));
-	}
-
-		private static int getDepth(ProbabilisticMachine pdfa) {
-		Integer depth = 0;
-		Integer startState = pdfa.getAutomaton().getInitialState();
-		for(Integer state : pdfa.getAutomaton().getStates()){
-			Integer stateDepth = pdfa.getAutomaton().shortestPath(startState,state).getLength();
-			if(stateDepth > depth)
-				depth = stateDepth;
-		}
-		return depth;
-	}
 
 	private static ProbabilisticMachine createProbabilisticMachine(Machine dfa) {
 		ProbabilisticMachine pdfa = new ProbabilisticMachine();
@@ -110,6 +206,8 @@ public class SLProbabilitiesEvaluator {
 		}
 		return pdfa;
 	}
+
+
 
 	private static double[] createDistribution(int numOutgoing) {
 		double[] dist = new double[numOutgoing];
@@ -145,19 +243,45 @@ public class SLProbabilitiesEvaluator {
 		return dfa;
 	}
 
+
+
 	private static void runExperiment(String label, int folds, Configuration configuration, TraceSet posSet,
 									  ProbabilisticMachine pdfa) {
 		Collection<List<TraceElement>> pos = posSet.getPos();
-		Collection<List<TraceElement>> neg = new HashSet<List<TraceElement>>();
+		Collection<List<TraceElement>> neg = posSet.getNeg();
 		configuration.PREFIX_CLOSED = true;
 		configuration.SUBJECTIVE_OPINIONS=true;
-		//configuration.CONFIDENCE_THRESHOLD=60;
+		configuration.CAREFUL_DETERMINIZATION=false;
 		configuration.LOGGING = Level.ALL;
-		for(int k = 1; k<10; k++) {
+		outputStats(label,pdfa);
+		//for(int k = 0; k<3; k++) {
 			Set<List<TraceElement>> sizeP = new HashSet<List<TraceElement>>();
 			sizeP.addAll(pos);
-			RefModelKFoldsEvaluator kfolds = new RefModelKFoldsEvaluator(label, sizeP, neg, 0, k, pdfa);
+			Set<List<TraceElement>> sizeN = new HashSet<List<TraceElement>>();
+			sizeN.addAll(neg);
+			RefModelKFoldsEvaluator kfolds = new RefModelKFoldsEvaluator(label, sizeP, sizeN, configuration.SEED, 0, pdfa, 0.05);
 			kfolds.kfolds(folds,false);
-		}
+		//}
+
 	}
+
+	protected static void outputStats(String label, ProbabilisticMachine pdfa) {
+		FileWriter fWriter = null;
+		BufferedWriter writer = null;
+		try {
+			fWriter = new FileWriter(label+"_stats.csv",true);
+			writer = new BufferedWriter(fWriter);
+
+			String stats = pdfa.getStates().size()+","+pdfa.getAutomaton().getTransitions().size()+","+pdfa.getAutomaton().getAlphabet().size()+"\n";
+
+			writer.append(stats);
+
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
 }

@@ -2,6 +2,7 @@ package mint.evaluation;
 
 import mint.model.Machine;
 import mint.model.PayloadMachine;
+import mint.model.dfa.TraceDFA;
 import mint.model.dfa.TransitionData;
 
 import java.io.BufferedReader;
@@ -58,6 +59,8 @@ public class NuSMVFSMReader {
             Integer source = Integer.parseInt(sourceState);
             Integer destination = Integer.parseInt(destinationState);
             dfa.getAutomaton().addTransition(source,destination,data);
+            dfa.getAutomaton().setAccept(source, TraceDFA.Accept.ACCEPT);
+            dfa.getAutomaton().setAccept(destination, TraceDFA.Accept.ACCEPT);
         }
     }
 
@@ -67,6 +70,7 @@ public class NuSMVFSMReader {
         for(int i = 0; i< tokenized.length; i++){
             Integer parsed = Integer.parseInt(tokenized[i].substring(1));
             dfa.getAutomaton().addState(parsed);
+            dfa.getAutomaton().setAccept(parsed, TraceDFA.Accept.ACCEPT);
         }
     }
 
