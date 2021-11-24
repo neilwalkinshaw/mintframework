@@ -1,6 +1,8 @@
 package mint.model.soa;
 
 
+import citcom.subjectiveLogic.BinomialOpinion;
+import citcom.subjectiveLogic.operators.binomial.BinomialMultiplication;
 import mint.model.Machine;
 import mint.model.walk.WalkResult;
 import mint.tracedata.TraceElement;
@@ -122,7 +124,8 @@ public class BinomialOpinionMachineDecorator extends SOAMachineDecorator {
                 so = soaMap.get(de).clone();
             }
             else{
-                so.multiply(soaMap.get(de));
+                BinomialMultiplication multi = new BinomialMultiplication();
+                so = multi.apply(so,soaMap.get(de));
             }
         }
         return so;

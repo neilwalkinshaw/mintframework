@@ -1,5 +1,6 @@
 package mint.model.soa;
 
+import citcom.subjectiveLogic.SubjectiveOpinion;
 import mint.model.dfa.TraceDFA;
 
 public class SOResult{

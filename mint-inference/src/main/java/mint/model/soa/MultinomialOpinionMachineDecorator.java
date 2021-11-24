@@ -1,6 +1,13 @@
 package mint.model.soa;
 
 
+import citcom.subjectiveLogic.BinomialOpinion;
+import citcom.subjectiveLogic.MultinomialOpinion;
+
+import citcom.subjectiveLogic.operators.binomial.BinomialMultiSourceFusion;
+import citcom.subjectiveLogic.operators.binomial.BinomialMultiplication;
+import citcom.subjectiveLogic.operators.multinomial.MultinomialAveragingFusion;
+import citcom.subjectiveLogic.operators.multinomial.MultinomialMultiplication;
 import mint.model.Machine;
 import mint.model.dfa.TraceDFA;
 import mint.model.walk.WalkResult;
@@ -158,7 +165,8 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
                 if (!label.isEmpty()) {
 
                     BinomialOpinion targetOp = soaMap.get(target).coarsen(label);
-                    so.multiply(targetOp);
+                    BinomialMultiplication multi = new BinomialMultiplication();
+                    so = multi.apply(so,targetOp);
                 }
                 else break;
             }
@@ -167,7 +175,8 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
             so = new BinomialOpinion(0,0,1);
         else if(walk.isAccept(component.getAutomaton())!= TraceDFA.Accept.ACCEPT){
             if(!angelic){
-                so.multiply(new BinomialOpinion(0,0.5,0.5));
+                BinomialMultiplication multi = new BinomialMultiplication();
+                so = multi.apply(so,new BinomialOpinion(0,0.5,0.5));
             }
         }
 
@@ -204,9 +213,8 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
                     if(simplified != null)
                         so = simplified;
                 }
-
-                so = so.multiply(soaMap.get(source));
-
+                MultinomialMultiplication multi = new MultinomialMultiplication();
+                so = multi.apply(so,soaMap.get(source));
            // }
         }
         //for(int i = path.size(); i<originalLength;i++){
@@ -216,7 +224,7 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
 
         //    so = so.multiply(getRejectionOpinion());
         //}
-        if(!so.isSimplified) {
+        if(!so.isSimplified()) {
             MultinomialOpinion simplified = so.simplify(labList);
             if (simplified != null)
                 so = simplified;
@@ -235,7 +243,7 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
         List<DefaultEdge> path = new ArrayList<>();
         path.addAll(walk.getWalk());
 
-        Collection<MultinomialOpinion> opinions = new ArrayList<>();
+        List<MultinomialOpinion> opinions = new ArrayList<>();
 
         for(DefaultEdge de : path){
             Integer source = getAutomaton().getTransitionSource(de);
@@ -249,11 +257,12 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
         }
         for(int i = 0; i< originalLength - path.size(); i++){
             MultinomialOpinion mo= new MultinomialOpinion(so.getBelief(),so.getApriori(),so.getDomain());
-            mo.multiply(getRejectionOpinion());
+            MultinomialMultiplication multi = new MultinomialMultiplication();
+            mo = multi.apply(mo,getRejectionOpinion());
             opinions.add(mo);
         }
-
-        so = MultinomialOpinion.averagingFusion(opinions);
+        MultinomialAveragingFusion maf = new MultinomialAveragingFusion();
+        so = maf.apply(opinions.toArray(new MultinomialOpinion[opinions.size()]));
 
         return so;
     }
@@ -301,8 +310,8 @@ public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
                 toFuse.add(new BinomialOpinion(0,1,0));
             }
         }
-
-        BinomialOpinion fused = BinomialOpinion.multiSourceFusion(toFuse);
+        BinomialMultiSourceFusion bmsf = new BinomialMultiSourceFusion();
+        BinomialOpinion fused = bmsf.apply(toFuse.toArray(new BinomialOpinion[toFuse.size()]));
 
         return fused;
     }

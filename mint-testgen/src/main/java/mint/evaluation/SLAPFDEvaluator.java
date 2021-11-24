@@ -9,6 +9,7 @@
  ******************************************************************************/
 package mint.evaluation;
 
+import citcom.subjectiveLogic.BinomialOpinion;
 import fr.vergne.pareto.ParetoComparator;
 import fr.vergne.pareto.ParetoHelper;
 import mint.Configuration;

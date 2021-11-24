@@ -1,5 +1,6 @@
 package mint.evaluation;
 
+import citcom.subjectiveLogic.BinomialOpinion;
 import mint.Configuration;
 import mint.evaluation.kfolds.ProbabilisticExperiment;
 import mint.evaluation.kfolds.Result;
