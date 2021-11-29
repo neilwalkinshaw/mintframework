@@ -4,7 +4,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
 import mint.model.dfa.TransitionData;
 import mint.model.walk.WalkResult;
@@ -26,16 +26,16 @@ public class ProbabilityMatrix {
     protected Map<Integer,Integer> statesToIndices = new HashMap<Integer,Integer>();
     private Integer indexCounter = 0; // keeps track of index we're on for state machine
     protected RealMatrix fundamentalMatrix;
-    protected ProbabilisticMachine machine;
+    protected RawProbabilisticMachine machine;
 
-    public ProbabilityMatrix(ProbabilisticMachine machine){
+    public ProbabilityMatrix(RawProbabilisticMachine machine){
         this.machine = machine;
         initialise(machine);
     }
 
 
 
-    private void initialise(ProbabilisticMachine machine) {
+    private void initialise(RawProbabilisticMachine machine) {
         double[][] fundamental = new double[machine.getStates().size()][machine.getStates().size()];
         generateAbsoluteCounts(fundamental, machine);
         normalise(fundamental, true);
@@ -81,7 +81,7 @@ public class ProbabilityMatrix {
      * @param matrix
      * @param machine
      */
-    private void generateAbsoluteCounts(double[][] matrix, ProbabilisticMachine machine) {
+    private void generateAbsoluteCounts(double[][] matrix, RawProbabilisticMachine machine) {
         TraceDFA<Double> automaton = machine.getAutomaton();
         initialiseMatrix(matrix);
         for(Integer state : machine.getStates()){

@@ -10,26 +10,12 @@
 package mint.evaluation.kfolds;
 
 import mint.inference.InferenceBuilder;
-import mint.model.dfa.TraceDFA;
-import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
 import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.Configuration.Data;
-import mint.inference.BaseClassifierInference;
 import mint.inference.efsm.AbstractMerger;
-import mint.inference.efsm.EDSMDataMerger;
-import mint.inference.efsm.EDSMMerger;
-import mint.inference.efsm.mergingstate.RedBlueMergingState;
-import mint.inference.efsm.scoring.RedBlueScorer;
-import mint.inference.efsm.scoring.Scorer;
-import mint.inference.efsm.scoring.scoreComputation.ComputeScore;
 import mint.model.Machine;
-import mint.model.PayloadMachine;
-import mint.model.SimpleMachine;
 import mint.model.WekaGuardMachineDecorator;
-import mint.model.prefixtree.EFSMPrefixTreeFactory;
-import mint.model.prefixtree.FSMPrefixTreeFactory;
-import mint.model.prefixtree.PrefixTreeFactory;
 import mint.model.walk.EFSMAnalysis;
 import mint.model.walk.SimpleMachineAnalysis;
 import mint.tracedata.TraceElement;

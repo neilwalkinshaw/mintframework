@@ -2,7 +2,7 @@ package mint.evaluation.kfolds;
 
 import mint.Configuration;
 import mint.evaluation.RefModelProbabilisticExperiment;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.soa.SubjectiveOpinionResult;
 import mint.tracedata.TraceElement;
 import org.apache.log4j.Logger;
@@ -15,13 +15,13 @@ import java.util.Random;
 
 public class RefModelKFoldsEvaluator extends StrategicKFoldsEvaluator {
 
-    public ProbabilisticMachine refModel;
+    public RawProbabilisticMachine refModel;
     protected double negProp;
     private final static Logger LOGGER = Logger.getLogger(RefModelKFoldsEvaluator.class.getName());
 
 
     public RefModelKFoldsEvaluator(String name, Collection<List<TraceElement>> trace, Collection<List<TraceElement>> negTrace,
-                                   int seed, int tail, ProbabilisticMachine refModel, double negProp) {
+                                   int seed, int tail, RawProbabilisticMachine refModel, double negProp) {
         super(name, trace, negTrace, seed, tail);
         this.negProp = negProp;
         this.refModel = refModel;

@@ -4,12 +4,12 @@ import citcom.subjectiveLogic.BinomialOpinion;
 import mint.Configuration;
 import mint.evaluation.kfolds.ProbabilisticExperiment;
 import mint.evaluation.kfolds.Result;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
 import mint.model.soa.*;
 import mint.model.walk.SimpleMachineAnalysis;
 import mint.model.walk.WalkResult;
-import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
+import mint.model.walk.probabilistic.RawProbabilisticMachineAnalysis;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
 import org.apache.log4j.Logger;
@@ -18,13 +18,13 @@ import java.util.*;
 
 public class RefModelProbabilisticExperiment extends ProbabilisticExperiment {
 
-    protected ProbabilisticMachine reference;
+    protected RawProbabilisticMachine reference;
     protected double proportionNeg = 1;
 
     private final static Logger LOGGER = Logger.getLogger(RefModelProbabilisticExperiment.class.getName());
 
 
-    public RefModelProbabilisticExperiment(String name, Random r, Collection<List<TraceElement>> negtrace, Collection<List<TraceElement>> trace, int folds, Configuration.Data algo, int seed, int tail, boolean data, Configuration.Strategy strategy, ProbabilisticMachine reference, double proportionNeg) {
+    public RefModelProbabilisticExperiment(String name, Random r, Collection<List<TraceElement>> negtrace, Collection<List<TraceElement>> trace, int folds, Configuration.Data algo, int seed, int tail, boolean data, Configuration.Strategy strategy, RawProbabilisticMachine reference, double proportionNeg) {
         super(name, r, trace, negtrace, folds, algo, seed, tail, data, strategy);
         this.reference = reference;
         this.proportionNeg = proportionNeg;
@@ -35,7 +35,7 @@ public class RefModelProbabilisticExperiment extends ProbabilisticExperiment {
         LOGGER.info("Running experiment for:"+name+","+algo.toString()+","+seed+","+data+","+strategy);
         setConfiguration();
         List<TraceSet> f = computeFolds(folds);
-        ProbabilisticMachineAnalysis referenceModelAnalysis = new ProbabilisticMachineAnalysis(reference);
+        RawProbabilisticMachineAnalysis referenceModelAnalysis = new RawProbabilisticMachineAnalysis(reference);
         for(TraceSet ts : f){
             for(List<TraceElement> p : ts.getPos()){
                 assert (referenceModelAnalysis.walkAccept(p, false, reference.getAutomaton()) != TraceDFA.Accept.REJECT);
@@ -106,7 +106,7 @@ public class RefModelProbabilisticExperiment extends ProbabilisticExperiment {
             BinomialOpinion so = model.binomialWalkOpinion(moWalk,moWalk.getWalk().size(), true);
 
             TraceDFA.Accept predictedAccept = wr.isAccept(model.getAutomaton());
-            ProbabilisticMachineAnalysis referenceModelAnalysis = new ProbabilisticMachineAnalysis(reference);
+            RawProbabilisticMachineAnalysis referenceModelAnalysis = new RawProbabilisticMachineAnalysis(reference);
             WalkResult refResult = referenceModelAnalysis.walk(test,reference.getInitialState(),new ArrayList<>(),reference.getAutomaton());
             TraceDFA.Accept accept = refResult.isAccept(reference.getAutomaton());
             double probability = referenceModelAnalysis.getProbabilityOfWalk(test);

@@ -11,18 +11,12 @@ package mint.evaluation;
 
 import mint.Configuration;
 import mint.evaluation.kfolds.RefModelKFoldsEvaluator;
-import mint.evaluation.mutation.MutationOperator;
-import mint.evaluation.mutation.StateMachineMutator;
 import mint.model.Machine;
 import mint.model.PayloadMachine;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
 import mint.model.dfa.reader.DotReader;
 import mint.model.prefixtree.FSMPrefixTreeFactory;
-import mint.model.soa.SubjectiveOpinionResult;
-import mint.model.walk.SimpleMachineAnalysis;
-import mint.model.walk.WalkResult;
-import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
 import mint.tracedata.SimpleTraceElement;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
@@ -30,7 +24,6 @@ import mint.tracedata.types.VariableAssignment;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -69,7 +62,7 @@ public class SLProbabilitiesEvaluator {
 			dfa = dr.getImported();
 		}
 		dfa.getAutomaton().completeWithRejects();
-		ProbabilisticMachine pdfa = createProbabilisticMachine(dfa);
+		RawProbabilisticMachine pdfa = createProbabilisticMachine(dfa);
 
 		int targetSize = Integer.parseInt(numtraces);
 		//int targetSize = pdfa.getAutomaton().getStates().size() * pdfa.getAutomaton().getAlphabet().size();
@@ -86,7 +79,7 @@ public class SLProbabilitiesEvaluator {
 		runExperiment(label,Integer.parseInt(folds), configuration, traces, pdfa);
 	}
 
-	public static void checkTransitions(ProbabilisticMachine m){
+	public static void checkTransitions(RawProbabilisticMachine m){
 		for(DefaultEdge transition : m.getAutomaton().getTransitions()){
 			assert(m.getAutomaton().getTransitionData(transition).getPayLoad() instanceof Double);
 		}
@@ -140,7 +133,7 @@ public class SLProbabilitiesEvaluator {
 	}
 
 
-		private static TraceSet createTracesD(ProbabilisticMachine pdfa, int posNum, int negNum) {
+		private static TraceSet createTracesD(RawProbabilisticMachine pdfa, int posNum, int negNum) {
 		Integer rejectState = 0;
 
 		for(Integer s : pdfa.getStates()){
@@ -192,8 +185,8 @@ public class SLProbabilitiesEvaluator {
 	}
 
 
-	private static ProbabilisticMachine createProbabilisticMachine(Machine dfa) {
-		ProbabilisticMachine pdfa = new ProbabilisticMachine();
+	private static RawProbabilisticMachine createProbabilisticMachine(Machine dfa) {
+		RawProbabilisticMachine pdfa = new RawProbabilisticMachine();
 		pdfa.setAutomaton(dfa.getAutomaton());
 		for(Integer state : pdfa.getAutomaton().getStates()){
 			int numOutgoing = pdfa.getAutomaton().getOutgoingTransitions(state).size();
@@ -246,7 +239,7 @@ public class SLProbabilitiesEvaluator {
 
 
 	private static void runExperiment(String label, int folds, Configuration configuration, TraceSet posSet,
-									  ProbabilisticMachine pdfa) {
+									  RawProbabilisticMachine pdfa) {
 		Collection<List<TraceElement>> pos = posSet.getPos();
 		Collection<List<TraceElement>> neg = posSet.getNeg();
 		configuration.PREFIX_CLOSED = true;
@@ -265,7 +258,7 @@ public class SLProbabilitiesEvaluator {
 
 	}
 
-	protected static void outputStats(String label, ProbabilisticMachine pdfa) {
+	protected static void outputStats(String label, RawProbabilisticMachine pdfa) {
 		FileWriter fWriter = null;
 		BufferedWriter writer = null;
 		try {

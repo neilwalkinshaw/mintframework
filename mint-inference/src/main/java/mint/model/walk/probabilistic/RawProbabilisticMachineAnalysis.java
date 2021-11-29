@@ -1,9 +1,8 @@
 package mint.model.walk.probabilistic;
 
 import mint.model.dfa.TraceDFA;
-import org.apache.log4j.Logger;
 import mint.model.Machine;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.matrix.ProbabilityMatrix;
 import mint.model.walk.SimpleMachineAnalysis;
 import mint.model.walk.WalkResult;
@@ -20,12 +19,12 @@ import java.util.List;
 /**
  * Created by neilwalkinshaw on 27/04/2016.
  */
-public class ProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machine<?>> {
+public class RawProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machine<?>> {
 
     protected ProbabilityMatrix matrix;
 
 
-    public ProbabilisticMachineAnalysis(ProbabilisticMachine m) {
+    public RawProbabilisticMachineAnalysis(RawProbabilisticMachine m) {
         super(m);
         matrix = new ProbabilityMatrix(m);
     }

@@ -1,15 +1,12 @@
 package mint.evaluation.mutation;
 
-import mint.Configuration;
 import mint.model.Machine;
-import mint.model.ProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
 import mint.model.walk.SimpleMachineAnalysis;
 import mint.tracedata.SimpleTraceElement;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
 import mint.tracedata.types.VariableAssignment;
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultEdge;
 

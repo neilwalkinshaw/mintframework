@@ -4,9 +4,13 @@ import mint.model.dfa.TransitionData;
 import org.jgrapht.graph.DefaultEdge;
 
 /**
+ * This is a simple state machine where edges are labelled by doubles (probabilities). It is intended for use as
+ * a reference machine (e.g. an inference target), without having actual trace events attached to the edges.
+ *
+ *
  * Created by neilwalkinshaw on 18/05/2016.
  */
-public class ProbabilisticMachine extends SimpleMachine<Double> {
+public class RawProbabilisticMachine extends SimpleMachine<Double> {
 
     @Override
     public double getProbability(DefaultEdge transition) {

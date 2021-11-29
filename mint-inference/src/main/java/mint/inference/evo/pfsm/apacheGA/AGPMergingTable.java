@@ -8,7 +8,7 @@ import mint.inference.efsm.EDSMMerger;
 import mint.inference.efsm.mergingstate.SimpleMergingState;
 import mint.model.Machine;
 import mint.model.PayloadMachine;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
 import mint.model.dfa.TransitionData;
 import mint.model.prefixtree.FSMPrefixTreeFactory;
@@ -16,7 +16,7 @@ import mint.model.prefixtree.PrefixTreeFactory;
 import mint.model.statepair.OrderedStatePair;
 import mint.model.statepair.StatePair;
 import mint.model.statepair.StatePairComparator;
-import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
+import mint.model.walk.probabilistic.RawProbabilisticMachineAnalysis;
 import mint.tracedata.TraceSet;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -118,7 +118,7 @@ public class AGPMergingTable extends AbstractListChromosome<StatePair> implement
         if(!done) {
             done=true;
             lastFitness = -1000000;
-            ProbabilisticMachine sm = buildMachine();
+            RawProbabilisticMachine sm = buildMachine();
             if(sm == null){
                 return lastFitness;
             }
@@ -129,7 +129,7 @@ public class AGPMergingTable extends AbstractListChromosome<StatePair> implement
                 fitness =  -fitness;
             }
             else {
-                ProbabilisticMachineAnalysis pma = new ProbabilisticMachineAnalysis(sm);
+                RawProbabilisticMachineAnalysis pma = new RawProbabilisticMachineAnalysis(sm);
                 List<Double> dist = pma.getNGramDistribution(nGram.getNgrams());
                 normalise(dist);
                 double divergence = KLDivergencee(targetDist, dist);
@@ -142,13 +142,13 @@ public class AGPMergingTable extends AbstractListChromosome<StatePair> implement
             return lastFitness;
     }
 
-    private ProbabilisticMachine buildMachine() {
+    private RawProbabilisticMachine buildMachine() {
 
         PayloadMachine payM = getMergedMachine();
         if(Thread.currentThread().isInterrupted()){
             return null;
         }
-        ProbabilisticMachine pm = new ProbabilisticMachine();
+        RawProbabilisticMachine pm = new RawProbabilisticMachine();
         TraceDFA<Double> automaton = pm.getAutomaton();
 
         for(DefaultEdge payEdge : payM.getAutomaton().getTransitions()){

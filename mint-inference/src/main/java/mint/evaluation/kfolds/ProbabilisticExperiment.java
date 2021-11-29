@@ -4,10 +4,10 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.apache.log4j.Logger;
 import mint.Configuration;
 import mint.model.Machine;
-import mint.model.ProbabilisticMachine;
+import mint.model.RawProbabilisticMachine;
 import mint.model.dfa.TraceDFA;
 import mint.model.dfa.TransitionData;
-import mint.model.walk.probabilistic.ProbabilisticMachineAnalysis;
+import mint.model.walk.probabilistic.RawProbabilisticMachineAnalysis;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
 import org.jgrapht.graph.DefaultEdge;
@@ -169,13 +169,13 @@ public class ProbabilisticExperiment extends Experiment {
     }
 
     private List<Double> getMachineNGramDistribution(Machine model, List<List<String>> ngrams) {
-        ProbabilisticMachineAnalysis pma = new ProbabilisticMachineAnalysis(buildProbabilisticMachine(model));
+        RawProbabilisticMachineAnalysis pma = new RawProbabilisticMachineAnalysis(buildProbabilisticMachine(model));
         List<Double> dist = pma.getNGramDistribution(ngrams);
         return dist;
     }
 
-    protected ProbabilisticMachine buildProbabilisticMachine(Machine<?> m) {
-        ProbabilisticMachine pm = new ProbabilisticMachine();
+    protected RawProbabilisticMachine buildProbabilisticMachine(Machine<?> m) {
+        RawProbabilisticMachine pm = new RawProbabilisticMachine();
         TraceDFA<?> automaton = m.getAutomaton();
         for(DefaultEdge de : automaton.getTransitions()){
             pm.getAutomaton().addState(automaton.getTransitionSource(de));
