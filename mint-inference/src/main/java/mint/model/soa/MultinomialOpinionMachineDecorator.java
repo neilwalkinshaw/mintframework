@@ -9,6 +9,7 @@ import citcom.subjectiveLogic.operators.binomial.BinomialMultiplication;
 import citcom.subjectiveLogic.operators.multinomial.MultinomialAveragingFusion;
 import citcom.subjectiveLogic.operators.multinomial.MultinomialMultiplication;
 import mint.model.Machine;
+import mint.model.ProbabilisticTraceMachineDecorator;
 import mint.model.dfa.TraceDFA;
 import mint.model.walk.WalkResult;
 import mint.tracedata.TraceElement;
@@ -19,7 +20,7 @@ import org.jgrapht.graph.DefaultEdge;
 import java.util.*;
 
 
-public class MultinomialOpinionMachineDecorator extends SOAMachineDecorator {
+public class MultinomialOpinionMachineDecorator extends ProbabilisticTraceMachineDecorator {
 
     protected Map<Integer, MultinomialOpinion> soaMap;
 

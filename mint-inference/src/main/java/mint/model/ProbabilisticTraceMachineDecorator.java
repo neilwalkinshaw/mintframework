@@ -1,4 +1,4 @@
-package mint.model.soa;
+package mint.model;
 
 import mint.model.Machine;
 import mint.model.MachineDecorator;
@@ -16,7 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class SOAMachineDecorator extends MachineDecorator {
+/**
+ * A weighted DFA, associated with a trace set. Intended to be used as a basis for computing probabilities (or
+ * subjective opinions) attributed to states or transitions.
+ */
+
+public abstract class ProbabilisticTraceMachineDecorator extends MachineDecorator {
 
     protected TraceSet traces;
 
@@ -26,7 +31,7 @@ public abstract class SOAMachineDecorator extends MachineDecorator {
 
 
 
-    public SOAMachineDecorator(Machine decorated, TraceSet traces, double conf) {
+    public ProbabilisticTraceMachineDecorator(Machine decorated, TraceSet traces, double conf) {
         super(decorated);
         this.traces=traces;
         this.confidenceThreshold=conf;
@@ -37,6 +42,11 @@ public abstract class SOAMachineDecorator extends MachineDecorator {
         return ma.walk(elements,getInitialState(),new ArrayList<>(),getAutomaton());
     }
 
+    /**
+     * Add weights to all transitions for a given set of traces.
+     * @param traces
+     * @param oneWeightPerTrace
+     */
     public void addWeights(TraceSet traces, boolean oneWeightPerTrace){
         for(List<TraceElement> trace: traces.getPos()){
             WalkResult result= ma.walk(trace,getInitialState(),new ArrayList<>(),getAutomaton());
@@ -70,6 +80,14 @@ public abstract class SOAMachineDecorator extends MachineDecorator {
         }
     }
 
+    /**
+     * Calculates the proportion of "weight" for the current transition, with respect to the
+     * other outgoing transitions from this state. Could be interpreted as a probability; the
+     * equivalent values for all transitions from the same state would sum to 1.
+     *
+     * @param current
+     * @return
+     */
     protected double calculateBelief(DefaultEdge current) {
         TraceDFA<Set<TraceElement>> automaton = getAutomaton();
         Integer source = automaton.getTransitionSource(current);

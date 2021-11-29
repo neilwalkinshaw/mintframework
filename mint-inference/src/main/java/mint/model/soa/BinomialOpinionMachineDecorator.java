@@ -4,6 +4,7 @@ package mint.model.soa;
 import citcom.subjectiveLogic.BinomialOpinion;
 import citcom.subjectiveLogic.operators.binomial.BinomialMultiplication;
 import mint.model.Machine;
+import mint.model.ProbabilisticTraceMachineDecorator;
 import mint.model.walk.WalkResult;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
@@ -13,7 +14,7 @@ import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
 
-public class BinomialOpinionMachineDecorator extends SOAMachineDecorator {
+public class BinomialOpinionMachineDecorator extends ProbabilisticTraceMachineDecorator {
 
     protected Map<DefaultEdge, BinomialOpinion> soaMap;
 
