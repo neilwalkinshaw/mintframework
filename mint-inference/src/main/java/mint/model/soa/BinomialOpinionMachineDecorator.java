@@ -31,8 +31,8 @@ public class BinomialOpinionMachineDecorator extends ProbabilisticTraceMachineDe
         this.strict = strict;
     }
 
-    public BinomialOpinionMachineDecorator(Machine decorated, TraceSet traces, double confidenceThreshold) {
-        super(decorated, traces, confidenceThreshold);
+    public BinomialOpinionMachineDecorator(Machine decorated, TraceSet traces, double confidenceThreshold, boolean oneWeightPerTrace) {
+        super(decorated, traces, confidenceThreshold, oneWeightPerTrace);
         soaMap=new HashMap<>();
 
     }

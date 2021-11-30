@@ -168,5 +168,11 @@ public class Configuration {
 	public String JAVA_SUT="";
 
 
+	/**
+	 * When decorating a machine from traces, should the occurrence of an element in a trace be counted multiple
+	 * times whenever it occurs within a trace, or just the once?
+	 */
+	public boolean ONE_WEIGHT_PER_TRACE=false;
+
 
 }

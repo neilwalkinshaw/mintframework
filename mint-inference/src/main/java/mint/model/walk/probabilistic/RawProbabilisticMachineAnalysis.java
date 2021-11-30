@@ -17,6 +17,10 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ *
+ * Specifically for the analysis of RawProbabilisticStateMachines (state machines without any trace data attached
+ * to them, where transitions are simply annotated by numerical probabilities).
+ *
  * Created by neilwalkinshaw on 27/04/2016.
  */
 public class RawProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machine<?>> {

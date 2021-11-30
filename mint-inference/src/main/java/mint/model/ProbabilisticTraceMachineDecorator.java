@@ -21,21 +21,27 @@ import java.util.Set;
  * subjective opinions) attributed to states or transitions.
  */
 
-public abstract class ProbabilisticTraceMachineDecorator extends MachineDecorator {
+public class ProbabilisticTraceMachineDecorator extends MachineDecorator {
 
     protected TraceSet traces;
 
     protected double confidenceThreshold = Double.MAX_VALUE;
 
     protected MachineAnalysis ma;
+    protected boolean oneWeightPerTrace;
 
 
-
-    public ProbabilisticTraceMachineDecorator(Machine decorated, TraceSet traces, double conf) {
+    public ProbabilisticTraceMachineDecorator(Machine decorated, TraceSet traces, double conf, boolean oneWeightPerTrace) {
         super(decorated);
         this.traces=traces;
         this.confidenceThreshold=conf;
+        this.oneWeightPerTrace = oneWeightPerTrace;
         ma = new SimpleMachineAnalysis(decorated);
+        addWeights();
+    }
+
+    public TraceSet getTraces(){
+        return traces;
     }
 
     public WalkResult walk(List<TraceElement> elements){
@@ -44,10 +50,8 @@ public abstract class ProbabilisticTraceMachineDecorator extends MachineDecorato
 
     /**
      * Add weights to all transitions for a given set of traces.
-     * @param traces
-     * @param oneWeightPerTrace
      */
-    public void addWeights(TraceSet traces, boolean oneWeightPerTrace){
+    private void addWeights(){
         for(List<TraceElement> trace: traces.getPos()){
             WalkResult result= ma.walk(trace,getInitialState(),new ArrayList<>(),getAutomaton());
             HashSet<DefaultEdge> done = new HashSet<>();

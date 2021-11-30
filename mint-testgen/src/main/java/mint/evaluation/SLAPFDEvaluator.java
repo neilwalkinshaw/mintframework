@@ -249,8 +249,7 @@ public class SLAPFDEvaluator {
 
 
 
-			MultinomialOpinionMachineDecorator pmd = new MultinomialOpinionMachineDecorator(dfa,ts,Configuration.getInstance().CONFIDENCE_THRESHOLD);
-			pmd.addWeights(ts,false);
+			MultinomialOpinionMachineDecorator pmd = new MultinomialOpinionMachineDecorator(dfa,ts,Configuration.getInstance().CONFIDENCE_THRESHOLD, false);
 			pmd.postProcess();
 
 			Comparator<List<TraceElement>> cCom = new UncertaintyComparator(pmd, covered);
@@ -424,8 +423,7 @@ public class SLAPFDEvaluator {
 			addedTrace.getPos().addAll(ts.getPos());
 			addedTrace.addPos(test);
 
-			MultinomialOpinionMachineDecorator pmd2 = new MultinomialOpinionMachineDecorator(dfa,addedTrace,Configuration.getInstance().CONFIDENCE_THRESHOLD);
-			pmd2.addWeights(addedTrace,false);
+			MultinomialOpinionMachineDecorator pmd2 = new MultinomialOpinionMachineDecorator(dfa,addedTrace,Configuration.getInstance().CONFIDENCE_THRESHOLD, false);
 			pmd2.postProcess();
 
 			WalkResult wr2 = pmd2.walk(test);

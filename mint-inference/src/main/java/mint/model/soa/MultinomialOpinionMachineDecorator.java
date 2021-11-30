@@ -30,8 +30,8 @@ public class MultinomialOpinionMachineDecorator extends ProbabilisticTraceMachin
     private final static Logger LOGGER = Logger.getLogger(MultinomialOpinionMachineDecorator.class.getName());
 
 
-    public MultinomialOpinionMachineDecorator(Machine decorated, TraceSet traces, double confidenceThreshold) {
-        super(decorated, traces, confidenceThreshold);
+    public MultinomialOpinionMachineDecorator(Machine decorated, TraceSet traces, double confidenceThreshold, boolean oneWeightPerTrace) {
+        super(decorated, traces, confidenceThreshold, oneWeightPerTrace);
         soaMap=new HashMap<>();
     }
 
