@@ -314,8 +314,8 @@ public class WekaGuardMachineDecorator extends MachineDecorator {
                               DefaultEdge transitionB) {
         assert(getAutomaton().consistentTransitions());
         assert(getAutomaton().getTransitions().contains(transitionB));
-        if(!compatible(td, transitionB))
-            return false;
+        //if(!compatible(td, transitionB))
+        //    return false;
         return checkCompatible(td, transitionB);
     }
 

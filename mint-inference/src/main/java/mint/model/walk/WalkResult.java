@@ -23,7 +23,7 @@ public class WalkResult{
 		return walk;
 	}
 	
-	public TraceDFA.Accept isAccept(TraceDFA automaton){
+	public TraceDFA.Accept isAccept(){
 		return accept;
 	}
 	

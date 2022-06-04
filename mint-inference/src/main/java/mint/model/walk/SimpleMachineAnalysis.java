@@ -75,7 +75,7 @@ public class SimpleMachineAnalysis<T extends Machine> extends MachineAnalysis<T>
 			transitionsCovered.addAll(walk.getWalk());
 		if(walk.getWalk().size()<s.size())
 			return false;
-		return walk.isAccept(automaton) == TraceDFA.Accept.ACCEPT;
+		return walk.isAccept() == TraceDFA.Accept.ACCEPT;
 	}
 
 	/*
@@ -91,14 +91,14 @@ public class SimpleMachineAnalysis<T extends Machine> extends MachineAnalysis<T>
 		TraceDFA.Accept result = TraceDFA.Accept.UNDEFINED;
 		if(walk.getWalk()!=null) {
 			transitionsCovered.addAll(walk.getWalk());
-			result = walk.isAccept(automaton);
+			result = walk.isAccept();
 		}
 		return result;
 	}
 
 
 
-	protected WalkResult walk(List<TraceElement> in){
+	public WalkResult walk(List<TraceElement> in){
 		return walk(in,machine.getInitialState(), new Stack<DefaultEdge>(), machine.getAutomaton());
 	}
 	

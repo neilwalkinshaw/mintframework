@@ -105,10 +105,10 @@ public class RefModelProbabilisticExperiment extends ProbabilisticExperiment {
             //MultinomialOpinion so = model.walkOpinion(moWalk,test.size());
             BinomialOpinion so = model.binomialWalkOpinion(moWalk,moWalk.getWalk().size(), true);
 
-            TraceDFA.Accept predictedAccept = wr.isAccept(model.getAutomaton());
+            TraceDFA.Accept predictedAccept = wr.isAccept();
             RawProbabilisticMachineAnalysis referenceModelAnalysis = new RawProbabilisticMachineAnalysis(reference);
             WalkResult refResult = referenceModelAnalysis.walk(test,reference.getInitialState(),new ArrayList<>(),reference.getAutomaton());
-            TraceDFA.Accept accept = refResult.isAccept(reference.getAutomaton());
+            TraceDFA.Accept accept = refResult.isAccept();
             double probability = referenceModelAnalysis.getProbabilityOfWalk(test);
             List<String> seq = new ArrayList<String>();
             for(int i = 0; i<wr.getWalk().size(); i++){

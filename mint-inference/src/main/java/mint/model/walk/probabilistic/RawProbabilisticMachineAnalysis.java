@@ -49,7 +49,7 @@ public class RawProbabilisticMachineAnalysis extends SimpleMachineAnalysis<Machi
         WalkResult wr = walk(walk);
         if(wr.getWalk() == null)
             return 0D;
-        if(wr.isAccept(machine.getAutomaton())== TraceDFA.Accept.REJECT)
+        if(wr.isAccept()== TraceDFA.Accept.REJECT)
             return 0D;
         if(wr.getWalk().size()<walk.size())
             return 0D;

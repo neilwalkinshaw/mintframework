@@ -14,15 +14,15 @@ public class RawProbabilisticMachine extends SimpleMachine<Double> {
 
     @Override
     public double getProbability(DefaultEdge transition) {
-        Integer source = getAutomaton().getTransitionSource(transition);
+        /*Integer source = getAutomaton().getTransitionSource(transition);
         double total = 0D;
         for(DefaultEdge outgoing : getAutomaton().getOutgoingTransitions(source)){
             total += getAutomaton().getTransitionData(outgoing).getPayLoad();
         }
         Double prob = getAutomaton().getTransitionData(transition).getPayLoad()/total;
         if(prob.isNaN())
-            prob = 0D;
-        return prob;
+            prob = 0D;*/
+        return getAutomaton().getTransitionData(transition).getPayLoad();
     }
 
     /* (non-Javadoc)

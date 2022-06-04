@@ -122,6 +122,9 @@ public class Configuration {
 
 	// Input file
 	public String INPUT = "";
+
+	// Input file
+	public String COMPARETO = "";
 		
 	public Level LOGGING = Level.INFO;
 	

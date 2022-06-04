@@ -1,7 +1,6 @@
 package mint.evaluation;
 
 import mint.Configuration;
-import mint.app.Mint;
 import mint.inference.InferenceBuilder;
 import mint.inference.efsm.AbstractMerger;
 import mint.model.GPFunctionMachineDecorator;
@@ -17,16 +16,12 @@ import mint.tracedata.readers.TraceReader;
 import mint.tracedata.types.VariableAssignment;
 import mint.tracedata.types.VariableAssignmentComparator;
 import mint.visualise.dot.DotGraphWithLabels;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class GPEvaluator {
 

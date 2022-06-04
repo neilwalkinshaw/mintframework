@@ -174,7 +174,7 @@ public class MultinomialOpinionMachineDecorator extends ProbabilisticTraceMachin
         }
         if(so == null) //we were given an empty path to start with
             so = new BinomialOpinion(0,0,1);
-        else if(walk.isAccept(component.getAutomaton())!= TraceDFA.Accept.ACCEPT){
+        else if(walk.isAccept()!= TraceDFA.Accept.ACCEPT){
             if(!angelic){
                 BinomialMultiplication multi = new BinomialMultiplication();
                 so = multi.apply(so,new BinomialOpinion(0,0.5,0.5));
@@ -196,7 +196,7 @@ public class MultinomialOpinionMachineDecorator extends ProbabilisticTraceMachin
         List labList = new ArrayList();
         List<DefaultEdge> path = new ArrayList<>();
         path.addAll(walk.getWalk());
-        if(walk.isAccept(getAutomaton())==TraceDFA.Accept.REJECT){
+        if(walk.isAccept()==TraceDFA.Accept.REJECT){
             path.remove(path.size()-1);
         }
         for(DefaultEdge de : path){

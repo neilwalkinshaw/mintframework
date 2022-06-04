@@ -29,6 +29,6 @@ public class StateEventPair {
 
     @Override
     public int hashCode() {
-        return Objects.hash(state, event);
+        return Objects.hash(state.toString(), event);
     }
 }

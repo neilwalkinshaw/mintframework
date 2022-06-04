@@ -12,8 +12,11 @@ package mint.app;
 import mint.Configuration;
 import mint.inference.InferenceBuilder;
 import mint.inference.efsm.AbstractMerger;
+import mint.model.GPFunctionMachineDecorator;
 import mint.model.Machine;
 import mint.model.WekaGuardMachineDecorator;
+import mint.model.walk.EFSMAnalysis;
+import mint.model.walk.MachineAnalysis;
 import mint.tracedata.TraceElement;
 import mint.tracedata.TraceSet;
 import mint.tracedata.readers.TraceReader;
@@ -22,12 +25,10 @@ import mint.visualise.dot.DotGraphWithLabels;
 import org.apache.commons.cli.*;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ public class Mint {
 
 	private final static Logger LOGGER = Logger.getLogger(Mint.class.getName());
 
+	private TraceSet evalSet = null;
 	
 	@SuppressWarnings("static-access")
 	public void parseCommandLine(String[] args) {
@@ -56,6 +58,7 @@ public class Mint {
 		Option strategy = OptionBuilder.withArgName("strategy").hasArg().withDescription("redblue,gktails,noloops,ktails").create("strategy");
         Option gp = OptionBuilder.withArgName("gp").withDescription("Use GP to infer transition functions.").create("gp");
         Option carefulDet = OptionBuilder.withArgName("carefulDet").withDescription("Determinize to prevent overgeneralisation.").create("carefulDet");
+		Option compareTo = OptionBuilder.withArgName("compareTo").hasArg().withDescription("trace file to run against inferred machine").create("compareTo");
 
 		options.addOption(help);
 		options.addOption(csv);
@@ -70,6 +73,7 @@ public class Mint {
 		options.addOption(strategy);
         options.addOption(gp);
         options.addOption(carefulDet);
+		options.addOption(compareTo);
 		// create the parser
 		CommandLineParser parser = new GnuParser();
 		Configuration configuration = Configuration.getInstance();
@@ -107,11 +111,14 @@ public class Mint {
 				configuration.VIS = Configuration.Visualise.valueOf(line.getOptionValue("visualise"));
 			if (line.hasOption("strategy"))
 				configuration.STRATEGY = Configuration.Strategy.valueOf(line.getOptionValue("strategy"));
+			if (line.hasOption("compareTo")) {
+				configuration.COMPARETO = line.getOptionValue("compareTo");
+			}
 			try {
 				infer();
 			} catch (IOException e) {
-				System.err.println("Input file not found: "
-				        + configuration.INPUT);
+				System.err.println("Either input our compareTo file (if provided) is not valid.\n"
+				        + configuration.INPUT+"\n"+ configuration.COMPARETO);
 			}
 
 		} catch (ParseException exp) {
@@ -127,14 +134,19 @@ public class Mint {
 		LOGGER.info("Parsing input file");
 		Configuration configuration = Configuration.getInstance();
 		TraceSet posSet = TraceReader.readTraceFile(configuration.INPUT, configuration.TOKENIZER);
+		if(configuration.COMPARETO.length()>0){
+			evalSet = TraceReader.readTraceFile(configuration.COMPARETO, configuration.TOKENIZER);
+		}
 		InferenceBuilder ib = new InferenceBuilder(configuration);
-		AbstractMerger<?, ?> inference = ib.getInference(posSet);
+		AbstractMerger<?, ?> inference = ib.getInference(posSet, evalSet);
 
         Machine output = inference.infer();
 		if (configuration.VIS.equals(Configuration.Visualise.text)) {
+			boolean fileOutput = false;
 			OutputStream outputStream = null;
 			if (configuration.VIS_OUTPUT != null && !"-".equals(configuration.VIS_OUTPUT)) {
 				outputStream = new FileOutputStream(new File(configuration.VIS_OUTPUT));
+				fileOutput = true;
 			} else {
 				outputStream = System.out;
 			}
@@ -143,7 +155,8 @@ public class Mint {
 			} finally {
 				if (outputStream != null) {
 					try {
-						outputStream.close();
+						if(fileOutput)
+							outputStream.close();
 					} catch (Exception ignored) {
 					}
 				}
@@ -162,11 +175,34 @@ public class Mint {
             WekaGuardMachineDecorator wgm = (WekaGuardMachineDecorator) output;
             System.out.println(wgm.modelStrings());
         }
-
+		if(configuration.COMPARETO.length()>0){
+			evaluate(output);
+		}
 		
 	}
 
-    public static void info(Collection<List<TraceElement>> traces) {
+	private void evaluate(Machine output) throws IOException {
+
+
+		EFSMAnalysis<WekaGuardMachineDecorator> ma = new EFSMAnalysis(output);
+		int numAccepted = 0;
+		for(List<TraceElement> trace : evalSet.getPos()){
+			boolean accept = ma.walk(trace,false,output.getAutomaton());
+			if(accept)
+				numAccepted++;
+		}
+		int total = evalSet.getPos().size();
+		if(total>0) {
+			double score = ((double)numAccepted / (double) total) * 100;
+			BigDecimal bd = BigDecimal.valueOf(score);
+			bd = bd.setScale(2, RoundingMode.HALF_UP);
+			System.out.println(bd + "% ("+numAccepted+"/"+total+") of test traces accepted.");
+		}
+		else
+			System.out.println("No evaluation traces given");
+	}
+
+	public static void info(Collection<List<TraceElement>> traces) {
         double numTraces = traces.size();
         LOGGER.info("Number of traces: "+traces.size());
         double total = 0D;

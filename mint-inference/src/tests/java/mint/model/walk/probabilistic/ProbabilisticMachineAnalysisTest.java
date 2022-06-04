@@ -47,7 +47,7 @@ public class ProbabilisticMachineAnalysisTest {
         addSequence(new String[]{"open","edit","edit","save","close","exit"}, ts);
         addSequence(new String[]{"open","edit","save","close","open","close","exit"}, ts);
 
-        ProbabilisticMachineAnalysis pma = new ProbabilisticMachineAnalysis(coreMachine,2,ts);
+        ParameterisableProbabilisticMachineAnalysis pma = new StateSensitiveProbabilisticMachineAnalaysis(coreMachine,2,ts);
 
         StateEventPair sep = new StateEventPair(coreMachine.getInitialState(), exitElement.getLabel());
 
@@ -99,8 +99,6 @@ public class ProbabilisticMachineAnalysisTest {
         addSequence(new String[]{"exit"}, ts);
         addSequence(new String[]{"open","edit","edit","save","close","exit"}, ts);
         addSequence(new String[]{"open","edit","save","close","open","close","exit"}, ts);
-
-        ProbabilisticMachineAnalysis pma = new ProbabilisticMachineAnalysis(coreMachine,2,ts);
 
         StateEventPair sep = new StateEventPair(coreMachine.getInitialState(), exitElement.getLabel());
 

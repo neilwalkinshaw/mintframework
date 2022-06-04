@@ -369,7 +369,7 @@ public class SLAPFDEvaluator {
 			count++;
 			LOGGER.info("Mutation testing: "+(count/(double)tests.size())*100+"% done (out of "+tests.size()+" tests)");
 			WalkResult wr = sma.walk(test,dfa.getInitialState(),new ArrayList<>(),dfa.getAutomaton());
-			TraceDFA.Accept accept = wr.isAccept(dfa.getAutomaton());
+			TraceDFA.Accept accept = wr.isAccept();
 			if(accept == TraceDFA.Accept.UNDEFINED)
 				accept = TraceDFA.Accept.REJECT;
 			mut.removeAll(killed);
@@ -377,7 +377,7 @@ public class SLAPFDEvaluator {
 
 					SimpleMachineAnalysis mutantAnalysis = new SimpleMachineAnalysis(mutated);
 					WalkResult mwr = mutantAnalysis.walk(test,mutated.getInitialState(),new ArrayList<>(),mutated.getAutomaton());
-					TraceDFA.Accept maccept = mwr.isAccept(mutated.getAutomaton());
+					TraceDFA.Accept maccept = mwr.isAccept();
 					if(maccept == TraceDFA.Accept.UNDEFINED)
 						maccept = TraceDFA.Accept.REJECT;
 					if(accept != maccept) {

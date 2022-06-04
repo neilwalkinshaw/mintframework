@@ -1,22 +1,13 @@
 package mint.testgen.sequential;
 
 import mint.Configuration;
-import mint.evaluation.SLAPFDEvaluator;
 import mint.model.Machine;
-import mint.model.PayloadMachine;
-import mint.model.SimpleMachine;
 import mint.model.dfa.TraceDFA;
-import mint.model.prefixtree.FSMPrefixTreeFactory;
-import mint.model.prefixtree.PrefixTreeFactory;
 import mint.model.walk.SimpleMachineAnalysis;
 import mint.model.walk.WalkResult;
 import mint.tracedata.SimpleTraceElement;
 import mint.tracedata.TraceElement;
-import mint.tracedata.TraceSet;
-import mint.tracedata.readers.ngram.UselessReducer;
 import mint.tracedata.types.VariableAssignment;
-import mint.visualise.dot.DotGraphWithLabels;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultEdge;
@@ -185,7 +176,7 @@ public class WMethodSMTester implements TestGenerator {
             for(int i = 0; i<states.size(); i++){
                 Integer currentState = states.get(i);
                 WalkResult wr = sma.walk(walkable,currentState,new ArrayList<>(),m.getAutomaton());
-                TraceDFA.Accept result = wr.isAccept(m.getAutomaton());
+                TraceDFA.Accept result = wr.isAccept();
                 if(result == TraceDFA.Accept.UNDEFINED)
                     result = TraceDFA.Accept.REJECT;
                 results[j][i]=result;
@@ -255,7 +246,7 @@ public class WMethodSMTester implements TestGenerator {
             for(List<String> sequence : added){
                 List<TraceElement> walkable = getTraceElements(sequence);
                 WalkResult wr = sma.walk(walkable,state,new ArrayList<>(),m.getAutomaton());
-                TraceDFA.Accept result = wr.isAccept(m.getAutomaton());
+                TraceDFA.Accept result = wr.isAccept();
                 if(result == TraceDFA.Accept.UNDEFINED)
                     result = TraceDFA.Accept.REJECT;
                 accept.add(result);
