@@ -134,11 +134,15 @@ public class Mint {
 		LOGGER.info("Parsing input file");
 		Configuration configuration = Configuration.getInstance();
 		TraceSet posSet = TraceReader.readTraceFile(configuration.INPUT, configuration.TOKENIZER);
+		InferenceBuilder ib = new InferenceBuilder(configuration);
+		AbstractMerger<?, ?> inference = null;
 		if(configuration.COMPARETO.length()>0){
 			evalSet = TraceReader.readTraceFile(configuration.COMPARETO, configuration.TOKENIZER);
+			inference = ib.getInference(posSet,evalSet);
 		}
-		InferenceBuilder ib = new InferenceBuilder(configuration);
-		AbstractMerger<?, ?> inference = ib.getInference(posSet, evalSet);
+		else{
+			inference = ib.getInference(posSet);
+		}
 
         Machine output = inference.infer();
 		if (configuration.VIS.equals(Configuration.Visualise.text)) {
