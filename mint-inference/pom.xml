@@ -86,7 +86,7 @@
             <version>31.1-jre</version>
         </dependency>
         <dependency>
-            <groupId>citcom</groupId>
+            <groupId>io.github.citcom-project</groupId>
             <artifactId>subjectivelogic</artifactId>
             <version>1.0.4</version>
         </dependency>
