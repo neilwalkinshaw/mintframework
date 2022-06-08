@@ -45,11 +45,6 @@
             <id>lib</id>
             <url>file://${basedir}/lib</url>
         </repository>
-        <repository>
-            <id>github</id>
-            <name>GitHub neilwalkinshaw Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/citcom-project/subjectivelogic</url>
-        </repository>
     </repositories>
 
 
