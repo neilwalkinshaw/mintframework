@@ -343,4 +343,18 @@ public class MultinomialOpinionMachineDecorator extends ProbabilisticTraceMachin
         return new MultinomialOpinion(zeroBelief,prior,domain);
     }
 
+    public String toString(){
+        String retString = "State";
+        for(String alpha : getAutomaton().getAlphabet()){
+            retString+=","+alpha;
+        }
+        retString+=", uncertainty\n";
+        for(Integer state : soaMap.keySet()){
+            retString+=state+",";
+            retString+=soaMap.get(state).toString()+"\n";
+        }
+        return retString;
+    }
+
+
 }

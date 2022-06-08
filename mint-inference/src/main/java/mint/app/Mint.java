@@ -15,6 +15,7 @@ import mint.inference.efsm.AbstractMerger;
 import mint.model.GPFunctionMachineDecorator;
 import mint.model.Machine;
 import mint.model.WekaGuardMachineDecorator;
+import mint.model.soa.MultinomialOpinionMachineDecorator;
 import mint.model.walk.EFSMAnalysis;
 import mint.model.walk.MachineAnalysis;
 import mint.tracedata.TraceElement;
@@ -59,7 +60,8 @@ public class Mint {
         Option gp = OptionBuilder.withArgName("gp").withDescription("Use GP to infer transition functions.").create("gp");
         Option carefulDet = OptionBuilder.withArgName("carefulDet").withDescription("Determinize to prevent overgeneralisation.").create("carefulDet");
 		Option compareTo = OptionBuilder.withArgName("compareTo").hasArg().withDescription("trace file to run against inferred machine").create("compareTo");
-
+		Option viewOpinions = OptionBuilder.withArgName("viewOpinions").withDescription("View multinomial opinions for each state").create("viewOpinions");
+		Option opinionThreshold = OptionBuilder.withArgName("opinionThreshold").hasArg().withDescription("Set Subjective Opinion threshold").create("opinionThreshold");
 		options.addOption(help);
 		options.addOption(csv);
 		options.addOption(daikon);
@@ -74,6 +76,9 @@ public class Mint {
         options.addOption(gp);
         options.addOption(carefulDet);
 		options.addOption(compareTo);
+		options.addOption(viewOpinions);
+		options.addOption(opinionThreshold);
+
 		// create the parser
 		CommandLineParser parser = new GnuParser();
 		Configuration configuration = Configuration.getInstance();
@@ -113,6 +118,12 @@ public class Mint {
 				configuration.STRATEGY = Configuration.Strategy.valueOf(line.getOptionValue("strategy"));
 			if (line.hasOption("compareTo")) {
 				configuration.COMPARETO = line.getOptionValue("compareTo");
+			}
+			if (line.hasOption("viewOpinions")) {
+				configuration.VIEW_OPINIONS = true;
+			}
+			if (line.hasOption("opinionThreshold")) {
+				configuration.CONFIDENCE_THRESHOLD = Integer.valueOf(line.getOptionValue("opinionThreshold"));
 			}
 			try {
 				infer();
@@ -179,6 +190,12 @@ public class Mint {
             WekaGuardMachineDecorator wgm = (WekaGuardMachineDecorator) output;
             System.out.println(wgm.modelStrings());
         }
+		if(configuration.VIEW_OPINIONS){
+			MultinomialOpinionMachineDecorator mom = new MultinomialOpinionMachineDecorator(output,posSet, configuration.CONFIDENCE_THRESHOLD, configuration.ONE_WEIGHT_PER_TRACE);
+			mom.postProcess();
+			System.out.println(mom);
+		}
+
 		if(configuration.COMPARETO.length()>0){
 			evaluate(output);
 		}

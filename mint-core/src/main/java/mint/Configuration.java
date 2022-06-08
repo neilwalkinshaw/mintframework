@@ -177,5 +177,8 @@ public class Configuration {
 	 */
 	public boolean ONE_WEIGHT_PER_TRACE=false;
 
+	public boolean VIEW_OPINIONS=false;
+
+
 
 }
